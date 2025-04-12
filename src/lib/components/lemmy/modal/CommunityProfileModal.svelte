@@ -11,8 +11,6 @@
         subscribe 
     } from '$lib/components/lemmy/community/helpers'
     
-    import { StorageCache} from '$lib/storage-controller'
-
     import { addCommunityToGroup, amMod, isAdmin } from '$lib/components/lemmy/moderation/moderation'
     import { dispatchWindowEvent } from '$lib/ui/events'
     import { fullCommunityName } from "$lib/util"
@@ -66,13 +64,7 @@
     
     export let community: Community | undefined
     export let open: boolean = false
-    
-    const storage = new StorageCache({
-        type: 'session',
-        ttl: 15,
-        useCompression: true   
-    })
-    
+   
     let loading = false
     let blocking = false
     let subscribing = false
@@ -99,7 +91,6 @@
     let modalWidth = defaultWidth
 
     let communityLookupName: string     // Set by loadDetails()
-    let storageKey: string              // set by loadDetails()
     
     // Reactive hack (rather than just monitoring community directly) since updating the modal store changes the community (though back to its original value)
     // and causes the loader to re-run needlessly.
@@ -130,19 +121,9 @@
         communityLookupName = `${community.name}@${new URL(community.actor_id).hostname}`
         
         try {
-            let cachedCommunityResponse = await storage.getCommunityResponse(communityLookupName)
-            
-            if (!cachedCommunityResponse) {    
-                
-                communityDetails = await getClient().getCommunity({
-                    name: communityLookupName
-                })
-
-                await storage.putCommunityResponse(communityDetails)
-            }
-            else {
-                communityDetails = cachedCommunityResponse
-            }   
+            communityDetails = await getClient().getCommunity({
+                name: communityLookupName
+            })
         }
         catch {
             try {
@@ -156,8 +137,6 @@
                     communityDetails = await getClient().getCommunity({
                         name: `${community.name}@${new URL(community.actor_id).hostname}`
                     })
-
-                    if (communityDetails) storage.putCommunityResponse(communityDetails)
                 }
                 else {
                     toast({
@@ -234,9 +213,6 @@
                     community_id: communityDetails.community_view.community.id,
                     removed: communityDetails.community_view.community.removed
                 })
-                
-                // Update the cached community details with the new state
-                await storage.put(storageKey, communityDetails)
 
                 remove.reset()
                 returnMainMenu()
@@ -275,9 +251,6 @@
                     community_id: communityDetails.community_view.community.id,
                     hidden: communityDetails.community_view.community.hidden
                 })
-
-                // Update the cached community details with the new state
-                await storage.put(storageKey, communityDetails)
 
                 hide.reset()
                 returnMainMenu()
@@ -343,6 +316,7 @@
                     title="{subscribed ? 'Unsubscribe from' : 'Subscribe to'} Community"    
                     iconClass="{subscribed ? 'text-amber-500' : ''}" 
                     loading={subscribing}
+                    disabled={communityDetails.community_view.banned_from_community}
                     on:click={async ()=> {
                         subscribing = true
                         subscribed = await subscribe(communityDetails.community_view.community, subscribed)
@@ -624,7 +598,7 @@
                             <Button color="tertiary-border" icon={PencilSquare} iconSize={20} alignment="left" class="w-full"
                                 disabled={
                                     (communityDetails.community_view.community.posting_restricted_to_mods && !amMod($profile.user, communityDetails.community_view.community)) ||
-                                    communityDetails.community_view.community.removed
+                                    communityDetails.community_view.community.removed || communityDetails.community_view.banned_from_community
                                 }
                                 on:click={()=> {
                                     action='createPost'
@@ -652,6 +626,7 @@
                             <!---Community Settings (if mod or local admin of a local community)--->
                             {#if $profile?.user && amMod($profile.user, communityDetails.community_view.community)}
                                 <Button color="tertiary-border" icon={Cog6Tooth} iconSize={20} alignment="left" class="w-full"
+                                    disabled={communityDetails.community_view.banned_from_community}
                                     on:click={ () => {
                                         goto(`/c/${fullCommunityName(communityDetails.community_view.community.name, communityDetails.community_view.community.actor_id)}/settings`)
                                         open = false
@@ -664,6 +639,7 @@
                             <!---Ban User Tool--->
                             {#if $profile?.user && (amMod($profile.user, communityDetails.community_view.community) || isAdmin($profile.user) )}
                                 <Button color="tertiary-border" icon={Scale} iconSize={20} alignment="left" class="w-full"
+                                    disabled={communityDetails.community_view.banned_from_community}
                                     on:click={ () => {
                                         modalWidth = 'max-w-3xl'
                                         action = 'banning'

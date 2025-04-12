@@ -1,5 +1,3 @@
-import { StorageCache } from '$lib/storage-controller'
-
 import { get } from 'svelte/store'
 import { getClient } from '$lib/lemmy.js'
 import { goto } from '$app/navigation'
@@ -7,23 +5,11 @@ import { profile } from '$lib/auth.js'
 import { toast } from '$lib/components/ui/toasts/toasts.js'
 
 
-const storage = new StorageCache({
-    type: 'session',
-    ttl: 15,
-    useCompression: true   
-})
-
 export async function load(req: any) {
     try {
-       let getCommunityResponse = await storage.getCommunityResponse(req.params.community_name)
-        
-       if (!getCommunityResponse) {
-            getCommunityResponse = await getClient().getCommunity({
-                name: req.params.community_name,
-            })
-
-            storage.putCommunityResponse(getCommunityResponse)
-        }
+        let getCommunityResponse = await getClient().getCommunity({
+            name: req.params.community_name,
+        })
 
         return {
             community: getCommunityResponse,
