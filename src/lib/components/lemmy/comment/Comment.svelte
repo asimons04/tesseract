@@ -26,8 +26,15 @@
     import RelativeDate     from '$lib/components/util/RelativeDate.svelte'
     import UserLink         from '$lib/components/lemmy/user/UserLink.svelte'
 
-    import { amModOfAny }   from '../moderation/moderation'
-    import { getClient }    from '$lib/lemmy.js'
+    import { 
+        amMod, 
+        amModOfAny, 
+        isAdmin 
+    }                       from '../moderation/moderation'
+    import { 
+        getClient, 
+        minAPIVersion 
+    }                       from '$lib/lemmy.js'
     import { onMount }      from 'svelte'
     import { page }         from '$app/stores'
     import { profile }      from '$lib/auth.js'
@@ -52,9 +59,13 @@
     let jumpToComment               = false
     let commentContainer: HTMLDivElement
     let op                          = (node.comment_view.post.creator_id == node.comment_view.creator.id)
+    let commentText                 = node.comment_view.comment.content
 
     // If linking to a thread, scroll to the speciic comment and highlight it
     onMount(async() => {
+        // Need to do this so we can set comment text to "Deleted by creator", "Remove by Mod", and try to lookup the modlog details to display inline.
+        commentText = await getCommentText()
+        
         if (jumpTo > 0 && jumpTo == node.comment_view.comment.id ) { 
             jumpToComment = true
             color = 'warning'
@@ -82,7 +93,7 @@
             
             if (e.detail.remove_content) {
                 node.comment_view.comment.removed = true
-                color = 'error'
+                //color = 'error'
             }
         }
         node = node
@@ -91,9 +102,12 @@
     function handleRemoveComment(e: RemoveCommentEvent) {
         if (node.comment_view.comment.id == e.detail.comment_id) {
             node.comment_view.comment.removed = e.detail.removed
-            
+            getCommentText().then((newText) => commentText = newText)
+
+            /*
             if (e.detail.removed) color = 'error'
             else color = getCardColor(node)
+            */
         }
     }   
 
@@ -132,9 +146,66 @@
         
         if (node.comment_view.comment.distinguished) return 'success'
         if (jumpToComment) return 'warning'
-        if (node.comment_view.comment.removed) return 'error'
+        //if (node.comment_view.comment.removed) return 'error'
 
         return color
+    }
+
+    async function getCommentText() {
+        let text = node.comment_view.comment.content
+
+        if (node.comment_view.comment.deleted) {
+            text = '*Deleted by Creator*'
+        }
+
+        if (node.comment_view.comment.removed) {
+            text =  onHomeInstance 
+                ? `[*Removed by Mod*](/modlog?comment_id=${node.comment_view.comment.id})`
+                : '*Removed by Mod*'
+        }
+        
+        // If current account is admin, show the content. Second condition is for older APIs that showed the removed content to mods.
+        if (onHomeInstance && (isAdmin($profile?.user) || (amMod($profile?.user, node.comment_view.community) && node.comment_view.comment.content))) {
+            text =  node.comment_view.comment.content
+        }
+
+        // If the content is removed, try to append the removal reason.  If current account is a mod, append the original content from the modlog lookup
+        if (onHomeInstance && node.comment_view.comment.removed) {
+            // Assume removed reason is ban w/removal if no modlog entry for the removed item.
+            let reason = (node.comment_view.creator.banned || node.comment_view.creator_banned_from_community)
+                ? 'Creator banned with content removal'
+                :'No reason specified'
+            let originalContent = ''
+            
+            if ($userSettings.autoLookupRemovedCommentReasons && minAPIVersion('0.19.6')) {
+                try {
+                    let results = await getClient().getModlog({comment_id: node.comment_view.comment.id})
+                    if (results?.removed_comments.length > 0) {
+                        reason = results.removed_comments[0].mod_remove_comment.reason ?? 'Failed to lookup reason automatically. Please see modlog.'
+                        
+                        // Let mods see removed comments again (stupid Lemmy devs!!)
+                        if (isAdmin($profile?.user) || amMod($profile?.user, node.comment_view.community)) {
+                            originalContent = results.removed_comments[0].comment.content
+                        }
+                    }
+                    
+                    // Append the removal reason and if admin/mod, the removed content contents
+                    text += `\n\n --- \n\n**Removal Reason**: ${reason}`
+                    
+                    if (originalContent) text += `\n\n
+                        :::spoiler Removed Comment
+                        ${originalContent}
+                        :::\n
+                    `
+                }
+                catch {}
+            }
+        }
+
+        return text
+
+
+    
     }
 
     let color: 'default' | 'warning' | 'error' | 'success' = getCardColor(node)
@@ -175,7 +246,7 @@
                         comment_id: node.comment_view.comment.id,
                         content: newComment,
                     })
-                    node.comment_view.comment.content = newComment
+                    commentText = node.comment_view.comment.content = newComment
                     editing = false
                     toast({
                         content: 'Successfully edited comment.',
@@ -261,6 +332,9 @@
             <div class="flex flex-col gap-1">
                 
                 <div class="max-w-full mt-0.5 break-words text-sm">
+                    <Markdown source={commentText} class="px-1" />
+                    
+                    <!---
                     <Markdown source={
                         !amModOfAny($profile?.user) && (node.comment_view.comment.removed || node.comment_view.comment.deleted)
                             ? node.comment_view.comment.deleted ? '*Deleted by creator*' : '*Removed by mod*'
@@ -268,6 +342,7 @@
                         } 
                         class="px-1"
                     />
+                    --->
                 </div>
                 
                 
