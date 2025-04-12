@@ -234,7 +234,7 @@
     on:clickIntoPost={() => open = false }
 />
 
-<Modal bind:open icon={ShieldExclamation} title="Moderation" card={false} preventCloseOnClickOut width={modalWidth} on:close={() => { history.back() }} >
+<Modal bind:open icon={ShieldExclamation} title="Moderation" card={false} width={modalWidth} on:close={() => { history.back() }} >
     
     <!---Toggle Actions for the Modal Title Bar--->
     <div class="flex flex-row gap-2 items-center" slot="title-bar-buttons">
