@@ -5,7 +5,7 @@
     } from 'lemmy-js-client'
     
     
-    import { getClient } from '$lib/lemmy'
+    import { getClient, parseAPIError } from '$lib/lemmy'
     import { instance } from '$lib/instance'
     import { page } from '$app/stores'
     import { site } from '$lib/lemmy'
@@ -58,7 +58,7 @@
             toast({
                 type: 'error',
                 title: "Error",
-                content: `Unable to process your vote.`,
+                content: `${parseAPIError(err).error ?? 'Failed to process your vote'}`
             })
             return post.counts
         }
