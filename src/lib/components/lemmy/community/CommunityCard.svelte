@@ -64,11 +64,10 @@
         </div>
 
         <!---Settings buttons for Mod/Admin--->
-        {#if $profile?.user && amMod($profile.user, community_view.community) || (isAdmin($profile?.user) && community_view.community.local)}
+        {#if !community_view.banned_from_community && ($profile?.user && amMod($profile.user, community_view.community) || (isAdmin($profile?.user) && community_view.community.local))}
             <div class="w-full flex flex-row gap-2 hidden xl:flex">
                 <Button link title="Edit Community" class="w-full" size="lg" color="tertiary-border"
                     href="/c/{fullCommunityName(community_view.community.name,community_view.community.actor_id)}/settings"
-                    disabled={community_view.banned_from_community}
                 >
                     <Icon src={Cog6Tooth} mini size="16" />
                     Community Settings
