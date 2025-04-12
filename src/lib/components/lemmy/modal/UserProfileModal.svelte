@@ -162,7 +162,7 @@
         <span class="ml-auto" />
         
         {#if personDetails}
-            
+            <!---User 'Share' Menu--->
             <Menu  alignment="bottom-right" containerClass="!min-w-[0px]">
                 <Button
                     slot="button"
@@ -174,13 +174,12 @@
                     iconSize={20}
                     let:toggleOpen
                 />
-
-                <li class="flex flex-row items-center text-xs font-bold opacity-100 text-left mx-4 my-1 py-1 min-w-48">
-                    Share
-                    <span class="ml-auto" />
-                    <Icon src={Share} width={16} mini />
+                
+                <li class="flex flex-row items-center text-xs font-bold opacity-100 text-left mx-4 my-1 py-1 max-w-[25ch]">
+                    Copy User Link
                 </li>
                 <hr class="dark:opacity-10 w-[90%] my-2 mx-auto" />
+                
                 
                 <!--Lemmyverse--->
                 <MenuButton color="info" icon={LinkIcon} iconSize={16} title="Lemmyverse Link"
@@ -200,7 +199,7 @@
                 </MenuButton>
 
                 <!--Lemshare--->
-                <MenuButton color="info" icon={LinkIcon} iconSize={16} title="Lemmyverse Link"
+                <MenuButton color="info" icon={LinkIcon} iconSize={16} title="Lemshare Link"
                     on:click={() => {
                         //https://lemsha.re/instance.xyz/u/name
                         if (personDetails?.person_view.person) {
@@ -216,6 +215,26 @@
                     <span>Lemshare</span>
                 </MenuButton>
 
+                <!--Threadiverse--->
+                <MenuButton color="info" icon={LinkIcon} iconSize={16} title="Threadiverse Link"
+                    on:click={() => {
+                        //https://threadiverse.link/u/user@instance.xyz
+                        if (personDetails?.person_view.person) {
+                            navigator.clipboard.writeText(`https://threadiverse.link/u/${personDetails.person_view.person.name}@${new URL(personDetails.person_view.person.actor_id).host}`)
+                        }
+                        toast({
+                            type: 'success',
+                            content: `Copied Threadiverse link to clipboard`,
+                            title: 'Copied'
+                        })
+                    }}
+                >
+                    <span>Threadiverse</span>
+                </MenuButton>
+                
+                
+                <hr class="dark:opacity-10 w-[90%] my-2 mx-auto" />
+                
                 <!---Actor ID--->
                 <MenuButton color="info" icon={LinkIcon} iconSize={16} title="Actor ID"
                     on:click={() => {
@@ -228,6 +247,20 @@
                     }}
                 >
                     <span>Actor ID</span>
+                </MenuButton>
+
+                <!---Local Link--->
+                <MenuButton color="info" icon={LinkIcon} iconSize={16} title="Local Link"
+                    on:click={() => {
+                         if (personDetails?.person_view.person) navigator.clipboard.writeText(`https://${$instance}/u/${personDetails.person_view.person.name}@${new URL(personDetails.person_view.person.actor_id).host}`)
+                        toast({
+                            type: 'success',
+                            content: `Copied local user link to clipboard`,
+                            title: 'Copied'
+                        })
+                    }}
+                >
+                    <span>Local Link</span>
                 </MenuButton>
             </Menu>
 
