@@ -451,6 +451,7 @@
                     allowImagePasting={images}
                     {rows}
                     {id}
+                    {disabled}
                     {...$$restProps}
 
                     on:paste={async (e) => { 
