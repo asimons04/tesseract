@@ -3,7 +3,7 @@
     import { defaultSettings, userSettings, ENABLE_MEDIA_PROXY, migrateSettings } from '$lib/settings'
     import { amModOfAny, isAdmin } from '$lib/components/lemmy/moderation/moderation'
     import { fixLemmyEncodings, postViewTypes, selectViewType } from '$lib/components/lemmy/post/helpers'
-    import { getClient} from '$lib/lemmy.js'
+    import { getClient, minAPIVersion} from '$lib/lemmy.js'
     import { onMount } from 'svelte';
     import { page } from '$app/stores'
     import { profile } from '$lib/auth.js'
@@ -85,6 +85,7 @@
         Tag,
         UserGroup,
         WrenchScrewdriver,
+        Newspaper,
     } from 'svelte-hero-icons'
     
     
@@ -624,6 +625,13 @@
         <SettingToggle title="Large Custom Emojis" icon={FaceSmile} description="By default, custom emojis are rendered 'emoji-sized'. Enable this to double their size."
             bind:value={$userSettings.uiState.largeEmojis}
         />
+
+        {#if minAPIVersion('0.19.6')}
+        <SettingToggle title="Show Inline Comment Removal Reasons" icon={Newspaper} description="Automatically fetch the removal reason from the modlog for removed comments
+        and show them below the removed content. Enabling this also allows community mods to see the original comment contents."
+            bind:value={$userSettings.autoLookupRemovedCommentReasons}
+        />
+        {/if}
 
         <!---Code Syntax Highlighting--->
         <SettingToggle title="Code Highlighting" icon={CodeBracketSquare} bind:value={$userSettings.highlightCode}

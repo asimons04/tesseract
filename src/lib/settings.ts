@@ -59,6 +59,7 @@ interface Settings {
     }
     feedSnapshotValidity: number                                        // Number, in minutes, the feed snapshots are valid
     markReadOnScroll: boolean
+    autoLookupRemovedCommentReasons: boolean                            // If enabled, removed comments will automatically lookup in the modlog for the reason.
     hidePosts: {
         deleted: boolean
         removed: boolean
@@ -216,7 +217,7 @@ export const defaultSettings: Settings = {
     },
 
     markReadPosts:      toBool(env.PUBLIC_MARK_READ_POSTS)              ??  false,
-    
+    autoLookupRemovedCommentReasons:                                    false,    
     showCompactPosts:   toBool(env.PUBLIC_SHOW_COMPACT_POSTS)           ??  false,
     
     defaultSort: {
