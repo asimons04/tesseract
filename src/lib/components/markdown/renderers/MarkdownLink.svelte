@@ -143,7 +143,7 @@
 
     <!---Universal Format Comment Link--->
 {:else if token.href.startsWith('/comment/')}
-<Link href={token.href} newtab={$userSettings.openInNewTab.posts} preventDefault on:click={(e) => {
+    <Link href={token.href} newtab={$userSettings.openInNewTab.posts} preventDefault on:click={(e) => {
             let relLink = token.href.split('/')
             let commentID = relLink.pop()
             let instance = relLink.pop()
