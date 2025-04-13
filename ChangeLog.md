@@ -2,6 +2,71 @@
 All major/minor changes between releases will be documented here.  
 
 
+# 1.4.34
+
+
+## Bugfixes
+- [a84bc5db] Add community-banned indicator to vote view if `banned_from_community` is present in the API response.
+
+- [1e5bfeae] Disable actions if banned from community (all actions the API forbids if user is community banned):
+  - Post/comment vote buttons
+  - Edit post/comment
+  - Delete/Restore post/comment
+  - Report post/comment
+  - Moderation buttons (if a mod is banned but not removed from mod team, they'll still see mod action buttons but be unable to perform any)
+  - Create post, subscribe, and "community settings" buttons in /c/community and community modal
+
+- [0216bc2a] Don't cache `getCommunity` lookup results.  While nice in theory, it prevents being aware you've been banned or any changes to the community during the cache validity window with no way to automatically invalidate beyond a fixed TTL.
+
+- [d4df7d05] Don't badge-ify post and comment links.  That worked well until people would link entire paragraphs.  :sigh:  So they're regular links now, but they still open up in modals.
+
+- [ac8db3d] Bring community mod team management section up to current API spec
+  - "Top Mod" can now transfer community
+  - Added confirmation dialogs when removing a mod or transferring a community.
+  - Made "transfer community" button icon less ambiguous
+  
+- [564980d9] Selecting "browse communities" from the `/instances` list was still using the old URL param for the instance rather than the new route param.
+
+
+## New Features
+### User Purge [Admin]
+User profile memus/modals can now purge users.  
+
+### Inline Comment Removal Reason
+**Notes**:  
+- This only works if you are viewing a post on your home instance.  Otherwise, the "Removed by Mod" text won't be linked to the modlog, and the removal reason will not be present.
+- This feature is disabled by default. To enable, go to `Settings -> Posts and Comments -> Show Inline Comment Removal Reasons`
+
+
+If a comment has been removed by a mod, it is now linked to the modlog.  Additionally, Tesseract can *attempt* to lookup the comment in the modlog and display the removal reason.
+
+Additionally, if you are a mod, it will show you the comment content that was removed.  Have to pull this from the modlog along with the reason (so if that lookup fails, this won't work either).  Making removed comments visible to mods is yet another big-brain move by the Lemmy devs that I have to cleanup client-side. 
+
+
+
+## Changes
+
+### User Profile Share Button + Support for LemShare
+The "Share" button on user profiles is now a menu, and I got rid of the separate buttons for "Lemmyverse Link" and "Actor ID".  Added support for Lemshare. Now, clicking "Share" button in user profiles will open a menu with the following options:
+- Lemmyverse Link
+- Lemshare Link
+- Threadiverse Link
+- Actor ID
+- Local Link (Local to your instance)
+
+
+
+
+### Misc
+
+- On main feed, when expanding "Site Info" or "Legal" panels in the sidebar, add a mini site card (logo + name) at the top.
+
+- Limit post flairs to 25 characters before truncating; add title tooltip with full flair text
+
+- Removed the +/- quick (un)subscribe buttons from post/comment community icons since the community modal makes subscribing/unsubscribing easy and these are no longer necessary.
+
+- Removed red background on removed comments.  Looks okay on a single comment, but once you have to break up a slapfight, it's just too much.
+
 
 # 1.4.33
 ## Bugfixes
