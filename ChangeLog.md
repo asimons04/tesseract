@@ -30,7 +30,7 @@ All major/minor changes between releases will be documented here.
 
 ## New Features
 ### User Purge [Admin]
-User profile memus/modals can now purge users.  
+Admins can now ues the user profile menus/modals to purge users.  
 
 ### Inline Comment Removal Reason
 **Notes**:  
