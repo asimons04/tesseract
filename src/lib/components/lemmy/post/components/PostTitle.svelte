@@ -82,7 +82,7 @@
         }
     }
 >
-    <h1 class="flex flex-row flex-wrap gap-0 items-start text-base md:text-lg mb-1 font-bold {(isPostView(post) && post.read && $userSettings.markReadPosts) ? 'opacity-90' : ''}">
+    <h1 class="flex flex-row flex-wrap gap-0 items-start text-base md:text-lg mb-1 font-bold {(isPostView(post) && post.read && $userSettings.markReadPosts) ? 'opacity-80' : ''}">
         <Markdown source={postName} noUserCommunityLink  noHashtags noLink/>
         
         <span class="mr-2" />
