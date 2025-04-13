@@ -121,42 +121,47 @@
 <!---Universal Format Post Link--->
 {:else if token.href.startsWith('/post/')}
     <Link href={token.href} newtab={$userSettings.openInNewTab.posts} preventDefault on:click={(e) => {
-        let relLink = token.href.split('/')
-        let postID = relLink.pop()
-        let instance = relLink.pop()
-        if (instance && postID) {
-            e.preventDefault()
-            e.stopPropagation()
-            postViewerModal(instance, Number(postID))
-        }
-    }}
-    
+            let relLink = token.href.split('/')
+            let postID = relLink.pop()
+            let instance = relLink.pop()
+            if (instance && postID) {
+                e.preventDefault()
+                e.stopPropagation()
+                postViewerModal(instance, Number(postID))
+            }
+        }}
     >
-        <!---<Badge color="cyan" rightJustify={false} inline={true} icon={Window} iconSize={14} class="!max-w-[30ch]" label="Post: {token.text}" >
-            Post
-        </Badge>
-        --->        
-        {token.text}
+        <!---Only badge-ify bare post links--->
+        {#if !token.text || token.text.startsWith('https://')}
+            <Badge color="cyan" rightJustify={false} inline={true} icon={Window} iconSize={14}  label="Post: {token.text}" >
+                {token.text}
+            </Badge>
+        {:else}
+            {token.text}
+        {/if}
     </Link>
 
     <!---Universal Format Comment Link--->
 {:else if token.href.startsWith('/comment/')}
 <Link href={token.href} newtab={$userSettings.openInNewTab.posts} preventDefault on:click={(e) => {
-        let relLink = token.href.split('/')
-        let commentID = relLink.pop()
-        let instance = relLink.pop()
-        if (instance && commentID) {
-            e.preventDefault()
-            e.stopPropagation()
-            postViewerModal(instance, undefined, Number(commentID))
-        }
-    }}>
-    <!---
-    <Badge color="teal" rightJustify={false} inline={true} icon={ChatBubbleLeftEllipsis} iconSize={14} label="Comment: {token.text}">
-        {token.text}
-    </Badge>
-    --->
-    {token.text}
+            let relLink = token.href.split('/')
+            let commentID = relLink.pop()
+            let instance = relLink.pop()
+            if (instance && commentID) {
+                e.preventDefault()
+                e.stopPropagation()
+                postViewerModal(instance, undefined, Number(commentID))
+            }
+        }}
+    >
+        <!---Only badge-ify bare comment links--->
+        {#if !token.text || token.text.startsWith('https://')}
+            <Badge color="teal" rightJustify={false} inline={true} icon={ChatBubbleLeftEllipsis} iconSize={14} label="Comment: {token.text}">
+                {token.text}
+            </Badge>
+        {:else}
+            {token.text}
+        {/if}
 </Link>
 
 <!--Turn hashtags into badges but keep the original link--->
