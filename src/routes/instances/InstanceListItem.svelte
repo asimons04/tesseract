@@ -89,7 +89,7 @@
 
                 <!---Browse Communities on Instance (if Lemmy)--->
                 {#if instance.software == 'lemmy'}
-                    <MenuButton link href="/communities?instance={instance.domain}&type=Local" newtab={true} title="Browse communities at {instance.domain}">
+                    <MenuButton link href="/communities/{instance.domain}?type=Local" newtab={true} title="Browse communities at {instance.domain}">
                         <Icon src={UserGroup} width={14} mini />
                         Browse Communities
                     </MenuButton>
