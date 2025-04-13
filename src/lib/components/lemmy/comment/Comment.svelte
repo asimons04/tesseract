@@ -81,7 +81,7 @@
             
             if (e.detail.remove_content) {
                 node.comment_view.comment.removed = true
-                color = 'error'
+                //color = 'error'
             }
         }
         node = node
