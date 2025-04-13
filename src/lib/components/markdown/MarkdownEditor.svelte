@@ -136,7 +136,7 @@
         KeyI: () => wrapSelection('*', '*'),
         KeyS: () => wrapSelection('~~', '~~'),
         KeyH: () => wrapSelection('\n# ', ''),
-        KeyK: () => wrapSelection('[](', ')'),
+        KeyK: () => wrapSelection('[', '](url)'),
         Enter: () => dispatcher('confirm', value),
     }
 
