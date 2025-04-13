@@ -1,4 +1,9 @@
-import { type GetSiteResponse, LemmyHttp, type SortType } from 'lemmy-js-client'
+import { 
+    type GetSiteResponse, 
+    type InstanceWithFederationState,
+    type SortType,
+    LemmyHttp, 
+} from 'lemmy-js-client'
 import { error } from '@sveltejs/kit'
 import { get, writable } from 'svelte/store'
 import { profile, profileData } from '$lib/auth.js'
@@ -12,6 +17,7 @@ export interface BlockInstanceResponse {
 export const getInstance = () => get(instance)
 
 export const site = writable<GetSiteResponse | undefined>(undefined)
+export const federated_instances = writable<InstanceWithFederationState|undefined>(undefined)
 
 /** Returns a LemmyHttp API client
  * @param instanceURL is the instance domain it should work against (default is current instance)
@@ -108,12 +114,11 @@ export let sortOptionNames:string[] = [
 
 
 export function parseAPIError(err:any) {
-    let errMsg:string
     try { 
         return JSON.parse(err.body.message)
     }
     catch {
-        return undefined
+        return err
     }
 }
 
@@ -140,3 +145,11 @@ if (!get(site)) {
         site.set(getSiteResponse)
     })
 }
+
+/*
+if (!get(federated_instances)) {
+    getClient(get(instance), 'dummyJWT').getFederatedInstances().then((getFederatedInstancesResponse) => {
+        federated_instances.set(getFederatedInstancesResponse)
+    })
+}
+*/
