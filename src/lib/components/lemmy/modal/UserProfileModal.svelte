@@ -28,6 +28,7 @@
     import ModalPanel               from './components/ModalPanel.svelte'
     import ModalPanelHeading        from './components/ModalPanelHeading.svelte'
     import ModalScrollArea          from './components/ModalScrollArea.svelte'
+    import PurgeUserForm            from "./components/PurgeUserForm.svelte"
     import SendDMForm               from "./components/SendDMForm.svelte"
     import Spinner                  from "$lib/components/ui/loader/Spinner.svelte"
     import UserCardSmall            from "../user/UserCardSmall.svelte"
@@ -39,6 +40,7 @@
         ChevronDoubleDown,
         ChevronDoubleUp,
         Envelope,
+        Fire,
         Hashtag,
         Home,
         Icon,
@@ -52,14 +54,14 @@
         User,
         UserCircle,
         Window as WindowIcon,
-    } from "svelte-hero-icons";
+    } from "svelte-hero-icons"
     
     
     
     export let user:Person | undefined
     export let open: boolean = false
     export let mod: boolean = false
-    export let action: 'none' | 'communityBanning' | 'userDetails' | 'profile' | 'banning' | 'messaging' | 'modlog' | 'submissions'  = 'none'
+    export let action: 'none' | 'communityBanning' | 'userDetails' | 'profile' | 'banning' | 'messaging' | 'modlog' | 'submissions' | 'purging'  = 'none'
     
     let loading = false
     let personDetails: GetPersonDetailsResponse
@@ -307,6 +309,16 @@
             </ModalPanel>
         {/if}
 
+        <!---Purging User--->
+        {#if action == 'purging'}
+            <ModalPanel>
+                <ModalPanelHeading title="Purge User"  on:click={()=>returnMainMenu()} />
+                    <ModalScrollArea>
+                        <PurgeUserForm bind:person={personDetails.person_view.person} on:purge={() => history.back() } />
+                    </ModalScrollArea>
+            </ModalPanel>
+        {/if}
+
         <!---Ban User from All Communities--->
         {#if action == 'communityBanning'}
             <ModalPanel>
@@ -537,6 +549,15 @@
                                     }}
                                 >
                                     {personDetails.person_view.person.banned ? 'Unban User' : 'Ban User'}...
+                                </Button>
+
+                                <Button color="tertiary-border" icon={Fire} iconSize={20} alignment="left" class="w-full"
+                                    on:click={() => {
+                                        action = 'purging'
+                                        modalWidth = 'max-w-3xl'
+                                    }}
+                                >
+                                    Purge User...
                                 </Button>
                             {/if}
 
