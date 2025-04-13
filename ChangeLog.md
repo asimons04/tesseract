@@ -40,7 +40,7 @@ Admins can now ues the user profile menus/modals to purge users.
 
 If a comment has been removed by a mod, it is now linked to the modlog.  Additionally, Tesseract can *attempt* to lookup the comment in the modlog and display the removal reason.
 
-Additionally, if you are a mod, it will show you the comment content that was removed.  Have to pull this from the modlog along with the reason (so if that lookup fails, this won't work either).  Making removed comments visible to mods is yet another big-brain move by the Lemmy devs that I have to cleanup client-side. 
+Additionally, if you are a mod, it will show you the comment content that was removed.  Have to pull this from the modlog along with the reason (so if that lookup fails, this won't work either).  Hiding removed comments from mods is yet another big-brain move by the Lemmy devs that I have to cleanup client-side. 
 
 
 
