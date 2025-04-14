@@ -1,6 +1,24 @@
 # Changelog for 1.4.x Series (Intrepid)
 All major/minor changes between releases will be documented here.  
 
+# 1.4.35
+
+## Bugfixes / Changes
+- [0a4fea7d] Decrease opacity from 90% to 80% when fading read post titles since 90% wasn't really perceptible
+
+- [5c47bf91] Got rid of "Removed Comment" spoiler on removed comments for mods and now show the text in-place like it used to be in 0.19.3. Still requires the automatic modlog lookup feature to be enabled and finding an entry for the comment in the modlog.  The logic is the same, just the presentation a bit more streamlined to match what admins see (and what mods used to see).
+
+- [ec944830] Fixed an errant comma causing the keyboard shortcut for inserting a hyperlink to not wrap the selected text correctly like the toolbar button does.
+
+- [de6e069b] Additional Spotify CDN detection for their thumbnails (when did it become "good" practice to stop using file extensions?! >:O )
+
+- [cce48a20] Disable inline images in removed comments.  If a comment is removed and contains inline images, disable inline images when showing the comment content for mods and admins. Will show a link instead which can be previewed in a modal without leaving the current item.  Local (home instance) custom emojis still show inline per the bugfix in 1.4.33.
+
+- [003bf7c1] Add a temporary exception regex to not localize off-site `/u/` links such as Reddit and YouTube. This is a temporary fix for an immediate bug while I work on the infrastructure changes needed to check if the target is to a Fediverse instance.
+
+- [5fd84f6c] Re-add badge-ify step for post/comment links *only* if they're a "bare" link.  e.g.  `https://instance.xyz/post/12345` will become a badge while `[See this post](https://instance.xyz/post/12345)` will be a regular link. Both still have the same "open in modal" behavior like with the badge buttons, but this should account for people linking entire sentences/paragraphs that were problematic when converting all post/comment links into badges.
+
+---
 
 # 1.4.34
 
@@ -54,17 +72,11 @@ The "Share" button on user profiles is now a menu, and I got rid of the separate
 - Actor ID
 - Local Link (Local to your instance)
 
-
-
-
 ### Misc
 
 - On main feed, when expanding "Site Info" or "Legal" panels in the sidebar, add a mini site card (logo + name) at the top.
-
 - Limit post flairs to 25 characters before truncating; add title tooltip with full flair text
-
 - Removed the +/- quick (un)subscribe buttons from post/comment community icons since the community modal makes subscribing/unsubscribing easy and these are no longer necessary.
-
 - Removed red background on removed comments.  Looks okay on a single comment, but once you have to break up a slapfight, it's just too much.
 
 
