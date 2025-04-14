@@ -60,6 +60,8 @@
     let commentContainer: HTMLDivElement
     let op                          = (node.comment_view.post.creator_id == node.comment_view.creator.id)
     let commentText                 = node.comment_view.comment.content
+    let admin                       = isAdmin($profile?.user)
+    let mod                         = amMod($profile?.user, node.comment_view.community)
 
     // If linking to a thread, scroll to the speciic comment and highlight it
     onMount(async() => {
@@ -165,47 +167,37 @@
         }
         
         // If current account is admin, show the content. Second condition is for older APIs that showed the removed content to mods.
-        if (onHomeInstance && (isAdmin($profile?.user) || (amMod($profile?.user, node.comment_view.community) && node.comment_view.comment.content))) {
+        if (onHomeInstance && (admin || (mod && !minAPIVersion('0.19.4')) )) {
             text =  node.comment_view.comment.content
         }
 
         // If the content is removed, try to append the removal reason.  If current account is a mod, append the original content from the modlog lookup
-        if (onHomeInstance && node.comment_view.comment.removed) {
+        if (onHomeInstance && node.comment_view.comment.removed && $userSettings.autoLookupRemovedCommentReasons && minAPIVersion('0.19.6')) {
             // Assume removed reason is ban w/removal if no modlog entry for the removed item.
             let reason = (node.comment_view.creator.banned || node.comment_view.creator_banned_from_community)
                 ? 'Creator banned with content removal'
                 :'No reason specified'
-            let originalContent = ''
-            
-            if ($userSettings.autoLookupRemovedCommentReasons && minAPIVersion('0.19.6')) {
-                try {
-                    let results = await getClient().getModlog({comment_id: node.comment_view.comment.id})
-                    if (results?.removed_comments.length > 0) {
-                        reason = results.removed_comments[0].mod_remove_comment.reason ?? 'Failed to lookup reason automatically. Please see modlog.'
-                        
-                        // Let mods see removed comments again (stupid Lemmy devs!!)
-                        if (isAdmin($profile?.user) || amMod($profile?.user, node.comment_view.community)) {
-                            originalContent = results.removed_comments[0].comment.content
-                        }
+           
+            try {
+                let results = await getClient().getModlog({comment_id: node.comment_view.comment.id})
+                if (results?.removed_comments.length > 0) {
+                    reason = results.removed_comments[0].mod_remove_comment.reason ?? 'Failed to lookup reason automatically. Please see modlog.'
+                    
+                    // Let mods see removed comments again (stupid Lemmy devs!!)
+                    if (admin || mod) {
+                        text = admin
+                            ? node.comment_view.comment.content
+                            : results.removed_comments[0].comment.content
                     }
-                    
-                    // Append the removal reason and if admin/mod, the removed content contents
-                    text += `\n\n --- \n\n**Removal Reason**: ${reason}`
-                    
-                    if (originalContent) text += `\n\n
-                        :::spoiler Removed Comment
-                        ${originalContent}
-                        :::\n
-                    `
                 }
-                catch {}
+                
+                // Append the removal reason and if admin/mod, the removed content contents
+                text += `\n\n --- \n\n**Removal Reason**: ${reason}`
             }
+            catch {}
         }
 
         return text
-
-
-    
     }
 
     let color: 'default' | 'warning' | 'error' | 'success' = getCardColor(node)
@@ -333,16 +325,6 @@
                 
                 <div class="max-w-full mt-0.5 break-words text-sm">
                     <Markdown source={commentText} class="px-1" />
-                    
-                    <!---
-                    <Markdown source={
-                        !amModOfAny($profile?.user) && (node.comment_view.comment.removed || node.comment_view.comment.deleted)
-                            ? node.comment_view.comment.deleted ? '*Deleted by creator*' : '*Removed by mod*'
-                            : node.comment_view.comment.content
-                        } 
-                        class="px-1"
-                    />
-                    --->
                 </div>
                 
                 
