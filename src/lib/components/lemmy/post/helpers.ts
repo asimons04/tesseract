@@ -78,6 +78,7 @@ export const isImage = (url: string | undefined) => {
         
         // Spotify thumbnails have no extensions. Ugh.
         if (url.startsWith('https://i.scdn.co/image/')) return true
+        if (url.includes('spotifycdn.com')) return true
         return false
     }
     catch {
