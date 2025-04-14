@@ -324,7 +324,7 @@
             <div class="flex flex-col gap-1">
                 
                 <div class="max-w-full mt-0.5 break-words text-sm">
-                    <Markdown source={commentText} class="px-1" />
+                    <Markdown source={commentText} noImages={node.comment_view.comment.removed} class="px-1" />
                 </div>
                 
                 
