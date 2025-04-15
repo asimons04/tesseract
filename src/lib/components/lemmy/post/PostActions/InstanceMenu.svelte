@@ -19,6 +19,7 @@
         Icon,
         GlobeAlt,
         Server,
+        ServerStack,
         NoSymbol,
         Eye
     } from 'svelte-hero-icons'
@@ -74,9 +75,7 @@
 
 <!---Explore Menu--->
 <Menu alignment="bottom-right" containerClass="overflow-auto">
-    <Button slot="button" aria-label="Explore" let:toggleOpen on:click={toggleOpen} size="square-md" title="Instances" color="tertiary">
-        <Icon slot="icon" src={Server} width={16} mini />
-    </Button>
+    <Button slot="button" aria-label="Explore" let:toggleOpen on:click={toggleOpen} size="square-md" title="Instances" icon={ServerStack} iconSize={16} color="tertiary"/>
     
     <!---Actions for the instance the post was submitted to--->
     <li class="mx-4 text-xs opacity-80 text-left my-1 py-1">{new URL(post.community.actor_id).hostname}</li>

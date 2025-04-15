@@ -330,7 +330,14 @@
     <Card class="flex flex-col px-2 py-1 gap-2 mx-auto
             {disablePostLinks ? 'pointer-events-none list-none' : ''}
             {($userSettings.uiState.feedMargins && displayType=='feed' && !inModal) || (displayType=='post' && !inModal && previewing) ? 'max-w-3xl' : 'w-full' }
-        " 
+        "
+        cardColor={
+            (post.post.removed || post.post.deleted)
+                ? 'error'
+                : (post.post.featured_community || post.post.featured_local)
+                    ? 'success'
+                    : 'default'
+        }
     >    
         {#if postType ==  'audio'}
             <AudioPost bind:post {actions} {displayType} {postType}  {inCommunity} {inModal}  {onHomeInstance}  {inProfile} {inViewport} compact={!expandCompact} on:reply />

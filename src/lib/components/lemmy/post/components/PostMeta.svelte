@@ -4,10 +4,11 @@
         PostView 
     } from 'lemmy-js-client'
     
-    import { amMod, isAdmin, postModerationModal } from '$lib/components/lemmy/moderation/moderation'
+    import { amMod, isAdmin, postModerationModal, report } from '$lib/components/lemmy/moderation/moderation'
     import { createEventDispatcher } from 'svelte'
     import { profile } from '$lib/auth.js'
     import { postType as getPostType, isImage, isVideo, type PostType } from '$lib/components/lemmy/post/helpers.js'
+    import { hide, save } from '$lib/lemmy/contentview'
     import { userSettings } from '$lib/settings'
 
     import Avatar           from '$lib/components/ui/Avatar.svelte'
@@ -24,7 +25,9 @@
         ArrowsPointingIn,
         ArrowsPointingOut,
         Bookmark,
+        Eye,
         EyeSlash,
+        Flag,
         Icon,
         LockClosed,
         Megaphone,
@@ -33,6 +36,9 @@
         ShieldCheck,
         Trash,
     } from 'svelte-hero-icons'
+    import PostShareMenu from '../PostActions/PostShareMenu.svelte';
+    import { minAPIVersion } from '$lib/lemmy';
+    
 
     export let post: PostView
     export let showTitle:boolean                = true;
@@ -54,7 +60,10 @@
 
     $: showExpandButton = postType != 'text' || (post.post.thumbnail_url || isImage(post.post.url) || isVideo(post.post.url) )
     $: post, userIsModerator  = (moderators.filter((index) => index.moderator.id == post.creator.id).length > 0)
-    
+
+    let savingPost = false
+    let hidingPost = false
+
 </script>
 
 <div class="flex flex-col gap-1 w-full {noClick ? 'pointer-events-none' : ''}">
@@ -62,7 +71,7 @@
     <div class="flex flex-row gap-1 w-full">
 
         <!---Community Name, User Name, Avatar, etc--->
-        <div class="flex flex-col gap-1 {showExpandButton ? 'w-[calc(100%-150px)]' : 'w-[calc(100%-120px)]'}">
+        <div class="flex flex-col gap-1 w-[calc(100%-150px)]">
 
             <span class="flex flex-row gap-2 text-sm items-start">
                 
@@ -119,41 +128,10 @@
             </span>
         </div>
 
-        <!--Badges and Action Buttons Row--->
-        <div class="flex flex-col ml-auto gap-1 {showExpandButton ? 'w-[150px]' : 'w-[120px]'}">
-                    
-            <!--- Post Badges --->
-            {#if !hideBadges}
-                <div class="flex flex-row ml-auto gap-2 items-end">
-                    {#if post.saved}
-                        <Badge label="Saved" color="yellow" icon={Bookmark} click={false}/>
-                    {/if}
-                    
-                    {#if post.post.locked}
-                        <Badge label="Locked" color="yellow" icon={LockClosed} click={false} />
-                    {/if}
-                    
-                    {#if post.post.removed}
-                        <Badge label="Removed" color="red" icon={NoSymbol} click={false} />
-                    {/if}
-                    
-                    {#if post.post.deleted}
-                        <Badge label="Deleted" color="red" icon={Trash} click={false} />
-                    {/if}
-                    
-                    {#if post.hidden}
-                        <Badge label="Hidden" color="red" icon={EyeSlash} click={false} />
-                    {/if}
+        <!--Post Action Buttons--->
+        <div class="flex flex-col ml-auto gap-1 w-[150px]">
 
-                    {#if (post.post.featured_local || post.post.featured_community)}
-                        <Badge label="Featured" color="green" icon={Megaphone} click={false} />
-                    {/if}
-                    
-                </div>
-            {/if}
-
-
-            <!---Post Action Buttons--->
+            <!---Post Action Buttons Top Row--->
             <div class="flex flex-row items-start gap-2 ml-auto">
                 <!--Expand/Collapse Post--->
                 {#if showExpandButton}
@@ -177,6 +155,64 @@
                     <PostActionsMenu {post} {onHomeInstance} />
                 {/if}
             </div>
+
+            <!---Post Action Buttons Bottom Row--->
+            <div class="flex flex-row items-start gap-2 ml-auto">
+                {#if actions}
+                    <!---Report Post--->
+                    <Button  
+                        title="Report Post" 
+                        color="tertiary" 
+                        size="square-md"
+                        icon={Flag} 
+                        iconSize={16}
+                        disabled={!onHomeInstance || post.post.removed || post.post.deleted || post.banned_from_community}
+                        on:click={() => report(post)}
+                    />
+
+                    <!---Hide Post Button--->
+                    <Button 
+                        size="square-md"
+                        disabled={!onHomeInstance || !$profile?.user || !minAPIVersion('0.19.4')}
+                        title={post.hidden ? 'Uh-Hide Post' : 'Hide Post'}
+                        icon={post.hidden ? Eye : EyeSlash}
+                        iconSize={16}
+                        color="tertiary"
+                        class="{post.hidden ? '!text-red-500' : ''}"
+                        loading={hidingPost}
+                        on:click={async () => {
+                            hidingPost = true
+                            post.hidden = await hide(post)
+                            hidingPost = false
+                        }}
+
+                        
+                    />
+
+                    <!---Save Post Button/Indicator--->
+                    <Button 
+                        size="square-md" 
+                        disabled={!onHomeInstance || !$profile?.user || post.post.removed || post.post.deleted}
+                        title="{post.saved ? 'Un-Save' : 'Save'}" 
+                        icon={Bookmark} 
+                        iconSize={16} 
+                        color='tertiary'
+                        class="{post.saved ? '!text-amber-500' : ''}"
+                        loading={savingPost}
+                        on:click={async () => {
+                            savingPost = true
+                            post.saved = await save(post, !post.saved)
+                            savingPost = false
+                        }}
+                    />
+
+                    
+                    <!---Share Menu--->
+                    <PostShareMenu {post} {onHomeInstance} />
+                {/if}
+            </div>
+
+
             
         </div>
     </div>

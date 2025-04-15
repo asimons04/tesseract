@@ -3,11 +3,10 @@
     
     import { amMod, debugModal, isAdmin, postModerationModal, report} from '$lib/components/lemmy/moderation/moderation.js'
     import { crossPost } from '$lib/components/lemmy/post/helpers'
-    import { deleteItem, hide, markAsRead, save } from '$lib/lemmy/contentview.js'
+    import { deleteItem,  markAsRead } from '$lib/lemmy/contentview.js'
     import { goto } from '$app/navigation';
     import { instance } from '$lib/instance'
     import { profile } from '$lib/auth'
-    import { minAPIVersion } from '$lib/lemmy'
     import { toast } from '$lib/components/ui/toasts/toasts.js'
     
     import Button           from '$lib/components/input/Button.svelte'
@@ -19,15 +18,11 @@
         type IconSource,
         Icon,
         ArrowTopRightOnSquare,
-        Bookmark,
-        BookmarkSlash,
         EllipsisVertical,
         Eye,
         EyeSlash,
-        Flag,
         Home,
         PencilSquare,
-        Share,
         Trash,
         User,
         ShieldCheck,
@@ -64,21 +59,7 @@
         </MenuButton>
     {/if}
 
-    <!--- Share/Copy Post Link to Clipboard --->
-    <MenuButton title="Share" color="success"
-        on:click={() => {
-            navigator.clipboard.writeText(post.post.ap_id)
-            toast({
-                type: 'success',
-                content: `Copied post URL to clipboard!`,
-            })
-            
-        }}
-    >
-        <Icon src={Share} width={16} mini />
-            Share
-    </MenuButton>
-
+    
     <!--- View Post on Home Instance--->
     {#if $instance != new URL(post.post.ap_id).hostname}
     <MenuButton title="View Post on Home Instance" color="info"
@@ -128,53 +109,6 @@
             <Icon src={ArrowTopRightOnSquare} width={16} mini />
             Crosspost
         </MenuButton>    
-
-        <!--- Save/Unsave Post --->
-        {#if onHomeInstance}
-        <MenuButton title="{post.saved ? 'Unsave' : 'Save'} Post" color="warning"
-            on:click={async () => {
-                //if ($profile?.jwt) post.saved = await save(post, !post.saved)
-                if ($profile?.jwt) save(post, !post.saved)
-            }}
-        >
-            <Icon src={post.saved ? BookmarkSlash : Bookmark} width={16} mini />
-            {post.saved ? 'Unsave' : 'Save'}
-        </MenuButton>
-        {/if}
-
-    
-        <!---Hide Post (requires at least 0.19.4)--->
-        {#if onHomeInstance && $profile?.user && minAPIVersion('0.19.4')}
-            <MenuButton title="{post.hidden ? 'Unhide' : 'Hide'} Post" color="warning"
-                on:click={async () => {
-                    post.hidden = await hide(post)
-                    post = post
-                }}
-
-            >
-                <Icon src={post.hidden ? Eye : EyeSlash} width={16} mini />
-                {post.hidden ? 'Unhide' : 'Hide'} Post
-            </MenuButton>
-        {/if}
-
-        
-
-
-        <!--- Hide for Self and/or if not on home instance--->
-        {#if onHomeInstance && $profile?.user && $profile.user?.local_user_view.person.id != post.creator.id}
-            
-            
-
-
-            <!---Report Post--->
-            <MenuButton on:click={() => report(post)} title="Report Post" color="dangerSecondary" disabled={post.post.removed || post.post.deleted || post.banned_from_community}>
-                <Icon src={Flag} width={16} mini />
-                Report Post...
-            </MenuButton>
-        {/if}
-
-        
-
 
         <!---Delete Post--->
         {#if $profile.user && post.creator.id == $profile.user.local_user_view.person.id}

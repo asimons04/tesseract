@@ -901,7 +901,7 @@
         {#each posts.posts as post, idx (post.post.id)}
             {#if 
                 !post.creator_blocked && 
-                !(post.hidden && $userSettings.hidePosts.hidden )&&
+                //!(post.hidden && $userSettings.hidePosts.hidden )&&
                 !($userSettings.hidePosts.deleted && post.post.deleted) && 
                 !($userSettings.hidePosts.removed && post.post.removed) &&
                 //@ts-ignore
