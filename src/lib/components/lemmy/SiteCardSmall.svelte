@@ -61,8 +61,8 @@
                 
                 <span class="flex flex-row w-full">
                     
-                    <span class="flex flex-col w-full">
-                        <span class="font-bold w-full text-xl">
+                    <span class="flex flex-col w-[calc(100%-82px)]">
+                        <span class="font-bold w-full truncate text-xl">
                             <a href="/site/{new URL(site.site.actor_id).hostname}" class="hover:underline" title="About {site.site.name}">
                                 {site.site.name}
                             </a>
@@ -73,10 +73,9 @@
                         </span>
                     </span>
 
-                    <div class="flex flex-col mt-auto gap-2 items-end pr-2">
+                    <div class="flex flex-col mt-auto gap-2 items-end pr-2 w-[80px]">
                         <!---Lemmy API Version--->
                         <span class="flex flex-row items-center gap-2 text-sm" title="API Version">
-                            <!--<Icon src={Server} width={16} height={16} mini />-->
                             <Logo url="/img/lemmy.svg" rounded={false} width={16}/>
                             {version.split('-')[0]}
                         </span>
