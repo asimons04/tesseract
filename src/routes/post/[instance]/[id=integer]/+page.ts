@@ -1,5 +1,7 @@
 import { get } from 'svelte/store'
 import { getClient } from '$lib/lemmy.js'
+import { instance } from '$lib/instance'
+import { error, redirect } from '@sveltejs/kit'
 import { userSettings } from '$lib/settings.js'
 
 interface LoadParams {
@@ -9,6 +11,16 @@ interface LoadParams {
 }
 
 export async function load({ params, url }: LoadParams) {
+    // Support /post/{post_id}/{comment_id} link formats. Has to be here to avoid route conflicts.
+    if (Number(params.instance)) {
+        const comment_id = url.pathname.split('/')[3]
+        if (Number(comment_id)) {
+            const inst = get(instance).toLowerCase()
+            console.log("Redirecting to", `/comment/${inst}/${comment_id}`)
+            throw redirect(300, `/comment/${inst}/${comment_id}`)
+        }
+    }
+    
     try {
         const post = await getClient(params.instance.toLowerCase()).getPost({
             id: Number(params.id),
@@ -55,9 +67,9 @@ export async function load({ params, url }: LoadParams) {
         }
     }
     catch (err) {
-        //console.log(err);
-        //throw error(500, {
-         //   message: 'Failed to fetch post.',
-       // })
+        console.log(err)
+        throw error(500, {
+           message: `Failed to fetch post. ${JSON.stringify(err)}`,
+        })
     }
 }
