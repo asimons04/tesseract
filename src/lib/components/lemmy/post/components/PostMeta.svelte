@@ -7,16 +7,16 @@
     import { amMod, isAdmin, postModerationModal, report } from '$lib/components/lemmy/moderation/moderation'
     import { createEventDispatcher } from 'svelte'
     import { profile } from '$lib/auth.js'
-    import { postType as getPostType, isImage, isVideo, type PostType } from '$lib/components/lemmy/post/helpers.js'
+    import { isImage, isVideo, type PostType } from '$lib/components/lemmy/post/helpers.js'
     import { hide, save } from '$lib/lemmy/contentview'
     import { userSettings } from '$lib/settings'
 
     import Avatar           from '$lib/components/ui/Avatar.svelte'
-    import Badge            from '$lib/components/ui/Badge.svelte'
     import Button           from '$lib/components/input/Button.svelte'
     import CommunityLink    from '$lib/components/lemmy/community/CommunityLink.svelte'
     import InstanceMenu     from '$lib/components/lemmy/post/PostActions/InstanceMenu.svelte'
     import PostActionsMenu  from '$lib/components/lemmy/post/PostActions/PostActionsMenu.svelte'
+    import PostShareMenu    from '$lib/components/lemmy/post/PostActions/PostShareMenu.svelte'
     import PostTitle        from '$lib/components/lemmy/post/components/PostTitle.svelte'
     import RelativeDate     from '$lib/components/util/RelativeDate.svelte'
     import UserLink         from '$lib/components/lemmy/user/UserLink.svelte'
@@ -29,14 +29,10 @@
         EyeSlash,
         Flag,
         Icon,
-        LockClosed,
-        Megaphone,
-        NoSymbol,
         Pencil,
         ShieldCheck,
-        Trash,
     } from 'svelte-hero-icons'
-    import PostShareMenu from '../PostActions/PostShareMenu.svelte';
+    
     import { minAPIVersion } from '$lib/lemmy';
     
 
@@ -130,7 +126,6 @@
 
         <!--Post Action Buttons--->
         <div class="flex flex-col ml-auto gap-1 w-[150px]">
-
             <!---Post Action Buttons Top Row--->
             <div class="flex flex-row items-start gap-2 ml-auto">
                 <!--Expand/Collapse Post--->
@@ -211,14 +206,11 @@
                     <PostShareMenu {post} {onHomeInstance} />
                 {/if}
             </div>
-
-
-            
         </div>
     </div>
 
 
     {#if showTitle}
-        <PostTitle {post} {postType} {inModal} {onHomeInstance}/>
+        <PostTitle {post} {postType} {inModal} {onHomeInstance} {hideBadges}/>
     {/if}
 </div>

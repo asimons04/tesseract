@@ -14,10 +14,18 @@
     import { instance } from '$lib/instance'
     import { userSettings } from '$lib/settings.js'
     
-    import Badge from '$lib/components/ui/Badge.svelte'
+    import Badge    from '$lib/components/ui/Badge.svelte'
     import Markdown from '$lib/components/markdown/Markdown.svelte'
     
-    import { BugAnt, ExclamationCircle, LockClosed, Megaphone, NoSymbol, Tag, Trash } from 'svelte-hero-icons'
+    import { 
+        BugAnt, 
+        ExclamationCircle, 
+        LockClosed, 
+        Megaphone, 
+        NoSymbol, 
+        Tag, 
+        Trash 
+    } from 'svelte-hero-icons'
     
 
     export let post:PostView | CommentReplyView | PersonMentionView
@@ -25,7 +33,7 @@
     export let flairs: boolean          = true
     export let inModal: boolean         = false
     export let onHomeInstance: boolean  = false
-    
+    export let hideBadges: boolean      = false
     
     // Extract any [flairs] from the post title and update the title to remove them.
     let postName: string    = post.post.name
@@ -124,34 +132,36 @@
         {/if}
 
         <!---Post State Flairs (Formerly Post Badges--->
-        {#if post.post.locked}
-            <Badge label="Locked" color="yellow" icon={LockClosed} click={false} rightJustify={false} class="mb-1 mr-2">
-                Locked
-            </Badge>
-        {/if}
-        
-        {#if post.post.removed}
-            <Badge label="Removed" color="red" icon={NoSymbol} click={true} rightJustify={false} class="mb-1 mr-2"
-                on:click={(e) => { 
-                    e.preventDefault()
-                    e.stopPropagation()
-                    goto(`/modlog?post_id=${post.post.id}`)
-                }}
-            >
-                Removed by Mod
-            </Badge>
-        {/if}
-        
-        {#if post.post.deleted}
-            <Badge label="Deleted" color="red" icon={Trash} click={false} rightJustify={false} class="mb-1 mr-2">
-                Deleted by Creator
-            </Badge>
-        {/if}
+        {#if !hideBadges}
+            {#if post.post.locked}
+                <Badge label="Locked" color="yellow" icon={LockClosed} click={false} rightJustify={false} class="mb-1 mr-2">
+                    Locked
+                </Badge>
+            {/if}
+            
+            {#if post.post.removed}
+                <Badge label="Removed" color="red" icon={NoSymbol} click={true} rightJustify={false} class="mb-1 mr-2"
+                    on:click={(e) => { 
+                        e.preventDefault()
+                        e.stopPropagation()
+                        goto(`/modlog?post_id=${post.post.id}`)
+                    }}
+                >
+                    Removed by Mod
+                </Badge>
+            {/if}
+            
+            {#if post.post.deleted}
+                <Badge label="Deleted" color="red" icon={Trash} click={false} rightJustify={false} class="mb-1 mr-2">
+                    Deleted by Creator
+                </Badge>
+            {/if}
 
-        {#if (post.post.featured_local || post.post.featured_community)}
-            <Badge label="Featured" color="green" icon={Megaphone} click={false} rightJustify={false}  class="mb-1 mr-2">
-                Featured
-            </Badge>
+            {#if (post.post.featured_local || post.post.featured_community)}
+                <Badge label="Featured" color="green" icon={Megaphone} click={false} rightJustify={false}  class="mb-1 mr-2">
+                    Featured
+                </Badge>
+            {/if}
         {/if}
     </h1>
 </a>
