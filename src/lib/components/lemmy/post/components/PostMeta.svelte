@@ -130,7 +130,7 @@
             <div class="flex flex-row items-start gap-2 ml-auto">
                 <!--Expand/Collapse Post--->
                 {#if showExpandButton}
-                    <Button  color="tertiary" size="square-md" title="{compact ? 'Expand' : 'Collapse'}" 
+                    <Button  color="tertiary" size="square-md" title="{compact ? 'Expand to Card View' : 'Collapse to Compact View'}" 
                         icon={compact ? ArrowsPointingOut : ArrowsPointingIn}
                         iconSize={16}
                         on:click={() => dispatcher('toggleCompact')}
