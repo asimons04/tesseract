@@ -34,6 +34,7 @@
     import { zoomImageModal } from "../lemmy/moderation/moderation";
 
     export let url:string
+    export let thumbnail_url: string|undefined = undefined
     export let resolution: number|undefined =  undefined
     export let nsfw:boolean = false
     export let altText:string = ''
@@ -170,7 +171,7 @@
 {#if url}   
     <!-- svelte-ignore a11y-click-events-have-key-events -->
     <!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
-    <img bind:this={img} src={imageProxyURL(url, resolution, format)}
+    <img bind:this={img} src={imageProxyURL(thumbnail_url ?? url, resolution, format)}
         class="{$$props.class} 
             {fadeIn ? 'opacity-0 transition-opacity duration-150' : ''}  {loaded ? 'opacity-100' : ''}
             {zoomable ? 'cursor-zoom-in' : ''}
@@ -184,12 +185,12 @@
             // If the image errors, try the proxy URL without format, then without resolution, and finally fallback to either original URL or use a placeholder.
             switch (retryCount) {
                 case 1:
-                    img.src = imageProxyURL(url, resolution, undefined) ?? ($userSettings.proxyMedia.fallback ? url : '/img/placeholder.png')
+                    img.src = imageProxyURL(thumbnail_url ?? url, resolution, undefined) ?? ($userSettings.proxyMedia.fallback ? url : '/img/placeholder.png')
                     retryCount++
                     break
 
                 case 2:
-                    img.src = imageProxyURL(url) ?? ($userSettings.proxyMedia.fallback ? url : '/img/placeholder.png')
+                    img.src = imageProxyURL(thumbnail_url ?? url) ?? ($userSettings.proxyMedia.fallback ? url : '/img/placeholder.png')
                     retryCount++
                     break
                  

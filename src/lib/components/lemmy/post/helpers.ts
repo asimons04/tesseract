@@ -141,6 +141,19 @@ export function getOptimalThumbnailURL(opts: {post?:PostView, url?:string, urls?
     return undefined
 }
 
+export function getOptimalImageURL(post:PostView):string|undefined {
+    if (post.post.url?.endsWith('.gif')) return post.post.url
+    if (post.post.embed_video_url?.endsWith('.gif')) return post.post.embed_video_url
+    
+    
+    if (isImage(post.post.url)) return post.post.url
+    if (isVideo(post.post.url)) return post.post.url
+    if (isVideo(post.post.embed_video_url)) return post.post.embed_video_url
+    if (post.post.thumbnail_url) return post.post.thumbnail_url
+
+    return undefined
+}
+
 
 export const getMIMEType = (url:string):string =>{
     try {

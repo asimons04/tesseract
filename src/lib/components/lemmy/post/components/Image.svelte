@@ -15,6 +15,7 @@
 
 
     export let url: string
+    export let thumbnail_url: string|undefined = undefined
     export let alt_text:string      = ''
     export let clickToPlay: boolean = false
     export let loading: boolean     = false
@@ -27,7 +28,7 @@
     $:  blur = (nsfw && displayType == 'feed' && $userSettings.nsfwBlur)
 </script>
 
-<ImageContainer image_url={url}>
+<ImageContainer image_url={thumbnail_url ?? url}>
     <NSFWOverlay bind:nsfw {displayType} />
     
     <!---Click to Play Image--->
@@ -39,7 +40,7 @@
         {/if}
         
         {#if isImage(url)}
-            <ZoomableImage {url} nsfw={blur} altText={alt_text} {zoomable} on:click={()=> dispatcher('click')}
+            <ZoomableImage {thumbnail_url} {url} nsfw={blur} altText={alt_text} {zoomable} on:click={()=> dispatcher('click')}
                 class="relative ml-auto mr-auto object-cover rounded-md min-h-[min(40vh,800px)] max-h-[min(50vh,800px)] z-10 {$$props.class}"
             />
         {:else if isVideo(url)}
@@ -53,7 +54,7 @@
     <!---Not a Click to Play Image--->
     {:else}
         {#if isImage(url)}
-            <ZoomableImage {url} altText={alt_text} {zoomable} nsfw={blur}
+            <ZoomableImage {thumbnail_url} {url} altText={alt_text} {zoomable} nsfw={blur}
                 class="relative ml-auto mr-auto object-contain rounded-md min-h-[min(40vh,800px)] {displayType=='feed' ? 'max-h-[min(50vh,800px)]' : ''} z-10 {$$props.class}"
             />
 

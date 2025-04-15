@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { getOptimalThumbnailURL, type PostDisplayType, type PostType } from '$lib/components/lemmy/post/helpers.js'
+    import { getOptimalImageURL, getOptimalThumbnailURL, type PostDisplayType, type PostType } from '$lib/components/lemmy/post/helpers.js'
     import type { PostView } from 'lemmy-js-client'
     
     import { userSettings } from '$lib/settings.js'
@@ -32,12 +32,14 @@
     export let zoomable:boolean = true
     
     let thumbnail_url:string
+    let image_url: string
+
     let expandPreviewText: boolean 
     let nsfw = post.post.nsfw
 
     // Finesse the url and thumbnail URL to accommodate GIFs (and not thumbnail webms ugh) or when the thumbnanil is a static image but the embed URL is a GIF (Imgur)
     $:  post.post.url, post.post.embed_video_url, post.post.thumbnail_url, thumbnail_url = getOptimalThumbnailURL({post:post}) ?? '/img/placeholder.png'
-
+    $:  post.post.url, post.post.embed_video_url, post.post.thumbnail_url, image_url = getOptimalImageURL(post) ?? '/img/placeholder.png'
    
     $: showEmbedDescription = (post.post.embed_title && post.post.embed_description)
 </script>
@@ -120,7 +122,7 @@
         <Link  href={post.post.url} title={post.post.url} newtab={true}   domainOnly={!$userSettings.uiState.showFullURL} highlight nowrap  class="text-xs"/>
     </PostEmbedDescription>
 
-    <Image url={thumbnail_url} {displayType} nsfw={nsfw} alt_text={post.post.alt_text ?? post.post.name} {zoomable} on:click/>
+    <Image url={image_url} thumbnail_url={thumbnail_url} {displayType} nsfw={nsfw} alt_text={post.post.alt_text ?? post.post.name} {zoomable} on:click/>
 
     <PostBody bind:post bind:expandPreviewText {displayType}  />
     <Crossposts bind:post {onHomeInstance} class="mb-1 !pl-0"/>
