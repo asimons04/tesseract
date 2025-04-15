@@ -171,7 +171,7 @@
                     {/if}
                     
                     <!---Instances--->
-                    <InstanceMenu {post} />
+                    <InstanceMenu {post} {onHomeInstance} />
                     
                     <!---Post Actions--->
                     <PostActionsMenu {post} {onHomeInstance} />

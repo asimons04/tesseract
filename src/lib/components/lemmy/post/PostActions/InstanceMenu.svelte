@@ -24,8 +24,8 @@
     } from 'svelte-hero-icons'
 
     export let post:PostView
-    
-    $: onHomeInstance = ($page.params.instance ?? $instance)  == $instance
+    export let onHomeInstance: boolean  = false
+
 
     let blockingInstance = false;
     async function doBlockInstance(instance_id:number, hostname:string, confirm:boolean=false):Promise<void> {
