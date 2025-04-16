@@ -179,6 +179,14 @@
                             hidingPost = true
                             post.hidden = await hide(post)
                             hidingPost = false
+
+                            // Unsave the post if hiding it
+                            if (post.saved && post.hidden) {
+                                savingPost = true
+                                post.saved = await save(post, false)
+                                savingPost = false
+                            }
+                            
                         }}
 
                         
@@ -187,7 +195,7 @@
                     <!---Save Post Button/Indicator--->
                     <Button 
                         size="square-md" 
-                        disabled={!onHomeInstance || !$profile?.user || post.post.removed || post.post.deleted}
+                        disabled={!onHomeInstance || !$profile?.user || post.post.removed || post.post.deleted || post.hidden}
                         title="{post.saved ? 'Un-Save' : 'Save'}" 
                         icon={Bookmark} 
                         iconSize={16} 
