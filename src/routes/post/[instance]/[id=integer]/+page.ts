@@ -68,8 +68,10 @@ export async function load({ params, url }: LoadParams) {
     }
     catch (err) {
         console.log(err)
+        /*
         throw error(500, {
            message: `Failed to fetch post. ${JSON.stringify(err)}`,
         })
+        */
     }
 }
