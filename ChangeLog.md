@@ -1,66 +1,6 @@
 # Changelog for 1.4.x Series (Intrepid)
 All major/minor changes between releases will be documented here.  
 
-
-# 1.4.36
-
-## Bugfixes
-
-- When zooming an image, it was using the thumbnail image rather than the actual image (when present).  Apparently my local instance's thumbnails are close enough to the original quality that I just never noticed.  
-
-- Fixed truncation in site card for long instance names and domains.
-
-## New Features and Changes
-
-### Compatibility Layer: Supports Local /post/{post_id}/{comment_id} Route Format
-**Note**:  This only works for your home instance.  It does not work for remotely fetched posts.  Additionally, this is not a "supported" way to share Tesseract links; it's just there for convenience if you want to turn a local Lemmy UI link into a valid Tesseract link.
-
-If you're in Lemmy UI and want to view a post in Tesseract, you can just change the domain and the post and/or comment params should translate transparently.
-
-e.g. Where `123456` is the post ID and `98765` is the comment id:
-
- Change `https://lemmy.world/post/12345/98765` to `https://t.lemmy.world/post/12345/98765` which then automatically redirects you to `https://t.lemmy.world/post/lemmy.world/post/12345?thread=0.4567.98765`
-
-
-
-
-### Got Rid of Post State Badges (Featured, Locked, Removed, Deleted, Hidden, Saved)
-"Hidden" and "Saved" are now indicated via toggle action buttons on the post itself.  The rest of the states now appear in the post title like flairs (though with unique icons and fixed colors).
-
-If a post is removed, the "Removed by Mod" flair is linked to the modlog entry for the post.
-
-#### Color Coded Post Cards
-Deleted, removed, and featured posts now have colored cards to distinguish them.
-
-- **Removed or Deleted**: Post has a red background and border
-- **Featured Local/Community**:  Post has a green background and border
-
-
-### New Post Action Buttons
-Added a second row of post action buttons and tweaked some indicators
-
-#### Save Post Button
-Can now quickly save/unsave a post.  Also indicates the post's saved state (got rid of badge which used to be the indicator).  Also removed "Save post" from post action menu.
-
-#### Hide/Unhide Post Button
-Can now quickly hide/unhide a post.  Hiding (intentionally) does not automatically clear it from the feed. This give you a chance to undo it without having to go through a confirmation dialog every time. Unless "show hidden posts" is enabled in the feed options, the next feed refresh will not show that post.
-
-The "hide post" button was removed from the post actions menu.
-
-#### Report Post Button
-Quick button to report a post.  The "report post" button was removed from the post action menu.
-
-#### Share Menu
-Added a dedicated share dropdown to share links to the post and removed "Share" link from post action menu.  Available share links include:
-
-- **Canonical (ActivityPub) Link**: Basicaly, to the post on the home instance of its creator
-- **Local Post Link**: A link to the post on your home instance / default UI
-- **Tesseract Link**:  A link to the post relative to the instance of Tesseract you're using
-- **Lemmyverse, Threadiverse, and LemShare Links**: Instance-agnostic links which can rediect to the user's own home instance
-
-Some options are only available if viewing the post on your home instance; local post link and Tesseract post link will be hidden if you are viewing a post via a remote API fetch.
-
-
 # 1.4.35
 
 ## Bugfixes / Changes
