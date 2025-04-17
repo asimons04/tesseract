@@ -14,6 +14,7 @@ Minor update with UI polish and, at least for now, the removal of a few rarely-u
 
 ## Bugfixes
 - [Issue 35: Preview length setting counts markup and trims before applying it resulting in short previews and broken links.](https://github.com/asimons04/tesseract/issues/35)
+- **Annoyance**:  When an `<hr>` element was used toward the top of the post body, it would render below the thumbnail image in compact view. Limited `<hr>` width to 80% in the markdown post CSS.
 
 ## Changes
 
@@ -27,7 +28,7 @@ The post body has been re-implemented in the feed.  This fixes [issue 35](https:
 Instead of a dumb substring from 0 to `postBodyPreviewLength` of the pre-rendered post body text, it now renders the body in full and conditionally limits the height of the container.  This ensures the content is rendered correctly when collapsed as well as being cleaner, better looking, and more responsive.
 
 #### Removed Unused View Modes
-Due to this as well as lack of use, the "Reader", "Ultra-Compact", "More-Compact", and "Compacter" view modes have been removed.  They would have required re-implementation from scratch anyway, so I just got rid of them.  If there is demand, I can eventually re-introduce them later.
+Due to the architectural change of the post body component (as well as lack of use), the "Reader", "Ultra-Compact", "More-Compact", and "Compacter" view modes have been removed.  They would have required re-implementation from scratch anyway, so I just got rid of them.  If there is demand, I can eventually re-introduce them later.
 
 If your view *was* set to any of those, it will now migrate it to "wide-compact" which is the closest remaining view.
 
