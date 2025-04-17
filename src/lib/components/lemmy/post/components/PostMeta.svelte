@@ -125,7 +125,8 @@
         </div>
 
         <!--Post Action Buttons--->
-        <div class="flex flex-col ml-auto gap-1 w-[150px]">
+        <div class="flex flex-col xl:flex-row-reverse ml-auto gap-1 w-[150px] xl:w-fit">
+            
             <!---Post Action Buttons Top Row--->
             <div class="flex flex-row items-start gap-2 ml-auto">
                 <!--Expand/Collapse Post--->
