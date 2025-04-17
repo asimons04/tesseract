@@ -23,15 +23,16 @@
     export let offsetExpandButton: boolean  = false
 
     let bodyContainer: HTMLDivElement
-    
+    $: bodyContainerDoesScroll = bodyContainer?.scrollHeight > bodyContainer?.clientHeight
 </script> 
 
-
 <div bind:this={bodyContainer} class="flex flex-col text-sm gap-1 p-1 rounded-md 
-        {displayType == 'feed' && !expandPreviewText ? 'max-h-[150px]' : ''}
-        {displayType == 'feed' && !expandPreviewText && $userSettings.uiState.scrollPostBodyInFeed ? 'overflow-y-auto' : ''}
-        {displayType == 'feed' && !expandPreviewText && !$userSettings.uiState.scrollPostBodyInFeed ? 'overflow-y-hidden' : ''}
-        {displayType == 'feed' && expandPreviewText  && $userSettings.uiState.scrollPostBodyInFeed ? 'max-h-[50vh] overflow-y-auto' : ''} 
+        {displayType == 'feed' && !expandPreviewText ? 'max-h-[120px] overflow-y-hidden' : ''}
+        {displayType == 'feed' && !expandPreviewText && bodyContainerDoesScroll 
+            ? 'bg-gradient-to-b text-transparent from-slate-800 via-slate-800 dark:from-zinc-100 dark:via-zinc-100 bg-clip-text z-0' 
+            : ''
+        }
+        {displayType == 'feed' && expandPreviewText && $userSettings.uiState.scrollPostBodyInFeed ? 'max-h-[50vh] overflow-y-auto' : ''} 
         {$$props.class}
     "
 >    
@@ -44,7 +45,7 @@
 </div>
 
 <!---Expand/Collapse Button (only show if text is expanded or if the body container needs to scroll)--->
-{#if displayType == 'feed' && (expandPreviewText || bodyContainer?.scrollHeight > bodyContainer?.clientHeight)}
+{#if displayType == 'feed' && (expandPreviewText || bodyContainerDoesScroll)}
     <Button color="tertiary" size="sm" 
         class="mx-auto text-xs font-bold !py-0 !px-1 w-full
             {expandPreviewText ? '' : 'mb-[5px]'} 
@@ -55,11 +56,8 @@
         iconSize={20}
         on:click={() => {
             expandPreviewText = !expandPreviewText
-            // Scroll top of post to top on close
-            if (!expandPreviewText) {
-                dispatchWindowEvent('scrollPostIntoView', { post_id: post.post.id})
-                bodyContainer?.scrollTo(0,0)
-            }
+            dispatchWindowEvent('scrollPostIntoView', { post_id: post.post.id})
+            bodyContainer?.scrollTo(0,0)
         }}
     >
         {#if expandPreviewText}
