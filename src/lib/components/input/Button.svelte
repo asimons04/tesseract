@@ -17,6 +17,7 @@
     }
 
     const buttonSize = {
+        xs: 'px-0 py-0',
         sm: 'px-2 py-1',
         md: 'px-3 py-1.5',
         lg: 'px-4 py-2',
