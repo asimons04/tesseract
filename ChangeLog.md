@@ -14,7 +14,7 @@ Minor update with UI polish and, at least for now, the removal of a few rarely-u
 
 ## Bugfixes
 - [Issue 35: Preview length setting counts markup and trims before applying it resulting in short previews and broken links.](https://github.com/asimons04/tesseract/issues/35)
-- **Annoyance**:  When an `<hr>` element was used toward the top of the post body, it would render below the thumbnail image in compact view. Limited `<hr>` width to 80% in the markdown post CSS.
+- **Annoyance**:  When an `<hr>` element was used toward the top of the post body, it would wrap below the thumbnail image in compact view. Changed `width` to `max-width` in the markdown post CSS.
 
 ## Changes
 
