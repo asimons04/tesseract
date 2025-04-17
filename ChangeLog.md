@@ -4,6 +4,37 @@ All major/minor changes between releases will be documented here.
 # 1.4.37
 ## Bugfixes
 - Revert throw error in `/post/instance/postid` loader as it was preventing the prettier error in `+page.svelte` from showing
+- Private message report modal was using the wrong close method
+
+
+## Changes
+
+# 1.4.37
+
+## Bugfixes
+- [Issue 35: Preview length setting counts markup and trims before applying it resulting in short previews and broken links.](https://github.com/asimons04/tesseract/issues/35)
+
+## Changes
+
+### Post Body in Feed / Removed Unused View Modes
+The post body has been re-implemented in the feed.  This fixes [issue 35](https://github.com/asimons04/tesseract/issues/35) as well as provides a better-looking post preview.
+
+Instead of a dumb substring from 0 to `postBodyPreviewLength` of the pre-rendered post body text, it now renders the body in full and conditionally limits the height of the container.  This ensures the content is rendered correctly when collapsed as well as being cleaner, better looking, and more responsive.
+
+Due to this as well as lack of use, the "Reader", "Ultra-Compact", "More-Compact", and "Compacter" view modes have been removed.  They would have required re-implementation from scratch anyway, so I just got rid of them.  If there is demand, I can eventually re-introduce them later.
+
+If your view *was* set to any of those, it will now migrate it to "wide-compact" which is the closest remaining view.
+
+**Removed Settings**:
+- Post Body Preview Length
+- Post View Mode options:
+  - Compacter
+  - More Compact
+  - Ultra-Compact
+  - Reader
+
+
+---
 
 
 # 1.4.36
