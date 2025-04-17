@@ -44,7 +44,7 @@ const isBrowser = () => {
 
 
 export type YouTubeFrontend = "YouTube" | "Custom"
-export type PostViewType = 'card' | 'compact' | 'more-compact' | 'wide-card' | 'wide-compact' | 'ultra-compact' | 'reader' | 'hybrid'
+export type PostViewType = 'card' | 'compact' |  'wide-card' | 'wide-compact' | 'hybrid'
 
 interface Settings {
     version: number
@@ -113,7 +113,6 @@ interface Settings {
         inboxDefaultUnread: boolean                                     // If true, the inbox will default to uread messages.
         disableDownvotes: boolean                                       // Enable to disable downvotes and hide downvote counts.
         linkPreviews: boolean,                                          // Enable to preview markdown links in modals. Disable to go directly to the link target
-        postBodyPreviewLength: number,                                  // The number of characters to show in the post body preview in the feed
         expandSidebar: boolean                                          // Used internally to control hiding/showing the lefthand sidebar 
         expandCommunitySidebar: boolean                                 // Used internally to control hiding/showing the site/community/user sidebar (key name is vestigial)
         feedMargins:boolean                                             // Enable to have margins on the side of the post feed, disable to make posts full width
@@ -159,7 +158,7 @@ interface Settings {
 
 // Default settings
 export const defaultSettings: Settings = {
-    version: 15,
+    version: 16,
     notifications: {
         enabled:    false,
         pollRate:   60,
@@ -187,7 +186,6 @@ export const defaultSettings: Settings = {
         inboxDefaultUnread:                                             true,
         disableDownvotes:                                               false,
         linkPreviews:                                                   true,
-        postBodyPreviewLength:                                          120,
         expandSidebar:                                                  true,
         expandCommunitySidebar:                                         true,
         feedMargins:                                                    true,
@@ -551,6 +549,17 @@ export function migrateSettings(old:any) {
             catch {}
             
             old.version = 15
+        }
+
+        if (old.version == 15) {
+            try { delete old.uiState.postBodyPreviewLength }
+            catch {}
+            // Deprecate 'reader', 'ultra-compact', and 'more-compact' View Modes
+            if (['reader', 'compacter', 'ultra-compact', 'more-compact'].includes(old.uiState.view)) {
+                old.uiState.view = 'wide-compact'
+            }
+            
+            old.version = 16
         }
     }
     catch (err) {

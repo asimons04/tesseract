@@ -535,15 +535,7 @@
             description="Edit the post types which should show as cards when using the Hybrid post view in the feed."
         />
        
-        <!---Post Body Preview Length--->
-        <SettingMultiSelect title="Post Body Preview Length" icon={Photo} description="Number of characters to show in the post body preview before
-            hiding behind the expand slider. You can also optionally disable the post body preview in the feed."
-            optionNames={['Disable', '0', '50', '120', '240', '500', '750', '1000', '2000', '10000']}
-            options={[-1, 0, 50, 120, 240, 500, 750, 1000, 2000, 10000]}
-            bind:selected={$userSettings.uiState.postBodyPreviewLength}
-        />
-
-        
+     
 
 
 
