@@ -26,7 +26,7 @@
     icon={ArrowsRightLeft} 
     iconSize={16}
     title="{post.cross_posts.length} {post.cross_posts.length == 1 ? 'Crosspost' : 'Crossposts'}"
-    class="{$$props.class}"
+    class="!my-0 {$$props.class}"
     innerClass="!pl-0"
 >
     <div class="divide-y gap-2 divide-slate-300 dark:divide-zinc-700 flex flex-col max-h-[10rem] overflow-y-scroll">
