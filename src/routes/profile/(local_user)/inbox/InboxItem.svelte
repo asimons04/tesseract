@@ -15,7 +15,7 @@
     import { isCommentReply, isPersonMention, isPostReply } from '$lib/lemmy/item'
     import { instance } from '$lib/instance'
     import { page } from '$app/stores'
-    import { postViewerModal } from '$lib/components/lemmy/moderation/moderation';
+    import { postViewerModal, report } from '$lib/components/lemmy/moderation/moderation';
     import { profile } from '$lib/auth.js'
     import { toast } from '$lib/components/ui/toasts/toasts.js'
     import { userSettings } from '$lib/settings'
@@ -28,7 +28,6 @@
     import MarkdownEditor       from '$lib/components/markdown/MarkdownEditor.svelte';
     import PrivateMessageItem   from '$lib/components/lemmy/private_message/PrivateMessageItem.svelte'
     import RelativeDate         from '$lib/components/util/RelativeDate.svelte';
-    import ReportModal          from '$lib/components/lemmy/moderation/ReportModal.svelte'
 
     import { 
         type IconSource, 
@@ -287,7 +286,7 @@
                                     
                                     <span class="flex flex-row gap-2">
                                         <!---Report PM--->
-                                        <Button color="tertiary-border" size="square-md" on:click={() => {reporting=true} } >
+                                        <Button color="tertiary-border" size="square-md" on:click={() => {report(item)} } >
                                             <Icon slot="icon" src={Flag} mini size="16" class="text-red-500" />
                                         </Button>
                                     </span>
@@ -313,6 +312,5 @@
 {/if}
 
 
-<ReportModal bind:open={reporting} bind:item={item} />
 
 

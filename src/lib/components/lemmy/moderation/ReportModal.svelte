@@ -12,6 +12,6 @@
 
 </script>
 
-<Modal bind:open title="Report Submission" icon={Flag} width="max-w-2xl" on:close={() => { open=false }}>
+<Modal bind:open title="Report Submission" icon={Flag} width="max-w-2xl" on:close={() => { history.back() }}>
     <ReportItemForm {item} {reason} on:reported={() => history.back()} />
 </Modal>
