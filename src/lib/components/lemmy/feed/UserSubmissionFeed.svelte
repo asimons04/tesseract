@@ -382,7 +382,7 @@
 />
 
 
-<div bind:this={scrollContainer} class="flex flex-col w-full h-full mt-2 md:pr-2 gap-4 overflow-x-hidden overflow-y-scroll" >
+<div bind:this={scrollContainer} id="feed" class="flex flex-col w-full h-full mt-2 md:pr-2 gap-4 overflow-x-hidden overflow-y-scroll" >
     
     <slot name="banner" {user} />
     

@@ -125,7 +125,8 @@
         </div>
 
         <!--Post Action Buttons--->
-        <div class="flex flex-col ml-auto gap-1 w-[150px]">
+        <div class="flex flex-col xl:flex-row-reverse ml-auto gap-1 w-[150px] xl:w-fit">
+            
             <!---Post Action Buttons Top Row--->
             <div class="flex flex-row items-start gap-2 ml-auto">
                 <!--Expand/Collapse Post--->
@@ -187,7 +188,7 @@
                     <!---Save Post Button/Indicator--->
                     <Button 
                         size="square-md" 
-                        disabled={!onHomeInstance || !$profile?.user || post.post.removed || post.post.deleted}
+                        disabled={!onHomeInstance || !$profile?.user || post.post.removed || post.post.deleted }
                         title="{post.saved ? 'Un-Save' : 'Save'}" 
                         icon={Bookmark} 
                         iconSize={16} 

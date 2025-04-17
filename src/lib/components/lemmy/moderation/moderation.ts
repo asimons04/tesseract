@@ -7,6 +7,7 @@ import type {
     MyUserInfo, 
     Person, 
     PostView,
+    PrivateMessageView,
 } from 'lemmy-js-client'
 
 import { 
@@ -49,7 +50,7 @@ interface Modals {
     },
     reporting: {
         open: boolean
-        item: SubmissionView | undefined
+        item: PostView | CommentView | PrivateMessageView | undefined
         reason: string | undefined
     }
     removing: {
@@ -429,7 +430,7 @@ export function remove(item: SubmissionView, purge: boolean = false, reason:stri
 }
 
 // Report Item Modal
-export function report(item: SubmissionView, reason:string='') {
+export function report(item: PostView | CommentView | PrivateMessageView, reason:string='') {
     modals.update((m) => ({
         ...m,
         reporting: {

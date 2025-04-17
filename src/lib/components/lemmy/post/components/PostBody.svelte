@@ -1,6 +1,6 @@
 <script lang="ts">
     import type { PostView }        from 'lemmy-js-client'
-    import type { PostDisplayType } from '$lib/components/lemmy/post/helpers'
+    import { sleep, type PostDisplayType } from '$lib/components/lemmy/post/helpers'
     
     import { dispatchWindowEvent }  from '$lib/ui/events'
     import { userSettings }         from '$lib/settings'
@@ -11,9 +11,7 @@
     import { 
         ChevronDown,
         ChevronUp,
-
         Icon
-
     } from 'svelte-hero-icons'
     
   
@@ -23,83 +21,43 @@
     export let expandPreviewText:boolean    = false
     export let inline:boolean               = false
     export let offsetExpandButton: boolean  = false
-    
-    let source: string = ''
-    let hideExpandButton = false
-    let fadeText = false
-    
-    function generateSource() {
-        let body = post.post.body ?? ''
-        
-        const bodyLength = body.length
-        let truncateBody = $userSettings.uiState.postBodyPreviewLength < 10000
 
-        hideExpandButton = (
-            $userSettings.uiState.postBodyPreviewLength == -1 || 
-            bodyLength < 1 ||
-            bodyLength < $userSettings.uiState.postBodyPreviewLength ||
-            !truncateBody ||
-            displayType == 'post'
-        )
-        
-        fadeText = !expandPreviewText && truncateBody && bodyLength > $userSettings.uiState.postBodyPreviewLength
-        
-        if (displayType == 'feed' && !expandPreviewText && bodyLength > 0 && bodyLength > $userSettings.uiState.postBodyPreviewLength && truncateBody) {
-            body = body.slice(0, $userSettings.uiState.postBodyPreviewLength)
-        }
-
-        return body
-    }
-    
-    // Regenerate source text if post content, preview length setting, or expanding preview text
-    $:  (post, $userSettings.uiState.postBodyPreviewLength, expandPreviewText), source = generateSource()
+    let bodyContainer: HTMLDivElement
+    $: bodyContainerDoesScroll = bodyContainer?.scrollHeight > bodyContainer?.clientHeight
 </script> 
 
+<div bind:this={bodyContainer} class="flex flex-col text-sm gap-1 p-1 rounded-md 
+        {displayType == 'feed' && !expandPreviewText ? 'max-h-[120px] overflow-y-hidden' : ''}
+        {displayType == 'feed' && !expandPreviewText && bodyContainerDoesScroll 
+            ? 'bg-gradient-to-b text-transparent from-slate-800 via-slate-800 dark:from-zinc-100 dark:via-zinc-100 bg-clip-text z-0' 
+            : ''
+        }
+        {displayType == 'feed' && expandPreviewText && $userSettings.uiState.scrollPostBodyInFeed ? 'max-h-[50vh] overflow-y-auto' : ''} 
+        {$$props.class}
+    "
+>    
+    <Markdown bind:source={post.post.body} {inline}>
+        <span slot="thumbnail">
+            <slot name="thumbnail" />
+        </span>
+    </Markdown>
+    <slot />
+</div>
 
-{#if source && $userSettings.uiState.postBodyPreviewLength >=0 }
-    <div class="flex flex-col text-sm gap-1 p-1 rounded-md {displayType == 'feed' && expandPreviewText && $userSettings.uiState.scrollPostBodyInFeed ? 'max-h-[50vh] overflow-y-auto' : ''} {$$props.class}">    
-        {#if displayType == 'post' }
-            <Markdown bind:source {inline}>
-                <span slot="thumbnail">
-                    <slot name="thumbnail" />
-                </span>
-            </Markdown>
-            <slot />
-        {/if}
-
-        <!--- Show expandable preview in feed--->
-        {#if displayType=='feed'}
-            <div class="
-                {fadeText
-                    ? 'bg-gradient-to-b text-transparent from-slate-800 via-slate-800 dark:from-zinc-100 dark:via-zinc-100 bg-clip-text z-0'
-                    : ''
-                }
-            ">
-                <Markdown bind:source {inline} noImages={!expandPreviewText}>
-                    <span slot="thumbnail">
-                        <slot name="thumbnail"/>
-                    </span>
-                        
-                </Markdown>
-            </div>
-        {/if}
-    </div>
-{/if}
-
-
-<!---Expand/Collapse Button--->
-{#if !hideExpandButton }
-    <Button color="tertiary" size="sm" class="mx-auto text-xs font-bold !py-0 w-full {expandPreviewText || $userSettings.uiState.postBodyPreviewLength < 49 ? '' : 'mt-[-25px] mb-[5px]'}"
+<!---Expand/Collapse Button (only show if text is expanded or if the body container needs to scroll)--->
+{#if displayType == 'feed' && (expandPreviewText || bodyContainerDoesScroll)}
+    <Button color="tertiary" size="sm" 
+        class="mx-auto text-xs font-bold !py-0 !px-1 w-full
+            {expandPreviewText ? '' : 'mb-[5px]'} 
+        "
         iconClass="{offsetExpandButton ? 'ml-[128px]' : ''}"
         title="{expandPreviewText ? 'Collapse' : 'Expand'}"
         icon={expandPreviewText ? undefined : ChevronDown}
         iconSize={20}
         on:click={() => {
             expandPreviewText = !expandPreviewText
-
-            // Scroll top of post to top on close
-            //if (!expandPreviewText) dispatchWindowEvent('scrollPostIntoView', { post_id: post.post.id})
             dispatchWindowEvent('scrollPostIntoView', { post_id: post.post.id})
+            bodyContainer?.scrollTo(0,0)
         }}
     >
         {#if expandPreviewText}
@@ -110,6 +68,4 @@
         </span>
         {/if}
     </Button>
-        
-
 {/if}
