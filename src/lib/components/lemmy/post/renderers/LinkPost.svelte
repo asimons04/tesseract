@@ -65,7 +65,7 @@
 {/if}
 
 {#if !compact && post.post.thumbnail_url}
-    <Image url={post.post.thumbnail_url} nsfw={nsfw} alt_text={post.post.alt_text ?? post.post.name} {displayType} zoomable />
+    <Image url={post.post.thumbnail_url} nsfw={nsfw} alt_text={post.post.alt_text} {displayType} zoomable />
 {/if}
 
 

@@ -125,7 +125,7 @@
 
     <!---Render as a Click-to-Play Thumbnail--->
     {:else}
-        <Image url={post.post.thumbnail_url ?? source ?? '/img/loops.png'} clickToPlay {displayType} nsfw={nsfw} zoomable={false} class="min-h-[300px]" 
+        <Image url={post.post.thumbnail_url ?? source ?? '/img/loops.png'} clickToPlay {displayType} nsfw={nsfw} zoomable={false} alt_text={post.post.alt_text} class="min-h-[300px]" 
             on:click={(e)=> clickToPlayClicked = true }
         />
     {/if}

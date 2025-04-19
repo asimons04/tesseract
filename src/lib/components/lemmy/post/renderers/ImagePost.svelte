@@ -122,7 +122,7 @@
         <Link  href={post.post.url} title={post.post.url} newtab={true}   domainOnly={!$userSettings.uiState.showFullURL} highlight nowrap  class="text-xs"/>
     </PostEmbedDescription>
 
-    <Image url={image_url} thumbnail_url={thumbnail_url} {displayType} nsfw={nsfw} alt_text={post.post.alt_text ?? post.post.name} {zoomable} on:click/>
+    <Image url={image_url} thumbnail_url={thumbnail_url} {displayType} nsfw={nsfw} alt_text={post.post.alt_text} {zoomable} on:click/>
 
     <PostBody bind:post bind:expandPreviewText {displayType}  />
     <Crossposts bind:post {onHomeInstance} class="mb-1 !pl-0"/>
