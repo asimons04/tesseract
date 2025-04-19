@@ -23,7 +23,7 @@
     export let offsetExpandButton: boolean  = false
 
     let bodyContainer: HTMLDivElement
-    $: bodyContainerDoesScroll = bodyContainer?.scrollHeight > bodyContainer?.clientHeight
+    $: bodyContainerDoesScroll = bodyContainer?.scrollHeight > bodyContainer?.clientHeight || (post.post.body?.substring(0,150).includes('!['))
 </script> 
 
 <div bind:this={bodyContainer} class="flex flex-col text-sm gap-1 p-1 rounded-md 
