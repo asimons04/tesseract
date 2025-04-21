@@ -72,8 +72,10 @@
 
     <!---Show Alt Text as Caption--->
     {#if alt_text && $userSettings.uiState.showAltText}
-        <p class="background-blur-3xl bg-white/50 dark:bg-black/50 rounded-xl p-2 mt-2 text-xs text-center">{alt_text}</p>
+        <p class="background-blur-3xl bg-white/50 dark:bg-black/50 rounded-xl p-2 mt-2 text-xs text-center z-10">{alt_text}</p>
     {/if}
+
+    
 
     <slot />
 </ImageContainer>
