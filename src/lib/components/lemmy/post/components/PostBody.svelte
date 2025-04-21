@@ -1,6 +1,6 @@
 <script lang="ts">
     import type { PostView }        from 'lemmy-js-client'
-    import { sleep, type PostDisplayType } from '$lib/components/lemmy/post/helpers'
+    import { type PostDisplayType } from '$lib/components/lemmy/post/helpers'
     
     import { dispatchWindowEvent }  from '$lib/ui/events'
     import { userSettings }         from '$lib/settings'
@@ -26,7 +26,8 @@
     $: bodyContainerDoesScroll = bodyContainer?.scrollHeight > bodyContainer?.clientHeight || (post.post.body?.substring(0,150).includes('!['))
 </script> 
 
-<div bind:this={bodyContainer} class="flex flex-col text-sm gap-1 p-1 rounded-md 
+<div bind:this={bodyContainer} 
+    class="flex flex-col text-sm gap-1 p-1 rounded-md 
         {displayType == 'feed' && !expandPreviewText ? 'max-h-[120px] overflow-y-hidden' : ''}
         {displayType == 'feed' && !expandPreviewText && bodyContainerDoesScroll 
             ? 'bg-gradient-to-b text-transparent from-slate-800 via-slate-800 dark:from-zinc-100 dark:via-zinc-100 bg-clip-text z-0' 
@@ -45,7 +46,7 @@
 </div>
 
 <!---Expand/Collapse Button (only show if text is expanded or if the body container needs to scroll)--->
-{#if displayType == 'feed' && (expandPreviewText || bodyContainerDoesScroll)}
+{#if displayType == 'feed' && (expandPreviewText || bodyContainer?.scrollHeight > bodyContainer?.clientHeight)}
     <Button color="tertiary" size="sm" 
         class="mx-auto text-xs font-bold !py-0 !px-1 w-full
             {expandPreviewText ? '' : 'mb-[5px]'} 
