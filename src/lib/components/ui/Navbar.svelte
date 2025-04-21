@@ -172,7 +172,7 @@
         <!--- Account Selection Submenu--->
         {#if $profileData?.profiles?.length > 0}
         <MenuButton>
-            <button class="flex flex-row gap-2 font-bold items-center w-full py-1 text-sm transition-colors"
+            <button class="flex flex-row gap-2  items-center w-full py-1 transition-colors"
                 on:click={(
                     //@ts-ignore
                     e
@@ -191,7 +191,16 @@
                     <Icon src={UserGroup} mini width={16} />
                 {/if}
 
-                {$profile?.user ? $profile.user.local_user_view.person.display_name ?? $profile.user.local_user_view.person.name : 'Profiles'}
+                <span class="flex flex-col gap-0 items-start max-w-[25ch] truncate">
+                    
+                    <span class="text-sm font-bold max-w-[25ch] truncate">
+                        {$profile?.user ? $profile.user.local_user_view.person.display_name ?? $profile.user.local_user_view.person.name : 'Profiles'}
+                    </span>
+                    {#if $profile?.user}
+                        <span class="text-xs opacity-80 max-w-[25ch] truncate">{$profile.user.local_user_view.person.name}@{new URL($profile.user.local_user_view.person.actor_id).hostname}</span>
+                    {/if}
+
+                </span>
                 <span class="text-xs font-bold px-1 py-0.5 ml-auto">
                     <Icon src={expandAccountsMenu ? ChevronUp : ChevronDown} mini width={16}  />
                 </span>
