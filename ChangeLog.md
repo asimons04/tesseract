@@ -1,8 +1,20 @@
 # Changelog for 1.4.x Series (Intrepid)
 All major/minor changes between releases will be documented here.  
 
-<<<<<<< HEAD
-=======
+# 1.4.38
+## Bugfixes
+- Now that most instances are on 0.19.4 and above, remove the post title as a fallback alt text.
+- Check if the first 150 characters of a post body contains an image since the lazy loading was sometimes preventing the "does the post body scroll" check from returning true. This caused the "expand" button to not appear unless you toggled the post to compact/card and back.
+- Un-distinguishing a comment did not reactivly change the background back from green.
+
+
+## Changes
+- Per user request, add alt text-as-caption for image posts (similar to markdown images).  Controlled by the same "Show alt text as caption" user setting.  Only shows in "card" view since there's no room in compact view, and it would be confusing to mix it in with the body text.
+
+
+
+---
+
 # 1.4.37
 ## Bugfixes
 - Revert throw error in `/post/instance/postid` loader as it was preventing the prettier error in `+page.svelte` from showing
@@ -46,7 +58,6 @@ If your view *was* set to any of those, it will now migrate it to "wide-compact"
 ---
 
 
->>>>>>> 1.4.37
 # 1.4.36
 
 ## Bugfixes
