@@ -81,37 +81,26 @@
             
             <!---Row with badges and jump to comment buttons--->
             <div class="flex flex-col gap-1">
-                <!---Badges--->
+                <!---Badges For Post Indicatiors--->
                 <div class="flex flex-row ml-auto mb-auto gap-2 items-center">
                 
                     <!---Badge accounts less than 5 days old (1440 minutes = 24 hours * 5)-->
-                    {#if comment?.creator?.published && isNewAccount(comment.creator.published)}
-                        <Badge label="New Account" color="gray" icon={Cake} iconSize={12} click={false}>
-                            <RelativeDate date={comment.creator.published} />
-                        </Badge>
-                    {/if}
-                    
                     {#if comment.post.locked}
                         <Badge label="Locked" color="yellow" click={false} icon={LockClosed} iconSize={14}/>
                     {/if}
-    
-                    {#if comment.saved}
-                        <Badge label="Saved" color="yellow" icon={Bookmark} iconSize={14} click={false}/>
-                    {/if}
                     
-                    
-                    {#if comment.comment.removed}
+                    {#if comment.post.removed}
                         <Badge label="Removed" color="red" icon={NoSymbol} iconSize={14} click={false}/>
                     {/if}
                     
-                    {#if comment.comment.deleted}
+                    {#if comment.post.deleted}
                         <Badge label="Deleted" color="red" icon={Trash} iconSize={14} click={false}/>
                     {/if}
                     
                 </div>
 
                 <!---Jump to Comment Buttons--->
-                <div class="flex flex-row gap-1 items-center">
+                <div class="flex flex-row gap-1 ml-auto items-center">
                     <Button 
                         color="tertiary-border" 
                         size="md"
