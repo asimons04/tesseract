@@ -26,7 +26,7 @@ A clear and concise description of what you expected to happen.
 **Screenshots**
 If applicable, add screenshots to help explain your problem.  
 
-**Note**:  If screenshots contain posts/comments, please try (if possible) to select neutral content avoiding overt political posts, NSFW content, etc.  In some cases, I may ask you to remove screenshots if they contain sensitive info or show content that I would prefer not be associated with me or my project.  
+**Note**:  If screenshots contain posts/comments, please try (if possible) to select neutral content avoiding overt political posts, NSFW content, any advocacy of violence, etc.  In some cases, I may ask you to remove screenshots if they contain sensitive info or show content that I would prefer not be associated with me or my project. 
 
 **Desktop (please complete the following information):**
  - OS: [e.g. iOS]
