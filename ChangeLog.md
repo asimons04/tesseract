@@ -11,6 +11,22 @@ All major/minor changes between releases will be documented here.
 ## Changes
 - Per user request, add alt text-as-caption for image posts (similar to markdown images).  Controlled by the same "Show alt text as caption" user setting.  Only shows in "card" view since there's no room in compact view, and it would be confusing to mix it in with the body text.
 
+## New Features
+
+### Select Multiple Comments and Perform a Single Mod Action for them All
+Added a little something something for the mods this release.  
+
+Ever have to break up a slapfight or nuke an entire comment thread that has gone completely toxic?  I have, and it's tedious work.  Not anymore.
+
+There are two new buttons available to mods/admins in the comment section:
+- Bulk Actions button (badge) at the top of the comment section
+- "Check" button on comment items
+
+Clicking the "check" on a comment will select it and add it to a queue.  Select as many as you need, and then click the "Bulk Actions" button at the top of the comment section.  From there, you can remove (or restore) all of the selected comments at once.  The same reason will be used for all removals.
+
+At present, you can only remove or restore comments with this feature, but I hope to add additional actions later as well as expand it to allow removing multiple posts from the community feed.
+
+**Note**:  While it would be nice to have a "select all chlid comment" box, due to API limitations and having no guarantee all of the parent comment's children have been loaded, you have to select each comment manually.  Still, it's a *huge* improvement over performing an individual removal for each.
 
 
 ---
