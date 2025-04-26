@@ -249,7 +249,7 @@
     >
         <!---Toolbar with zoom in/out buttons and button to close the overlay--->
         <div bind:this={toolbarElement} class="absolute top-0 w-full z-50 p-1 cursor-default">
-            <div class="flex flex-row w-full">
+            <div class="flex flex-row mx-auto w-fit">
                 <span class="flex flex-row gap-4 px-4 w-full items-center">
                     
                     <!---Markdown editor resize slider--->
