@@ -1,6 +1,6 @@
 <script lang="ts">
     import { userSettings } from '$lib/settings'
-    type CardColor = 'default' | 'warning' | 'error' | 'success'
+    type CardColor = 'default' | 'warning' | 'error' | 'success' | 'info'
     
     export let cardColor: CardColor = 'default'
     export let backgroundImage:string = ''
@@ -23,6 +23,9 @@
                         return 'border border-slate-300 dark:border-zinc-900 bg-slate-200 dark:bg-zinc-800 rounded-2xl'
                 }
             
+            case 'info':
+                return 'border border-sky-300 dark:bg-sky-950/30 dark:border-sky-900 bg-sky-100 rounded-2xl'
+
             case 'warning':
                 return 'border border-yellow-300 dark:bg-yellow-950/30 dark:border-yellow-900 bg-yellow-50 rounded-2xl'
 

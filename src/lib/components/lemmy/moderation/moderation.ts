@@ -6,19 +6,24 @@ import type {
     GetCommunityResponse,
     MyUserInfo, 
     Person, 
+    PersonView, 
     PostView,
     PrivateMessageView,
 } from 'lemmy-js-client'
 
 import { 
     sortOptions as defaultSortOptions, 
-    sortOptionNames as defaultSortOptionNames
+    sortOptionNames as defaultSortOptionNames,
+    getClient
 } from '$lib/lemmy'
 
 import { get } from 'svelte/store'
 import { page } from '$app/stores'
 import { pushState, replaceState } from '$app/navigation'
 import { writable } from 'svelte/store'
+import { isCommentView, isPostView, isUser } from '$lib/lemmy/item'
+import { dispatchWindowEvent } from '$lib/ui/events'
+import { toast } from '$lib/components/ui/toasts/toasts'
 
 export type PostModerationModalPanels = 
     'none' | 
@@ -523,3 +528,153 @@ export const removalTemplate = (
     if (content.reason) input = input.replaceAll('{{reason}}', content.reason)
     return input
 }
+
+
+export interface ModQueueList {
+    posts: PostView[]
+    comments: CommentView[],
+    users: PersonView[],
+}
+
+
+
+export class ModQueue {
+    queue: ModQueueList
+    constructor() {
+        this.queue = {
+            posts: [] as PostView[],
+            comments: [] as CommentView[],
+            users: [] as PersonView[]
+        } as ModQueueList
+    }
+
+    add (item:CommentView|PostView|PersonView) {
+        if (isCommentView(item) && this.queue.comments.findIndex((c) => c.comment.id == item.comment.id) < 0) {
+            this.queue.comments.push(item)
+            return
+        }
+
+        if (isPostView(item) && this.queue.comments.findIndex((c) => c.comment.id == item.post.id) < 0) {
+            this.queue.posts.push(item)
+            return
+        }
+
+        if (isUser(item) && this.queue.users.findIndex((c) => c.person.id == item.person.id) < 0) {
+            this.queue.users.push(item)
+            return
+        }
+        
+    }
+
+    clear() {
+        this.queue.posts      = []
+        this.queue.comments   = []
+        this.queue.users      = []
+    }
+
+    containsComment(comment_id:number) {
+        return (this.queue.comments.findIndex((c) => c.comment.id == comment_id) >= 0)
+    }
+
+    containsPost(post_id:number) {
+        return (this.queue.posts.findIndex((c) => c.post.id == post_id) >= 0)
+    }
+
+    containsUser(person_id:number) {
+        return (this.queue.users.findIndex((c) => c.person.id == person_id) >= 0)
+    }
+
+    delete(item:CommentView|PostView|PersonView) {
+        const index = isCommentView(item)
+            ? this.queue.comments.findIndex((c) => c.comment.id == item.comment.id)
+            : isPostView(item)
+                ? this.queue.comments.findIndex((c) => c.comment.id == item.post.id)
+                : isUser(item)
+                    ? this.queue.users.findIndex((c) => c.person.id === item.person.id)
+                    : -1
+
+        if (index >= 0 && isCommentView(item)) {
+            this.queue.comments.splice(index,1)
+            return
+        }
+
+        if (index >= 0 && isPostView(item)) {
+            this.queue.posts.splice(index,1)
+            return
+        }
+
+        if (index >=0 && isUser(item)) {
+            this.queue.users.splice(index,1)
+            return
+        }
+    }
+
+    list() {
+        return this.queue
+    }
+
+    async removeAllComments(form: {remove: boolean, reason?:string, banCommunity?:boolean, banSite?:boolean, banCommunityExpiry?:number, banSiteExpiry?:number}    ) {
+        if (this.queue.comments.length < 1) {
+            toast({
+                title: "No Comments Selected",
+                type: 'warning',
+                content: `You must select one or more comments to ${form.remove ? 'remove' : 'restore'}.`
+            })
+            return
+        }
+
+        let successful = [] as CommentView[]
+        
+        for (let i:number = 0; i < this.queue.comments.length; i++) {
+            const item = this.queue.comments[i]
+            let comment_view: CommentView | undefined = undefined
+            
+            // Remove Comment if it's removed state does not match the desired state
+            try {
+                if (item.comment.removed != form.remove && !item.comment.deleted) {
+                    comment_view = (await getClient().removeComment({
+                        comment_id: item.comment.id,
+                        removed: form.remove,
+                        reason: form.reason
+                    })).comment_view
+                }
+                dispatchWindowEvent('editComment', {
+                    comment_view: comment_view ?? item
+                })
+                successful.push(item)
+            }
+            catch {}
+        }
+        
+        // Delete the successful items from the queue
+        for (let i:number = 0; i < successful.length; i++) {
+            this.delete(successful[i])
+        }
+
+        if (successful.length == 0) {
+            toast({
+                title: "Operation Failed",
+                type: 'error',
+                content: `Failed to ${form.remove ? 'remove' : 'restore'} ${this.queue.comments.length > 1 ? 'any selected comments' : 'the selected comment'}.`
+            })
+        }
+        else if (this.queue.comments.length > 0) {
+            toast({
+                title: "Partial Operation Complete",
+                type: 'warning',
+                content: `Successfully ${form.remove ? 'removed' : 'restored'} ${successful.length} out of ${this.queue.comments.length + successful.length}`
+            })
+        }
+        else {
+            toast({
+                title: "Operation Complete",
+                type: 'success',
+                content: `Successfully ${form.remove ? 'removed' : 'restored'} ${successful.length} comments.`
+            })
+        }
+
+    }
+
+}
+
+

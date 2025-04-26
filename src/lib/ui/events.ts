@@ -3,7 +3,7 @@
 */
 
 import type { PostViewType } from "$lib/settings"
-import type { PostView, SortType } from "lemmy-js-client"
+import type { CommentView, PostView, SortType } from "lemmy-js-client"
 
 export type TesseractEvent = 
     'banUser'               |
@@ -119,6 +119,13 @@ export interface DistinguishCommentEvent extends CustomEvent {
     detail: {
         comment_id: number
         distinguished: boolean
+    }
+}
+
+// Fires when a post is edited
+export interface EditCommentEvent extends CustomEvent {
+    detail: {
+        comment_view: CommentView
     }
 }
 

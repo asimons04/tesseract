@@ -42,9 +42,6 @@
     
     const dispatcher = createEventDispatcher()
     
-    // Watch the reply reason options and automatically update the mod reply based on the removal / restore reason.
-    //$: remove.replyReason = remove.replyWithReason ? remove.setReplyReason(remove.reason) : ''
-    
     // Reactive helper variable to determine if the item is removed.
     $:  removed = isCommentView(item)
             ? item.comment.removed

@@ -16,8 +16,6 @@
     import { deleteItem, save } from '$lib/lemmy/contentview.js'
     import { goto } from '$app/navigation'
     import { instance } from '$lib/instance'
-    import { isCommentMutable } from '$lib/components/lemmy/post/helpers.js'
-    import { page } from '$app/stores'
     import { profile } from '$lib/auth.js'
     import { toast } from '$lib/components/ui/toasts/toasts.js'
     import { userSettings } from '$lib/settings.js'
@@ -33,6 +31,7 @@
         BookmarkSlash,
         BugAnt,
         ChatBubbleOvalLeft,
+        Check,
         EllipsisHorizontal,
         Eye,
         Flag,
@@ -53,8 +52,10 @@
     export let replying: boolean = false
     export let actions: boolean = true
     export let onHomeInstance = false
+    export let commentSelected = false
+    export let commentSelectable = false
 
-    const dispatcher = createEventDispatcher<{ edit: CommentView }>()
+    const dispatcher = createEventDispatcher<{ edit: CommentView, selected: boolean }>()
 
 </script>
 
@@ -81,6 +82,19 @@
 
         <!--- Comment Moderation Menu--->
         {#if onHomeInstance && $profile?.user && (amMod($profile?.user, comment.community) || isAdmin($profile.user))}
+            <!---Button to Select a Comment for Multi-Mod Actions--->
+            {#if commentSelectable}
+                <Button 
+                    color="{commentSelected ? 'info' : 'tertiary'}" size="square-md" 
+                    title="{commentSelected ? 'Un-Select' : 'Select'}" 
+                    icon={Check} iconSize={14}
+                    on:click={(e) => { 
+                        commentSelected = !commentSelected
+                        dispatcher('selected', commentSelected) 
+                    }}
+                />
+            {/if}
+
             <Button color="tertiary" size="square-md" title="Moderation" icon={ShieldCheck} iconSize={14} disabled={comment.banned_from_community} on:click={() => postModerationModal(comment) } />    
         {/if}
   
