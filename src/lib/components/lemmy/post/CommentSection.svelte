@@ -3,15 +3,17 @@
 
     import { buildCommentsTreeAsync } from '$lib/components/lemmy/comment/comments.js'
     import { getClient } from '$lib/lemmy.js'
+    import { amMod, isAdmin, ModQueue } from '../moderation/moderation'
     import { instance } from '$lib/instance'
     import { profile } from '$lib/auth.js'
-
+    import { toast } from '$lib/components/ui/toasts/toasts'
 
     import Button           from '$lib/components/input/Button.svelte'
     import Card             from '$lib/components/ui/Card.svelte'
     import Comments         from '$lib/components/lemmy/comment/Comments.svelte'
     import CommentForm      from '$lib/components/lemmy/comment/CommentForm.svelte'
     import FormattedNumber  from '$lib/components/util/FormattedNumber.svelte'
+    import MultiCommentRemoveModal from '../modal/MultiCommentRemoveModal.svelte'
     import Placeholder      from '$lib/components/ui/Placeholder.svelte';
     import SelectMenu       from '$lib/components/input/SelectMenu.svelte'
     import Spinner          from '$lib/components/ui/loader/Spinner.svelte'
@@ -20,7 +22,10 @@
         BarsArrowDown,
         ChatBubbleLeftRight,
         ExclamationTriangle,
+        ShieldCheck,
     } from 'svelte-hero-icons'
+    
+    
     
     export let data:any
     export let showCommentForm:boolean  = true;
@@ -30,6 +35,7 @@
 
     let commentSort: CommentSortType    = data.commentSort;
     let commentSectionContainer: HTMLDivElement
+    let bulkActionModal: boolean = false
     
     // Determine what instance to fetch the comments from (local home or that of the post's home instance)
     let postInstance = onHomeInstance
@@ -47,7 +53,13 @@
             max_depth: 3,
         })
     }
+
+    let modQueue = new ModQueue()
 </script>
+
+{#if bulkActionModal}
+    <MultiCommentRemoveModal bind:open={bulkActionModal} bind:modQueue />
+{/if}
 
 <div bind:this={commentSectionContainer} id="comments" class="mt-4 flex flex-col gap-2 w-full h-full min-h-[300px]">
     
@@ -60,6 +72,26 @@
                 <FormattedNumber number={data.post.post_view.counts.comments} />
             </span>
         </div>
+
+        <!---Multi-Comment Mod Button--->
+        {#if isAdmin($profile?.user) || amMod($profile?.user, data.post.post_view.community)}
+        <span class="flex flex-col gap-1">
+            <span class="font-bold text-sm opacity-80">Bulk Actions</span>
+            
+            <span class="flex flex-row items-center gap-1">
+                <Button size="lg" color="tertiary-border" class="mx-auto" title="Bulk Comment Actions" icon={ShieldCheck} iconSize={16}
+                    on:click={() => {
+                        if (modQueue.queue.comments.length < 1) toast({
+                            type: 'warning',
+                            title: 'No Comments Selected',
+                            content: 'You must select at least one comment.'
+                        })
+                        else bulkActionModal = true
+                    }}
+                />
+            </span>
+        </span>
+        {/if}
 
         
         <span class="flex flex-col gap-1">
@@ -108,7 +140,7 @@
             </div>
             {:then comments}
                 {#if comments.length > 0}
-                    <Comments post={data.post.post_view.post} moderators={data.post.moderators} nodes={comments} isParent={true} {onHomeInstance} {jumpTo}/>
+                    <Comments post={data.post.post_view.post} bind:modQueue moderators={data.post.moderators} nodes={comments} isParent={true} {onHomeInstance} {jumpTo}/>
                 {:else}
                     <!---Hide placeholder if you have the comment form open--->
                     {#if !showCommentForm}

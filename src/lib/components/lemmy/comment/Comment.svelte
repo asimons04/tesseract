@@ -1,7 +1,7 @@
 <script lang="ts">
-    import type { BanCommunityEvent, BanUserEvent, DistinguishCommentEvent, PurgeCommentEvent, RemoveCommentEvent } from '$lib/ui/events'
+    import type { BanCommunityEvent, BanUserEvent, DistinguishCommentEvent, EditCommentEvent, PurgeCommentEvent, PurgePostEvent, RemoveCommentEvent } from '$lib/ui/events'
     import { getDepthFromComment, type CommentNodeI } from './comments'
-    import type { UploadImageResponse } from 'lemmy-js-client';
+    import type { CommentView, UploadImageResponse } from 'lemmy-js-client';
     
     import {
         ArrowUp,
@@ -29,13 +29,16 @@
     import { 
         amMod, 
         amModOfAny, 
-        isAdmin 
+        isAdmin, 
     }                       from '../moderation/moderation'
     import { 
         getClient, 
         minAPIVersion 
     }                       from '$lib/lemmy.js'
-    import { onMount }      from 'svelte'
+    import { 
+        createEventDispatcher, 
+        onMount 
+    }                       from 'svelte'
     import { page }         from '$app/stores'
     import { profile }      from '$lib/auth.js'
     import { sleep }        from '../post/helpers'
@@ -51,7 +54,7 @@
     export let elevation: -1|0|1|2  = getCardElevation(node)
     export let jumpTo:number        = -1
     export let onHomeInstance       = false
-
+    export let selectable           = false
 
     let imageUploads                = [] as UploadImageResponse[]
     let editing                     = false
@@ -62,6 +65,7 @@
     let commentText                 = node.comment_view.comment.content
     let admin                       = isAdmin($profile?.user)
     let mod                         = amMod($profile?.user, node.comment_view.community)
+    let selected                    = false
 
     // If linking to a thread, scroll to the speciic comment and highlight it
     onMount(async() => {
@@ -77,56 +81,75 @@
         }
     })
 
-    function handleBanUser(e: BanUserEvent) {
-        if (node.comment_view.creator.id == e.detail.person_id) {
-            node.comment_view.creator.banned = e.detail.banned
-            
-            if (e.detail.remove_content) {
-                node.comment_view.comment.removed = true
-                //color = 'error'
+
+    const handlers = {
+        BanUserEvent: function (e: BanUserEvent) {
+            if (node.comment_view.creator.id == e.detail.person_id) {
+                node.comment_view.creator.banned = e.detail.banned
+                
+                if (e.detail.remove_content) {
+                    node.comment_view.comment.removed = true
+                }
             }
-        }
-        node = node
-    }
+            node = node
+        },
 
-    function handleBanCommunity(e: BanCommunityEvent) {
-        if (node.comment_view.creator.id == e.detail.person_id) {
-            node.comment_view.creator_banned_from_community = e.detail.banned
-            
-            if (e.detail.remove_content) {
-                node.comment_view.comment.removed = true
-                //color = 'error'
+        BanCommunityEvent: function (e: BanCommunityEvent) {
+            if (node.comment_view.creator.id == e.detail.person_id) {
+                node.comment_view.creator_banned_from_community = e.detail.banned
+                
+                if (e.detail.remove_content) {
+                    node.comment_view.comment.removed = true
+                    //color = 'error'
+                }
             }
-        }
-        node = node
-    }
-
-    function handleRemoveComment(e: RemoveCommentEvent) {
-        if (node.comment_view.comment.id == e.detail.comment_id) {
-            node.comment_view.comment.removed = e.detail.removed
-            getCommentText().then((newText) => commentText = newText)
-
-            /*
-            if (e.detail.removed) color = 'error'
-            else color = getCardColor(node)
-            */
-        }
-    }   
-
-    function handlePurgeComment(e: PurgeCommentEvent) {
-        if (node.comment_view.comment.id == e.detail.comment_id) {
-            node.comment_view.comment.removed = e.detail.purged
-            node.comment_view.comment.content = '*Purged*'
             node = node
-        }
-    }
+        },
 
-    function handleDistinguishComment(e: DistinguishCommentEvent) {
-        if (node.comment_view.comment.id == e.detail.comment_id) {
-            node.comment_view.comment.distinguished = e.detail.distinguished
-            node = node
-            color = 'success'
-        }
+        DistinguishCommentEvent: function (e: DistinguishCommentEvent) {
+            if (node.comment_view.comment.id == e.detail.comment_id) {
+                node.comment_view.comment.distinguished = e.detail.distinguished
+                node = node
+                color = e.detail.distinguished ? 'success' : getCardColor(node)
+            }
+        },
+
+        EditCommentEvent: function (e: EditCommentEvent) {
+            if (e.detail.comment_view.comment.id == node.comment_view.comment.id) {
+                node.comment_view = e.detail.comment_view
+                if (selected) selected = false
+                getCommentText().then((newText) => commentText = newText)
+                color = getCardColor(node)
+                node = node
+            }
+        },
+
+        PurgeCommentEvent: function(e: PurgeCommentEvent) {
+            if (node.comment_view.comment.id == e.detail.comment_id) {
+                node.comment_view.comment.removed = e.detail.purged
+                commentText = node.comment_view.comment.content = '*Purged*'
+                node = node
+            }
+        },
+
+        PurgePostEvent: function(e: PurgePostEvent) {
+            if (node.comment_view.post.id == e.detail.post_id) {
+                node.comment_view.comment.removed = e.detail.purged
+                commentText = node.comment_view.comment.content = '*Purged*'
+                node = node
+            }
+        },
+
+        RemoveCommentEvent: function (e:RemoveCommentEvent) {
+            if (node.comment_view.comment.id == e.detail.comment_id) {
+                if (selected) selected = false
+                node.comment_view.comment.removed = e.detail.removed
+                getCommentText().then((newText) => commentText = newText)
+                color = getCardColor(node)
+            }
+        },
+
+
     }
 
     // Render comment collapsed if bot account, on /post page, and user has enabled the collapse bot comment option
@@ -143,11 +166,12 @@
         return (depth % 2 == 0) ? 1 : 0
     }
 
-    function getCardColor(node: CommentNodeI): 'default' | 'warning' | 'error' | 'success' {
-        let color: 'default' | 'warning' | 'error' | 'success' = 'default'
+    function getCardColor(node: CommentNodeI): 'default' | 'warning' | 'error' | 'success' | 'info' {
+        let color: 'default' | 'warning' | 'error' | 'success' | 'info' = 'default'
         
         if (node.comment_view.comment.distinguished) return 'success'
         if (jumpToComment) return 'warning'
+        if (selected) return 'info'
         //if (node.comment_view.comment.removed) return 'error'
 
         return color
@@ -178,6 +202,12 @@
                 ? 'Creator banned with content removal'
                 :'No reason specified'
            
+            // Don't lookup purged comments; return early with static 'Purged by admin' message.
+            if (node.comment_view.comment.content == '*Purged*') {
+                text += `\n\n > **Removal Reason**: Purged by Admin`
+                return text
+            }
+
             try {
                 let results = await getClient().getModlog({comment_id: node.comment_view.comment.id})
                 if (results?.removed_comments.length > 0) {
@@ -192,7 +222,7 @@
                 }
                 
                 // Append the removal reason and if admin/mod, the removed content contents
-                text += `\n\n --- \n\n**Removal Reason**: ${reason}`
+                text += `\n\n > **Removal Reason**: ${reason}`
             }
             catch {}
         }
@@ -200,15 +230,19 @@
         return text
     }
 
-    let color: 'default' | 'warning' | 'error' | 'success' = getCardColor(node)
+    const dispatcher = createEventDispatcher<{select: CommentView, unselect: CommentView }>()
+
+    let color: 'default' | 'warning' | 'error' | 'success' | 'info' = getCardColor(node)
 </script>
 
 <svelte:window 
-    on:banUser={handleBanUser} 
-    on:banCommunity={handleBanCommunity} 
-    on:distinguishComment={handleDistinguishComment}
-    on:removeComment={handleRemoveComment}
-    on:purgeComment={handlePurgeComment}
+    on:banUser={handlers.BanUserEvent} 
+    on:banCommunity={handlers.BanCommunityEvent} 
+    on:editComment={handlers.EditCommentEvent}
+    on:distinguishComment={handlers.DistinguishCommentEvent}
+    on:removeComment={handlers.RemoveCommentEvent}
+    on:purgeComment={handlers.PurgeCommentEvent}
+    on:purgePost={handlers.PurgePostEvent}
 />
 
 
@@ -301,11 +335,15 @@
                         {/if}
 
                         {#if node.comment_view.comment.deleted} 
-                            <Badge icon={Trash} color="red" rightJustify={false} label="Deleted"/>
+                            <Badge icon={Trash} color="red" rightJustify={false} label="Deleted">
+                                <span class="hidden xl:block">Deleted</span>
+                            </Badge>
                         {/if}
 
                         {#if node.comment_view.comment.removed}
-                            <Badge icon={HandRaised} color="red" rightJustify={false} click={false}  label="Removed by Mod"/>
+                            <Badge icon={HandRaised} color="red" rightJustify={false} click={false}  label="Removed by Mod">
+                                <span class="hidden xl:block">Removed</span>
+                            </Badge>
                         {/if}
 
                         {#if node.comment_view.saved}
@@ -332,9 +370,22 @@
                     <CommentActions
                         {actions}
                         {onHomeInstance}
+                        commentSelected={selected}
+                        commentSelectable={selectable}
                         bind:comment={node.comment_view}
                         bind:replying
                         on:edit={() => (editing = true)}
+                        on:selected={(e) => {
+                            selected = e.detail
+                            if (selected) {
+                                color = 'info'
+                                dispatcher('select', node.comment_view)
+                            }
+                            else {
+                                color = getCardColor(node)
+                                dispatcher('unselect', node.comment_view)
+                            }
+                        }}
                     />
                 </div>
                 

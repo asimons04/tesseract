@@ -4,13 +4,16 @@
     import Button   from '$lib/components/input/Button.svelte'
     import Comment  from './Comment.svelte'
     
-    import { amMod } from '../moderation/moderation'
-    import { buildCommentsTree, type CommentNodeI } from './comments'
+    import { amMod, type ModQueue }      from '../moderation/moderation'
+    import { 
+        buildCommentsTree, 
+        type CommentNodeI 
+    }                               from './comments'
     import { fly }                  from 'svelte/transition'
     import { getClient }            from '$lib/lemmy.js'
     import {instance }              from '$lib/instance'
     import { isNewAccount }         from '../post/helpers'
-    import { setContext }  from 'svelte'
+    import { setContext }           from 'svelte'
     import { profile }              from '$lib/auth.js'
     import { toast }                from '$lib/components/ui/toasts/toasts.js'
     import { userSettings }         from '$lib/settings'
@@ -25,6 +28,8 @@
     export let moderators: Array<CommunityModeratorView>
     export let jumpTo: number           = -1
     export let onHomeInstance: boolean  = false
+    export let modQueue: ModQueue
+    export let selectable = true
 
     if (isParent) {
         setContext('comments:tree', nodes)
@@ -112,10 +117,17 @@
                     && !amMod($profile?.user, node.comment_view.community)
                 )
         }
-            <Comment postId={post.id} bind:node {jumpTo} {onHomeInstance}>
+            <Comment postId={post.id} bind:node {jumpTo} {onHomeInstance} {selectable}
+                on:select={(e) => { 
+                    modQueue.add(e.detail)
+                }}
+                on:unselect={(e) => { 
+                    modQueue.delete(e.detail);
+                }}
+            >
                 
                 {#if node.children?.length > 0}
-                    <svelte:self {post} bind:nodes={node.children} moderators={moderators} isParent={false} {jumpTo} {onHomeInstance}/>
+                    <svelte:self {post} bind:nodes={node.children} bind:modQueue moderators={moderators} isParent={false} {jumpTo} {onHomeInstance}/>
                 {/if}
 
                 {#if node.comment_view.counts.child_count > 0 && node.children.length == 0}
