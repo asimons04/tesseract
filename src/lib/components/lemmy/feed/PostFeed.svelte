@@ -800,8 +800,9 @@
                 icon={BarsArrowDown}
                 iconSize={18}
                 on:select={(e) => {
-                    if (!inModal && $pageStore.url.pathname.includes('/home/')) {
-                        goto(`/home/${type.toLowerCase()}/${e.detail.toLowerCase()}`)
+                    if (!inModal) {
+                        if ($pageStore.url.pathname.includes('/home/')) goto(`/home/${type.toLowerCase()}/${e.detail.toLowerCase()}`)
+                        if ($pageStore.url.pathname.includes('/c/') && community_name) goto(`/c/${community_name}/${e.detail.toLowerCase()}`)
                     }
                     else {
                         //@ts-ignore

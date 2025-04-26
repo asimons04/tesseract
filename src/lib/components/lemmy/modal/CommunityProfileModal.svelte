@@ -404,7 +404,7 @@
                         <Button size="md" color="tertiary" icon={ArrowPath} title="Refresh" iconSize={20} on:click={() => feedController.refresh(true) } />
                         <Button size="md" color="tertiary" icon={ArrowTopRightOnSquare} title="Go to Community" iconSize={20}
                             on:click={ () => {
-                                goto(`/c/${communityDetails.community_view.community.name}@${new URL(communityDetails.community_view.community.actor_id).hostname}`)
+                                goto(`/c/${communityDetails.community_view.community.name}@${new URL(communityDetails.community_view.community.actor_id).hostname}/${feedController.sort}`)
                                 open = false
                             }}
                         />
