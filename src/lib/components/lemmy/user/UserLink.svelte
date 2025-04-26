@@ -1,4 +1,5 @@
 <script lang="ts">
+    import type { BanUserEvent } from '$lib/ui/events'
     import type { Person } from 'lemmy-js-client'
     
     import { createEventDispatcher } from 'svelte';
@@ -18,6 +19,7 @@
         NoSymbol, 
         Trash, 
     } from 'svelte-hero-icons'
+    
     
     
     export let user: Person
@@ -44,7 +46,15 @@
     let displayName: string = user.name
 
     $:  user.id, $userSettings.displayNames, displayName = generateDisplayName(user)
-    //$:  $userSettings.uiState.showInstances, showInstance = $userSettings.uiState.showInstances 
+
+    const handlers = {
+        BanUserEvent: function (e: BanUserEvent) {
+            if (e.detail.person_id == user.id) {
+                user.banned = e.detail.banned
+                user = user
+            }
+        }
+    }
 
     function linkFromCommunity(user: Person) {
         const domain = new URL(user.actor_id).hostname
@@ -79,6 +89,7 @@
    
 </script>
 
+<svelte:window on:banUser={handlers.BanUserEvent} />
 
 <a href={linkFromCommunity(user)} on:click={loadProfileModal} 
     class="inline-flex flex-col md:flex-row  gap-1 items-start md:items-center hover:underline w-full 
