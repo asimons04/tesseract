@@ -18,14 +18,16 @@
         RemoveCommunityEvent, 
         RemovePostEvent, 
         SetSortTypeEvent,
-
-        SystemTimerEvent
-
-
     } from "$lib/ui/events"
     
-    import type { FeedController, FeedControllerLoadOptions } from './helpers'
     import type { GetPostsResponse, ListingType, PostView, SortType } from "lemmy-js-client"
+    
+    import { 
+        type FeedController,
+        type FeedControllerLoadOptions,
+        parseSortType,   
+    } from './helpers'
+    
     
     import { addMBFCResults, filterKeywords, findCrossposts, isNewAccount, sleep } from "../post/helpers"
     import { amMod, amModOfAny } from '../moderation/moderation'
@@ -44,7 +46,6 @@
     import { userSettings } from "$lib/settings"
     
     import Button                   from '$lib/components/input/Button.svelte'
-    import Card                     from "$lib/components/ui/Card.svelte"
     import CollapseButton           from "$lib/components/ui/CollapseButton.svelte"
     import InfiniteScrollDiv        from "$lib/components/ui/infinitescroll/InfiniteScrollDiv.svelte"
     import Pageination              from "$lib/components/ui/Pageination.svelte"
@@ -695,6 +696,8 @@
         controller.takeSnapshot().then(() => {
             controller.reset()
             controller.scrollContainer?.remove()
+            //@ts-ignore
+            controller.scrollContainer = null
         })
     })
 
@@ -802,11 +805,11 @@
                 on:select={(e) => {
                     if (!inModal) {
                         if ($pageStore.url.pathname.includes('/home/')) goto(`/home/${type.toLowerCase()}/${e.detail.toLowerCase()}`)
-                        if ($pageStore.url.pathname.includes('/c/') && community_name) goto(`/c/${community_name}/${e.detail.toLowerCase()}`)
+                        else if ($pageStore.url.pathname.includes('/c/') && community_name) goto(`/c/${community_name}/${e.detail.toLowerCase()}`)
+                        else controller.sort = parseSortType(e.detail)
                     }
                     else {
-                        //@ts-ignore
-                        controller.sort = e.detail
+                        controller.sort = parseSortType(e.detail)
                     }
                 }}
             />
