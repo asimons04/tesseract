@@ -9,6 +9,7 @@
     import { profile } from '$lib/auth.js'
     import { isImage, isVideo, type PostType } from '$lib/components/lemmy/post/helpers.js'
     import { hide, save } from '$lib/lemmy/contentview'
+    import { minAPIVersion } from '$lib/lemmy'
     import { userSettings } from '$lib/settings'
 
     import Avatar           from '$lib/components/ui/Avatar.svelte'
@@ -32,9 +33,6 @@
         Pencil,
         ShieldCheck,
     } from 'svelte-hero-icons'
-    
-    import { minAPIVersion } from '$lib/lemmy';
-    
 
     export let post: PostView
     export let showTitle:boolean                = true;
@@ -212,6 +210,6 @@
 
 
     {#if showTitle}
-        <PostTitle {post} {postType} {inModal} {onHomeInstance} {hideBadges}/>
+        <PostTitle bind:post {postType} {inModal} {onHomeInstance} {hideBadges} {inCommunity}/>
     {/if}
 </div>

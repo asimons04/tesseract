@@ -34,7 +34,8 @@
     export let inModal: boolean         = false
     export let onHomeInstance: boolean  = false
     export let hideBadges: boolean      = false
-    
+    export let inCommunity: boolean     = false
+
     // Extract any [flairs] from the post title and update the title to remove them.
     let postName: string    = post.post.name
     let postFlairs:string[] = []
@@ -123,7 +124,8 @@
                     on:click={(e) => { 
                         e.preventDefault()
                         e.stopPropagation()
-                        goto(`/search?type=Posts&q=${encodeURIComponent(`[${flair}]`)}`)
+                        if (inCommunity) goto(`/search?type=Posts&community_id=${post.community.id}&q=${encodeURIComponent(`[${flair}]`)}`)
+                        else goto(`/search?type=Posts&q=${encodeURIComponent(`[${flair}]`)}`)
                     }}
                 >
                     {flair}
