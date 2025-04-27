@@ -63,7 +63,7 @@
 
             <div class="flex {$userSettings.uiState.reverseActionBar ? 'flex-row-reverse' : 'flex-row'} gap-2">
                 <div class="flex flex-col gap-1 w-full">
-                    <PostTitle {postType} bind:post />
+                    <PostTitle bind:post {postType} {inModal} {onHomeInstance} {inCommunity}/>
                     
                     <PostEmbedDescription {compact} title={post.post.embed_title} on:clickThumbnail={() => compact = false}
                         description={post.post.embed_description} 
@@ -90,7 +90,7 @@
         
         <div class="flex {$userSettings.uiState.reverseActionBar ? 'flex-row-reverse' : 'flex-row'} gap-2">
             <div class="flex flex-col w-full gap-1">
-                <PostTitle {postType} bind:post />
+                <PostTitle bind:post {postType} {inModal} {onHomeInstance} {inCommunity}/>
 
                 <PostBody bind:post bind:expandPreviewText {displayType} class="my-1" >
                     <CompactPostThumbnail bind:post url={placeholderIcon} {displayType} float slot="thumbnail" 
