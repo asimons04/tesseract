@@ -21,6 +21,7 @@
     export let expandPreviewText:boolean    = false
     export let inline:boolean               = false
     export let offsetExpandButton: boolean  = false
+    export let compact                      = false
 
     let bodyContainer: HTMLDivElement
     $: bodyContainerDoesScroll = bodyContainer?.scrollHeight > bodyContainer?.clientHeight || (post.post.body?.substring(0,150).includes('!['))
@@ -57,7 +58,7 @@
         iconSize={20}
         on:click={() => {
             expandPreviewText = !expandPreviewText
-            dispatchWindowEvent('scrollPostIntoView', { post_id: post.post.id})
+            if (compact || !expandPreviewText) dispatchWindowEvent('scrollPostIntoView', { post_id: post.post.id})
             bodyContainer?.scrollTo(0,0)
         }}
     >

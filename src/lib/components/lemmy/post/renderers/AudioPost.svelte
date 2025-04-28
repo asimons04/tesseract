@@ -78,7 +78,7 @@
                     </PostEmbedDescription>
                     
 
-                    <PostBody bind:post bind:expandPreviewText {displayType}  />
+                    <PostBody bind:post bind:expandPreviewText {compact} {displayType}  />
                     <Crossposts bind:post class="mb-1 !pl-0"/>
                     <PostActions  bind:post {inModal} {displayType}  {onHomeInstance} on:reply class="mt-2" />
                 </div>
@@ -92,7 +92,7 @@
             <div class="flex flex-col w-full gap-1">
                 <PostTitle bind:post {postType} {inModal} {onHomeInstance} {inCommunity}/>
 
-                <PostBody bind:post bind:expandPreviewText {displayType} class="my-1" >
+                <PostBody bind:post bind:expandPreviewText {displayType}  {compact} class="my-1" >
                     <CompactPostThumbnail bind:post url={placeholderIcon} {displayType} float slot="thumbnail" 
                         showThumbnail = {($userSettings.uiState.hideCompactThumbnails && displayType=='feed') ? false : true}
                         on:toggleCompact={() => compact = !compact}
@@ -128,7 +128,7 @@
         />
     {/if}
 
-    <PostBody bind:post bind:expandPreviewText {displayType}  />
+    <PostBody bind:post bind:expandPreviewText {displayType}  {compact} />
     <Crossposts bind:post {onHomeInstance} class="mb-1 !pl-0"/>
     <PostActions  bind:post {inModal} {displayType} {onHomeInstance} on:reply class="mt-2" />
 

@@ -64,6 +64,6 @@
 {/if}
 
 <!---Common Footer--->
-<PostBody bind:post bind:expandPreviewText {displayType}  />
+<PostBody bind:post bind:expandPreviewText {displayType}  {compact} />
 <Crossposts bind:post {onHomeInstance} class="mb-1 !pl-0"/>
 <PostActions bind:post {inModal} {displayType} {onHomeInstance} on:reply class="mt-2" />
