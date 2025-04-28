@@ -2,31 +2,52 @@
 All major/minor changes between releases will be documented here.  
 
 # 1.4.38
+This release brings bugfixes, a user-requested feature, enhancements to reactivity when performing mod actions, and a special little something-something for mods and admins to make their lives MUCH easier.
+
 ## Bugfixes
 - Now that most instances are on 0.19.4 and above, remove the post title as a fallback alt text.
+
 - Check if the first 150 characters of a post body contains an image since the lazy loading was sometimes preventing the "does the post body scroll" check from returning true. This caused the "expand" button to not appear unless you toggled the post to compact/card and back.
+
 - Un-distinguishing a comment did not reactivly change the background back from green.
+
+- [Bug 47](https://github.com/asimons04/tesseract/issues/47): Selected sort state was not preserved after navigating away from `/c/{community}`  As a result of this bugfix, community URLs can now specify the desired sort method (e.g. `/c/community@instance/{sort}` --> `/c/tesseract@dubvee.org/TopMonth`).  If no sort paramater is supplied (e.g. `/c/tesseract@dubvee.org`), it will use your default sort type.
 
 
 ## Changes
 - Per user request, add alt text-as-caption for image posts (similar to markdown images).  Controlled by the same "Show alt text as caption" user setting.  Only shows in "card" view since there's no room in compact view, and it would be confusing to mix it in with the body text.
 
+- UserLink component now responsive to ban user events.  When banning a user from areas not attached to a post/comment (e.g from search or modlog), the banned indicator will change to reflect the state rather than relying on the post/comment handlers.  
+
+- When purging a post with the post opened (e.g. when the comment section is loaded), the comments will show "Purged" as well since the API also removes the comments from purged posts.
+
+- Flairs are now scoped to the community if you are in a community feed (vs main feed).  If you click a post flair, it will search for other posts with that in the title.  Now, if you are browsing inside a community, the search will scope itself to the community you're in.
+
+- Add indicator badge row to comments; move deleted/reomoved indicators to this row.  Link removed, baned site, banned community badges to relevant modlog entries.
+  - Deleted by Creator
+  - Removed by Mod
+  - Banned from Site
+  - Banned from Community
+
+
 ## New Features
 
 ### Select Multiple Comments and Perform a Single Mod Action for them All
-Added a little something something for the mods this release.  
+Added a nice little something-something for the mods this release.  
 
-Ever have to break up a slapfight or nuke an entire comment thread that has gone completely toxic?  I have, and it's tedious work.  Not anymore.
+Ever have to break up a slapfight or nuke an entire comment thread that has gone completely toxic and off the rails?  I have, and it's tedious work.  
+
+Not anymore.
 
 There are two new buttons available to mods/admins in the comment section:
 - Bulk Actions button (badge) at the top of the comment section
 - "Check" button on comment items
 
-Clicking the "check" on a comment will select it and add it to a queue.  Select as many as you need, and then click the "Bulk Actions" button at the top of the comment section.  From there, you can remove (or restore) all of the selected comments at once.  The same reason will be used for all removals.
+Clicking the "check" on a comment will select it and add it to a queue.  Select as many as you need, and then click the "Bulk Actions" button at the top of the comment section.  From there, you can remove (or restore) all of the selected comments at once.  The same reason/action will be used for all selected items.
 
 At present, you can only remove or restore comments with this feature, but I hope to add additional actions later as well as expand it to allow removing multiple posts from the community feed.
 
-**Note**:  While it would be nice to have a "select all chlid comment" box, due to API limitations and having no guarantee all of the parent comment's children have been loaded, you have to select each comment manually.  Still, it's a *huge* improvement over performing an individual removal for each.
+**Note**:  While it would be nice to have a "select all chlid comments" button on the topmost comment, due to API limitations and having no guarantee all of the parent comment's children have been loaded, you have to select each comment manually.  Still, it's a *huge* improvement over performing an individual removal for each.
 
 
 ---
