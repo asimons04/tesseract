@@ -20,6 +20,7 @@
     import { 
         BugAnt, 
         ExclamationCircle, 
+        HandRaised, 
         LockClosed, 
         Megaphone, 
         NoSymbol, 
@@ -135,14 +136,18 @@
 
         <!---Post State Flairs (Formerly Post Badges--->
         {#if !hideBadges}
+            
+            <!---Post Locked--->
             {#if post.post.locked}
                 <Badge label="Locked" color="yellow" icon={LockClosed} click={false} rightJustify={false} class="mb-1 mr-2">
-                    Locked
+                    Locked  
                 </Badge>
             {/if}
             
+                      
+            <!---Post Removed--->
             {#if post.post.removed}
-                <Badge label="Removed" color="red" icon={NoSymbol} click={true} rightJustify={false} class="mb-1 mr-2"
+                <Badge label="Removed" color="red" icon={HandRaised} click={true} rightJustify={false} class="mb-1 mr-2"
                     on:click={(e) => { 
                         e.preventDefault()
                         e.stopPropagation()
@@ -153,12 +158,14 @@
                 </Badge>
             {/if}
             
+            <!---Post Deleted--->
             {#if post.post.deleted}
                 <Badge label="Deleted" color="red" icon={Trash} click={false} rightJustify={false} class="mb-1 mr-2">
                     Deleted by Creator
                 </Badge>
             {/if}
-
+            
+            <!---Featured--->
             {#if (post.post.featured_local || post.post.featured_community)}
                 <Badge label="Featured" color="green" icon={Megaphone} click={false} rightJustify={false}  class="mb-1 mr-2">
                     Featured
