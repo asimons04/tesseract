@@ -205,6 +205,7 @@
                 post.post.embed_title = ''
                 post.post.featured_community = false
                 post.post.featured_local = false
+                post = post
             }
         },
 

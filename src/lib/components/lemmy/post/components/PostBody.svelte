@@ -37,14 +37,11 @@
         {$$props.class}
     "
 >    
-    {#key post.post.body}
     <Markdown bind:source={post.post.body} {inline}>
         <span slot="thumbnail">
             <slot name="thumbnail" />
         </span>
     </Markdown>
-    {/key}
-    
     <slot />
 </div>
 
