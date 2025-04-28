@@ -10,6 +10,7 @@
         HandRaised,
         Icon,
         Minus,
+        NoSymbol,
         Pencil,
         Plus,
         Trash,
@@ -45,6 +46,7 @@
     import { slide }        from 'svelte/transition'
     import { toast }        from '$lib/components/ui/toasts/toasts.js'
     import { userSettings } from '$lib/settings'
+    import { goto } from '$app/navigation';
     
     export let node: CommentNodeI
     export let postId: number
@@ -180,15 +182,19 @@
     async function getCommentText() {
         let text = node.comment_view.comment.content
 
+        /*
         if (node.comment_view.comment.deleted) {
             text = '*Deleted by Creator*'
+            text = ''
         }
 
         if (node.comment_view.comment.removed) {
+            
             text =  onHomeInstance 
                 ? `[*Removed by Mod*](/modlog?comment_id=${node.comment_view.comment.id})`
                 : '*Removed by Mod*'
         }
+        */
         
         // If current account is admin, show the content. Second condition is for older APIs that showed the removed content to mods.
         if (onHomeInstance && (admin || (mod && !minAPIVersion('0.19.4')) )) {
@@ -334,18 +340,6 @@
                             </span>
                         {/if}
 
-                        {#if node.comment_view.comment.deleted} 
-                            <Badge icon={Trash} color="red" rightJustify={false} label="Deleted">
-                                <span class="hidden xl:block">Deleted</span>
-                            </Badge>
-                        {/if}
-
-                        {#if node.comment_view.comment.removed}
-                            <Badge icon={HandRaised} color="red" rightJustify={false} click={false}  label="Removed by Mod">
-                                <span class="hidden xl:block">Removed</span>
-                            </Badge>
-                        {/if}
-
                         {#if node.comment_view.saved}
                             <Badge icon={Bookmark} color="yellow" rightJustify={false} click={false} label="Saved"/>
                         {/if}
@@ -361,7 +355,64 @@
 
             <div class="flex flex-col gap-1">
                 
-                <div class="max-w-full mt-0.5 break-words text-sm">
+                <!---Indicator Badges--->
+                <div class="flex flex-row flex-wrap w-full gap-2 items-center">
+                    
+                    <!--Deleted By Creator-->
+                    {#if node.comment_view.comment.deleted} 
+                        <Badge icon={Trash} color="red" rightJustify={false} click={false} class="my-1" label="Deleted">
+                            Deleted by Creator
+                        </Badge>
+                    {/if}
+
+                    <!---Removed by Mod--->
+                    {#if node.comment_view.comment.removed}
+                        <Badge icon={HandRaised} color="red" rightJustify={false} click={onHomeInstance} class="my-1" label="Removed by Mod"
+                            on:click={(e) => { 
+                               if (onHomeInstance) {
+                                    e.preventDefault()
+                                    e.stopPropagation()
+                                    goto(`/modlog?comment_id=${node.comment_view.comment.id}`)
+                               }
+                            }}
+                        >
+                            Removed by Mod
+                        </Badge>
+                    {/if}
+                    
+                    <!---Banned from Community--->
+                    {#if node.comment_view.creator_banned_from_community}
+                        <Badge icon={NoSymbol} color="yellow" rightJustify={false} click={onHomeInstance} class="my-1" label="Banned from Community"
+                            on:click={(e) => { 
+                                if (onHomeInstance) {
+                                    e.preventDefault()
+                                    e.stopPropagation()
+                                    goto(`/modlog?other_person_id=${node.comment_view.creator.id}&type=ModBanFromCommunity`)
+                                }
+                            }}
+                        >
+                            Banned From Community
+                        </Badge>
+                    {/if}
+
+                    <!---Banned from Instance--->
+                    {#if node.comment_view.creator.banned}
+                        <Badge icon={NoSymbol} color="red" rightJustify={false} click={onHomeInstance} class="my-1" label="Banned from Instance"
+                            on:click={(e) => { 
+                                if (onHomeInstance) {
+                                    e.preventDefault()
+                                    e.stopPropagation()
+                                    goto(`/modlog?other_person_id=${node.comment_view.creator.id}&type=ModBan`)
+                                }
+                            }}
+                        >
+                            Banned From Instance
+                        </Badge>
+                    {/if}
+
+                </div>
+
+                <div class="max-w-full break-words text-sm">
                     <Markdown source={commentText} noImages={node.comment_view.comment.removed} class="px-1" />
                 </div>
                 
