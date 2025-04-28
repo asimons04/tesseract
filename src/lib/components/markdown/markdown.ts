@@ -185,7 +185,7 @@ export const photonify = (link: string) => {
         const match = link.match(regexes.user)
         if (!match) return
         // These also use /u/ but should not be localized
-        let exceptionsRe = /(reddit.com|youtube.com|youtu.be|y2u.be)/i
+        let exceptionsRe = /(reddit.com|youtube.com|youtu.be|y2u.be|patreon.com)/i
         if (link.match(exceptionsRe)) return
         
         return `/u/${match?.[2]}@${match?.[1]}`
