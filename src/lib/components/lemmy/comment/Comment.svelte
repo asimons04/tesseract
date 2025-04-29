@@ -40,13 +40,15 @@
         createEventDispatcher, 
         onMount 
     }                       from 'svelte'
+    
+    import { goto }         from '$app/navigation'
     import { page }         from '$app/stores'
     import { profile }      from '$lib/auth.js'
     import { sleep }        from '../post/helpers'
     import { slide }        from 'svelte/transition'
     import { toast }        from '$lib/components/ui/toasts/toasts.js'
     import { userSettings } from '$lib/settings'
-    import { goto } from '$app/navigation';
+    
     
     export let node: CommentNodeI
     export let postId: number
@@ -182,25 +184,6 @@
     async function getCommentText() {
         let text = node.comment_view.comment.content
 
-        /*
-        if (node.comment_view.comment.deleted) {
-            text = '*Deleted by Creator*'
-            text = ''
-        }
-
-        if (node.comment_view.comment.removed) {
-            
-            text =  onHomeInstance 
-                ? `[*Removed by Mod*](/modlog?comment_id=${node.comment_view.comment.id})`
-                : '*Removed by Mod*'
-        }
-        */
-        
-        // If current account is admin, show the content. Second condition is for older APIs that showed the removed content to mods.
-        if (onHomeInstance && (admin || (mod && !minAPIVersion('0.19.4')) )) {
-            text =  node.comment_view.comment.content
-        }
-
         // If the content is removed, try to append the removal reason.  If current account is a mod, append the original content from the modlog lookup
         if (onHomeInstance && node.comment_view.comment.removed && $userSettings.autoLookupRemovedCommentReasons && minAPIVersion('0.19.6')) {
             // Assume removed reason is ban w/removal if no modlog entry for the removed item.
@@ -229,6 +212,11 @@
                 
                 // Append the removal reason and if admin/mod, the removed content contents
                 text += `\n\n > **Removal Reason**: ${reason}`
+                
+                // For mods/admins, show the mod who performed the action
+                if ( (admin || mod) && results.removed_comments[0].moderator) {
+                    text += `\n>\n> **Moderator**: @${results.removed_comments[0].moderator.name}@${new URL(results.removed_comments[0].moderator.actor_id).hostname}`
+                }
             }
             catch {}
         }
