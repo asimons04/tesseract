@@ -71,7 +71,7 @@
 
     // If linking to a thread, scroll to the speciic comment and highlight it
     onMount(async() => {
-        // Need to do this so we can set comment text to "Deleted by creator", "Remove by Mod", and try to lookup the modlog details to display inline.
+        // Need to do this so we can lookup the modlog details to display the reason inline and add the text back for mods.
         commentText = await getCommentText()
         
         if (jumpTo > 0 && jumpTo == node.comment_view.comment.id ) { 
