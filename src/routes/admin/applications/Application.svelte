@@ -322,7 +322,7 @@
                             <!---Approve The Application--->
                             <Button color="tertiary-border" icon={Check} alignment="left" class="w-full" 
                                 title="Approve the application"
-                                loading={approving}
+                                loading={approving && !createModlogEntry}
                                 disabled={approving}    
                                 on:click={() => { 
                                     approving = true
