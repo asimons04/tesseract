@@ -597,8 +597,16 @@
                         {#if $profile?.user && !communityBlocked}
                             <Button color="tertiary-border" icon={PencilSquare} iconSize={20} alignment="left" class="w-full"
                                 disabled={
-                                    (communityDetails.community_view.community.posting_restricted_to_mods && !amMod($profile.user, communityDetails.community_view.community)) ||
-                                    communityDetails.community_view.community.removed || communityDetails.community_view.banned_from_community
+                                    (
+                                        communityDetails.community_view.community.posting_restricted_to_mods && 
+                                        !amMod($profile.user, communityDetails.community_view.community)
+                                    ) ||
+                                    communityDetails.community_view.community.removed || 
+                                    communityDetails.community_view.banned_from_community || 
+                                    (
+                                        communityDetails.community_view.community.visibility == 'LocalOnly' && 
+                                        new URL($profile.user.local_user_view.person.actor_id).hostname != new URL(communityDetails.community_view.community.actor_id).hostname
+                                    )
                                 }
                                 on:click={()=> {
                                     action='createPost'
