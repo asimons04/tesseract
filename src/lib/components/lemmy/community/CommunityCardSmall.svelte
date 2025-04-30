@@ -22,6 +22,8 @@
         EyeSlash,
         NoSymbol,
         Trash,
+        LockClosed,
+        Home,
     } from 'svelte-hero-icons'
     
     
@@ -83,6 +85,18 @@
             </span>
 
             <span class="flex flex-row flex-wrap w-full gap-2 text-sm font-normal mt-1">
+                {#if community_view.community.posting_restricted_to_mods}
+                    <Badge color="yellow" icon={LockClosed} inline click={false} rightJustify={false}>
+                        Mods Only
+                    </Badge>
+                {/if}
+
+                {#if community_view.community.visibility == 'LocalOnly'}
+                    <Badge color="orange" icon={Home} inline click={false} rightJustify={false}>
+                        Local
+                    </Badge>
+                {/if}
+                
                 {#if community_view.blocked}
                     <Badge color="red" icon={EyeSlash} inline click={false} rightJustify={false}>
                         Blocked
