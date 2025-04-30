@@ -198,11 +198,11 @@
             if (post?.post.id == e.detail.post_id) {
                 post.post.removed = e.detail.purged
                 post.post.name = '*Purged*'
-                post.post.body = ''
-                post.post.url = ''
-                post.post.thumbnail_url = ''
-                post.post.embed_description = ''
-                post.post.embed_title = ''
+                post.post.body = undefined
+                post.post.url = undefined
+                post.post.thumbnail_url = undefined
+                post.post.embed_description = undefined
+                post.post.embed_title = undefined
                 post.post.featured_community = false
                 post.post.featured_local = false
                 post = post
