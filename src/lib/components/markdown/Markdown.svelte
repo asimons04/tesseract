@@ -42,7 +42,7 @@
     export let noHashtags: boolean = false
     export let noImages: boolean = false
 
-    let mdText:string
+    let mdText:string | undefined
 
     const noLinktokenizer = {
         autolink(src: string): undefined  {
@@ -79,8 +79,11 @@
 
     
     // Pre-process the markdown text to detect user/community links, hashtags, etc
-    function preProcess(text:string) {
-        if (!text) return
+    function preProcess(text:string|undefined) {
+        if (!text) {
+            mdText = undefined
+            return
+        }
         
         // Initialize guardrail flags
         let inCodeBlock = false
