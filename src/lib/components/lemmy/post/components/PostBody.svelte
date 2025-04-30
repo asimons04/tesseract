@@ -14,8 +14,6 @@
         Icon
     } from 'svelte-hero-icons'
     
-  
-
     export let post:PostView
     export let displayType:PostDisplayType  = 'post'
     export let expandPreviewText:boolean    = false
