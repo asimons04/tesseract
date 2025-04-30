@@ -1,7 +1,7 @@
 <script lang="ts">
     import type { BanCommunityEvent, BanUserEvent, DistinguishCommentEvent, EditCommentEvent, PurgeCommentEvent, PurgePostEvent, RemoveCommentEvent } from '$lib/ui/events'
     import { getDepthFromComment, type CommentNodeI } from './comments'
-    import type { CommentView, UploadImageResponse } from 'lemmy-js-client';
+    import type { CommentView, Person, UploadImageResponse } from 'lemmy-js-client';
     
     import {
         ArrowUp,
@@ -70,6 +70,18 @@
     let admin                       = isAdmin($profile?.user)
     let mod                         = amMod($profile?.user, node.comment_view.community)
     let selected                    = false
+
+    interface CommentModlogLookup {
+        reason: string | undefined
+        moderator: Person | undefined
+        when: string | undefined
+    }
+
+    let modlogLookup: CommentModlogLookup = {
+        reason: undefined,
+        moderator: undefined,
+        when: undefined
+    }
 
     // If linking to a thread, scroll to the speciic comment and highlight it
     onMount(async() => {
@@ -186,11 +198,7 @@
 
         // If the content is removed, try to append the removal reason.  If current account is a mod, append the original content from the modlog lookup
         if (onHomeInstance && node.comment_view.comment.removed && $userSettings.autoLookupRemovedCommentReasons && minAPIVersion('0.19.6')) {
-            // Assume removed reason is ban w/removal if no modlog entry for the removed item.
-            let reason = (node.comment_view.creator.banned || node.comment_view.creator_banned_from_community)
-                ? 'Creator banned with content removal'
-                :'No reason specified'
-           
+
             // Don't lookup purged comments; return early with static 'Purged by admin' message.
             if (node.comment_view.comment.content == '*Purged*') {
                 text += `\n\n > **Removal Reason**: Purged by Admin`
@@ -199,9 +207,18 @@
 
             try {
                 let results = await getClient().getModlog({comment_id: node.comment_view.comment.id})
+                
+                // Assume removed reason is ban w/removal if no modlog entry for the removed item.
+                modlogLookup.reason = (node.comment_view.creator.banned || node.comment_view.creator_banned_from_community)
+                    ? 'Creator banned with content removal'
+                    : 'No reason specified'
+                
                 if (results?.removed_comments.length > 0) {
-                    reason = results.removed_comments[0].mod_remove_comment.reason ?? 'Failed to lookup reason automatically. Please see modlog.'
                     
+                    modlogLookup.reason = results.removed_comments[0].mod_remove_comment.reason ?? 'Failed to lookup reason automatically. Please see modlog.'
+                    modlogLookup.when = results.removed_comments[0].mod_remove_comment.when_
+                    if (admin || mod) modlogLookup.moderator = results.removed_comments[0].moderator
+
                     // Let mods see removed comments again (stupid Lemmy devs!!)
                     if (admin || mod) {
                         text = admin
@@ -209,15 +226,7 @@
                             : results.removed_comments[0].comment.content
                     }
                 }
-                
-                // Append the removal reason and if admin/mod, the removed content contents
-                text += `\n\n > **Removal Reason**: ${reason}`
-                
-                // For mods/admins, show the mod who performed the action
-                if ( (admin || mod) && results.removed_comments[0].moderator) {
-                    text += `\n>\n> **Moderator**: @${results.removed_comments[0].moderator.name}@${new URL(results.removed_comments[0].moderator.actor_id).hostname}`
-                }
-            }
+             }
             catch {}
         }
 
@@ -344,8 +353,8 @@
             <div class="flex flex-col gap-1">
                 
                 <!---Indicator Badges--->
-                <div class="flex flex-row flex-wrap w-full gap-2 items-center">
-                    
+                <div class="flex flex-row flex-wrap w-full gap-2 px-1 items-center">
+
                     <!--Deleted By Creator-->
                     {#if node.comment_view.comment.deleted} 
                         <Badge icon={Trash} color="red" rightJustify={false} click={false} class="my-1" label="Deleted">
@@ -353,21 +362,6 @@
                         </Badge>
                     {/if}
 
-                    <!---Removed by Mod--->
-                    {#if node.comment_view.comment.removed}
-                        <Badge icon={HandRaised} color="red" rightJustify={false} click={onHomeInstance} class="my-1" label="Removed by Mod"
-                            on:click={(e) => { 
-                               if (onHomeInstance) {
-                                    e.preventDefault()
-                                    e.stopPropagation()
-                                    goto(`/modlog?comment_id=${node.comment_view.comment.id}`)
-                               }
-                            }}
-                        >
-                            Removed by Mod
-                        </Badge>
-                    {/if}
-                    
                     <!---Banned from Community--->
                     {#if node.comment_view.creator_banned_from_community}
                         <Badge icon={NoSymbol} color="yellow" rightJustify={false} click={onHomeInstance} class="my-1" label="Banned from Community"
@@ -379,7 +373,7 @@
                                 }
                             }}
                         >
-                            Banned From Community
+                            Community Banned
                         </Badge>
                     {/if}
 
@@ -394,7 +388,7 @@
                                 }
                             }}
                         >
-                            Banned From Instance
+                            Banned
                         </Badge>
                     {/if}
 
@@ -403,6 +397,42 @@
                 <div class="max-w-full break-words text-sm">
                     <Markdown source={commentText} noImages={node.comment_view.comment.removed} class="px-1" />
                 </div>
+
+                
+                <!---Removal Notice--->
+                {#if node.comment_view.comment.removed}
+                    <!---<Card elevation={elevation == 0 ? 1 : 0} class="mx-2 p-1">--->
+                    <Card cardColor='error' class="mx-2 p-1">
+                        <div class="flex flex-row gap-1 items-center w-full">
+                            
+                            <div class="w-[42px]">
+                                <Button color="tertiary" size="square-lg" icon={HandRaised} iconSize={28} title="View Modlog for Comment"
+                                    on:click={() => goto(`/modlog?comment_id=${node.comment_view.comment.id}`) }
+                                />
+                            </div>
+                            
+                            <div class="flex flex-col w-[calc(100%-48px)] gap-0 text-xs font-normal">
+                                <Markdown source={'**Removed by Moderator**'} />
+
+                                {#if modlogLookup.when}
+                                <span class="flex flex-row items-start gap-1">
+                                    <span class="font-bold">When</span>: <RelativeDate date={modlogLookup.when} />
+                                </span>
+                                {/if}
+
+                                {#if modlogLookup.moderator}
+                                <span class="flex flex-row items-start gap-1">
+                                    <span class="font-bold">Moderator</span>: <UserLink user={modlogLookup.moderator} avatar={false} avatarSize={20} badges={false}/>
+                                </span>
+                                {/if}
+
+                                {#if modlogLookup.reason}
+                                    <Markdown source={'**Reason**: ' + modlogLookup.reason}/>
+                                {/if}
+                            </div>
+                        </div>
+                    </Card>
+                {/if}
                 
                 
                 <div class="flex flex-row gap-2 items-center">
