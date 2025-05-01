@@ -2,7 +2,7 @@
 All major/minor changes between releases will be documented here.  
 
 # 1.4.38
-This release brings bugfixes, a user-requested feature, enhancements to reactivity when performing mod actions, tweaks and additions to status indicators, and a special little something-something for mods and admins to make their lives MUCH easier.
+This release brings bugfixes, a user-requested feature, enhancements to reactivity when performing mod actions, various UI polish, additions to status indicators, and a special little something-something for mods and admins to make their lives MUCH easier.
 
 ## Bugfixes
 - Now that most instances are on 0.19.4 and above which natively support alt text, remove the post title as a fallback alt text.
@@ -13,7 +13,7 @@ This release brings bugfixes, a user-requested feature, enhancements to reactivi
 
 - [Bug 47](https://github.com/asimons04/tesseract/issues/47): Selected sort state was not preserved after navigating away from `/c/{community}`  As a result of this bugfix, community URLs can now specify the desired sort method (e.g. `/c/community@instance/{sort}` --> `/c/tesseract@dubvee.org/TopMonth`).  If no sort paramater is supplied (e.g. `/c/tesseract@dubvee.org`), it will use your default sort type.
 
-- Disable create post button in community modal if community is local and current profile is not local to that instance.
+- Disable create post button if community is local and current profile is not local to that instance.
 
 - The post body would not reactivly update if the body content was cleared out (e.g. responding to purge post event or if you edited the post body and removed the text).  The content was correctly saved, but it only re-rendered on refresh. Now accounts for empty or undefined values in post body when triggering a re-render.
 
@@ -21,10 +21,17 @@ This release brings bugfixes, a user-requested feature, enhancements to reactivi
   - Opening it no longer triggers unwanted reactivity which caused certain elements to re-render. Most notable was expanding the list would cause the comment tree to reload (still no idea *why*) and/or cause the page to re-jump to the specific comment if you originally linked to it.
   - Performing mod actions from the crosspost list now correctly updates the xpost count and will clear the xpost component if all crossposts have been removed.
 
+- Re-added a hack to partially patch a memory-leak.  I had removed this previously to resolve another issue, but I think that no longer applies after other changes.  Svelte(/kit) *swears* there's no memory leak, but there definitely is.  Not sure if this is fixed in Svelte 5, but we'll see when I get around to porting it.  Ugh.
+
+
 ## Changes
 - Per user request, add alt text-as-caption for image posts (similar to markdown images).  Controlled by the same "Show alt text as caption" user setting.  Only shows in "card" view since there's no room in compact view, and it would be confusing to mix it in with the body text.
 
 - Finally added the option to set community visibility when creating or editing a community.
+
+- Add missing indicators to Community Card
+  - Posting Restricted to Mods (Yellow 'Mods only' Badge)
+  - Local Only (Orange "Local" Badge)
 
 - UserLink component now responsive to ban user events.  When banning a user from areas not attached to a post/comment (e.g from search or modlog), the banned indicator will change to reflect the state rather than relying on the post/comment handlers.  
 
@@ -45,9 +52,7 @@ This release brings bugfixes, a user-requested feature, enhancements to reactivi
   - Banned from Site
   - Banned from Community
 
-- Add missing indicators to Community Card
-  - Posting Restricted to Mods (Yellow 'Mods only' Badge)
-  - Local Only (Orange "Local Only" Badge)
+
 
 
 ## New Features
