@@ -411,7 +411,7 @@
                                 />
                             </div>
                             
-                            <div class="flex flex-col w-[calc(100%-48px)] gap-0 text-xs font-normal">
+                            <div class="flex flex-col w-[calc(100%-48px)] gap-0 truncate text-xs font-normal">
                                 <Markdown source={'**Removed by Moderator**'} />
 
                                 {#if modlogLookup.when}
