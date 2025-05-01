@@ -17,10 +17,14 @@
     on:click={() => createPost(community_view.community)}
     icon={PencilSquare}
     disabled={
+        (!$profile?.user) ||
         (community_view.community.posting_restricted_to_mods && !amMod($profile?.user, community_view.community)) || 
         community_view.community.removed ||
         community_view.banned_from_community ||
-        (!$profile?.jwt)
+        (
+            community_view.community.visibility == 'LocalOnly' && 
+            new URL($profile.user.local_user_view.person.actor_id).hostname != new URL(community_view.community.actor_id).hostname
+        )
     }
 >
     Create Post
