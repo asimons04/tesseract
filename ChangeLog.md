@@ -2,10 +2,10 @@
 All major/minor changes between releases will be documented here.  
 
 # 1.4.38
-This release brings bugfixes, a user-requested feature, enhancements to reactivity when performing mod actions, and a special little something-something for mods and admins to make their lives MUCH easier.
+This release brings bugfixes, a user-requested feature, enhancements to reactivity when performing mod actions, tweaks and additions to status indicators, and a special little something-something for mods and admins to make their lives MUCH easier.
 
 ## Bugfixes
-- Now that most instances are on 0.19.4 and above, remove the post title as a fallback alt text.
+- Now that most instances are on 0.19.4 and above which natively support alt text, remove the post title as a fallback alt text.
 
 - Check if the first 150 characters of a post body contains an image since the lazy loading was sometimes preventing the "does the post body scroll" check from returning true. This caused the "expand" button to not appear unless you toggled the post to compact/card and back.
 
@@ -13,41 +13,82 @@ This release brings bugfixes, a user-requested feature, enhancements to reactivi
 
 - [Bug 47](https://github.com/asimons04/tesseract/issues/47): Selected sort state was not preserved after navigating away from `/c/{community}`  As a result of this bugfix, community URLs can now specify the desired sort method (e.g. `/c/community@instance/{sort}` --> `/c/tesseract@dubvee.org/TopMonth`).  If no sort paramater is supplied (e.g. `/c/tesseract@dubvee.org`), it will use your default sort type.
 
+- Disable create post button in community modal if community is local and current profile is not local to that instance.
+
+- The post body would not reactivly update if the body content was cleared out (e.g. responding to purge post event or if you edited the post body and removed the text).  The content was correctly saved, but it only re-rendered on refresh. Now accounts for empty or undefined values in post body when triggering a re-render.
+
+- Fixed several glitches with the Crosspost list:
+  - Opening it no longer triggers unwanted reactivity which caused certain elements to re-render. Most notable was expanding the list would cause the comment tree to reload (still no idea *why*) and/or cause the page to re-jump to the specific comment if you originally linked to it.
+  - Performing mod actions from the crosspost list now correctly updates the xpost count and will clear the xpost component if all crossposts have been removed.
 
 ## Changes
 - Per user request, add alt text-as-caption for image posts (similar to markdown images).  Controlled by the same "Show alt text as caption" user setting.  Only shows in "card" view since there's no room in compact view, and it would be confusing to mix it in with the body text.
+
+- Finally added the option to set community visibility when creating or editing a community.
 
 - UserLink component now responsive to ban user events.  When banning a user from areas not attached to a post/comment (e.g from search or modlog), the banned indicator will change to reflect the state rather than relying on the post/comment handlers.  
 
 - When purging a post with the post opened (e.g. when the comment section is loaded), the comments will show "Purged" as well since the API also removes the comments from purged posts.
 
-- Flairs are now scoped to the community if you are in a community feed (vs main feed).  If you click a post flair, it will search for other posts with that in the title.  Now, if you are browsing inside a community, the search will scope itself to the community you're in.
+- Disable scroll to top of post when expanding post body in card view (still does for compact since the fixed height allows the whole post to be visible.
 
-- Add indicator badge row to comments; move deleted/reomoved indicators to this row.  Link removed, baned site, banned community badges to relevant modlog entries.
+- Flairs are now scoped to the community if you are in a community feed (vs main feed).  If you click a post flair, it will search for other posts with that in the title.  Now, if you are browsing inside a community, the search will scope itself to the community you're in when you click on a flair tag.
+
+- Made the inline removal reasons for comments prettier. 
+  - Now shows when the mod action was taken
+  - For admins and mods, will show the moderator who performed the action
+  - The "hand raised" icon is a button which links to the modlog for that item.
+
+- Add indicator badge row to comments; move deleted/reomoved indicators to this row.  The 'removed', 'baned site', and 'banned community' badges are clickable button links to relevant modlog entries.
   - Deleted by Creator
   - Removed by Mod
   - Banned from Site
   - Banned from Community
 
+- Add missing indicators to Community Card
+  - Posting Restricted to Mods (Yellow 'Mods only' Badge)
+  - Local Only (Orange "Local Only" Badge)
+
 
 ## New Features
 
-### Select Multiple Comments and Perform a Single Mod Action for them All
-Added a nice little something-something for the mods this release.  
+### Local Communities
+
+
+### ModQueue v0.1
+
+**Select Multiple Comments and Perform a Single Mod Action for them All**
+
+Added a nice little something-something for the mods this release. It's the initial version of a new set of mod tools which I plan to expand upon.
 
 Ever have to break up a slapfight or nuke an entire comment thread that has gone completely toxic and off the rails?  I have, and it's tedious work.  
 
 Not anymore.
 
 There are two new buttons available to mods/admins in the comment section:
+
 - Bulk Actions button (badge) at the top of the comment section
 - "Check" button on comment items
 
 Clicking the "check" on a comment will select it and add it to a queue.  Select as many as you need, and then click the "Bulk Actions" button at the top of the comment section.  From there, you can remove (or restore) all of the selected comments at once.  The same reason/action will be used for all selected items.
 
-At present, you can only remove or restore comments with this feature, but I hope to add additional actions later as well as expand it to allow removing multiple posts from the community feed.
+**Note**:  While it would be nice to have a "select all chlid comments" button on the topmost thread comment, due to API limitations and having no guarantee all of the parent comment's children have been loaded, you have to select each comment manually.  Still, it's a *huge* improvement over performing an individual removal for each.  I may look into doing a very deep fetch with the selected comment as the root, which should cover *most* cases, but there's still no guarantee from the API that *all* of the child comments are loaded.
+ 
+ #### Future Goals
+ At present, you can only remove or restore comments from the comment section with this feature, but the plan is to build upon this.  Under the hood, there *is* support for posts and users, but that hasn't been fully integrated yet.  
+ 
+ Roadmap and use-cases include:
 
-**Note**:  While it would be nice to have a "select all chlid comments" button on the topmost comment, due to API limitations and having no guarantee all of the parent comment's children have been loaded, you have to select each comment manually.  Still, it's a *huge* improvement over performing an individual removal for each.
+ - Add option to ban/unban the creators of the selected items
+ - Preview and edit the list of action items prior to issuing the action
+ - Allow selecting posts from the feed to perform a bulk action
+ - Allow selecting posts, comments, and/or users from the search results to mod in bulk.
+ 
+ The mod queue is currently scoped only to the current post and clears upon reloading/refreshing.  This was intentional to avoid accidental actions for items that may have been selected from another entry.  Once the UI for this feature matures, I'm going to make this persistent so that it is a proper mod queue that can work across posts, communities, pages, etc.
+
+ Suggestions for this are welcome.  I have only my own experience to draw from, so there may be cases I haven't considered or use-cases that haven't (yet) applied to me.
+
+
 
 
 ---
