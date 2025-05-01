@@ -35,7 +35,7 @@ This release brings bugfixes, a user-requested feature, enhancements to reactivi
 
 - UserLink component now responsive to ban user events.  When banning a user from areas not attached to a post/comment (e.g from search or modlog), the banned indicator will change to reflect the state rather than relying on the post/comment handlers.  
 
-- When purging a post with the post opened (e.g. when the comment section is loaded), the comments will show "Purged" as well since the API also removes the comments from purged posts.
+- When purging a post with the post opened (e.g. when the comment section is loaded), the comments will update to show "Purged" as well since the API also removes the comments from purged posts.
 
 - Disable scroll to top of post when expanding post body in card view (still does for compact since the fixed height allows the whole post to be visible.
 
@@ -46,7 +46,7 @@ This release brings bugfixes, a user-requested feature, enhancements to reactivi
   - For admins and mods, will show the moderator who performed the action
   - The "hand raised" icon is a button which links to the modlog for that item.
 
-- Add indicator badge row to comments; move deleted/reomoved indicators to this row.  The 'removed', 'baned site', and 'banned community' badges are clickable button links to relevant modlog entries.
+- Add indicator badge row to comments; move deleted/removed indicators to this row.  The 'removed', 'baned site', and 'banned community' badges are clickable button links to relevant modlog entries.
   - Deleted by Creator
   - Removed by Mod
   - Banned from Site
@@ -58,7 +58,7 @@ This release brings bugfixes, a user-requested feature, enhancements to reactivi
 ## New Features
 
 ### Local Communities
-
+Can now set the community visibility to "local" when creating or editing a community.
 
 ### ModQueue v0.1
 
@@ -99,17 +99,12 @@ Clicking the "check" on a comment will select it and add it to a queue.  Select 
 ---
 
 # 1.4.37
+Minor update with UI polish and, at least for now, the removal of a few rarely-used post views.  
+
 ## Bugfixes
 - Revert throw error in `/post/instance/postid` loader as it was preventing the prettier error in `+page.svelte` from showing
 - Private message report modal was using the wrong close method
 
-
-## Changes
-
-# 1.4.37
-Minor update with UI polish and, at least for now, the removal of a few rarely-used post views.  
-
-## Bugfixes
 - [Issue 35: Preview length setting counts markup and trims before applying it resulting in short previews and broken links.](https://github.com/asimons04/tesseract/issues/35)
 - **Annoyance**:  When an `<hr>` element was used toward the top of the post body, it would wrap below the thumbnail image in compact view. Changed `width` to `max-width` in the markdown post CSS.
 
