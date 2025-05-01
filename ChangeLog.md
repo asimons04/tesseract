@@ -1,6 +1,12 @@
 # Changelog for 1.4.x Series (Intrepid)
 All major/minor changes between releases will be documented here.  
 
+# 1.4.39
+## Bugfixes
+- Fix truncation in post headings to account for community display names where the community creator thinks "Display Name" and "Community Long Description" are the same picture :sigh:
+
+
+
 # 1.4.38
 This release brings bugfixes, a user-requested feature, enhancements to reactivity when performing mod actions, various UI polish, additions to status indicators, and a special little something-something for mods and admins to make their lives MUCH easier.
 
