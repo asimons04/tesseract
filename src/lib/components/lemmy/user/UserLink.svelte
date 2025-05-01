@@ -92,7 +92,7 @@
 <svelte:window on:banUser={handlers.BanUserEvent} />
 
 <a href={linkFromCommunity(user)} on:click={loadProfileModal} 
-    class="inline-flex flex-col md:flex-row  gap-1 items-start md:items-center hover:underline w-full 
+    class="inline-flex flex-col md:flex-row  gap-1 items-start md:items-center hover:underline w-full truncate
         {noClick ? 'pointer-events-none' : ''} 
         {$$props.class}
     " 
