@@ -1,9 +1,9 @@
 <script lang="ts">
-    import type { CommunityView, GetCommunityResponse, SubscribedType, UploadImageResponse } from 'lemmy-js-client';
+    import type { CommunityView, CommunityVisibility, GetCommunityResponse, SubscribedType, UploadImageResponse } from 'lemmy-js-client';
     
     import { addSubscription } from '$lib/lemmy/user.js'
     import { createFakeCommunityView } from '../post/helpers'
-    import { getClient } from '$lib/lemmy.js'
+    import { getClient, minAPIVersion } from '$lib/lemmy.js'
     import { goto } from '$app/navigation'
     import { instance } from '$lib/instance'
     import { page } from '$app/stores'
@@ -26,8 +26,8 @@
     import {
         ExclamationTriangle, 
         HandRaised,
+        Home,
     } from 'svelte-hero-icons'
-    import { Store } from 'emoji-mart';
     
     
     
@@ -43,6 +43,7 @@
         nsfw: boolean
         postsLockedToModerators: boolean
         submitting: boolean
+        visibility?: CommunityVisibility
     } = {
         name: '',
         displayName: '',
@@ -79,6 +80,7 @@
                         icon: formData.icon,
                         banner: formData.banner,
                         community_id: edit,
+                        visibility: minAPIVersion('0.19.4') ? (localCommunity ? 'LocalOnly' : 'Public') : undefined
                     })
                 :   await client.createCommunity({
                         name: formData.name,
@@ -88,6 +90,7 @@
                         posting_restricted_to_mods: formData.postsLockedToModerators,
                         icon: formData.icon,
                         banner: formData.banner,
+                        visibility: minAPIVersion('0.19.4') ? (localCommunity ? 'LocalOnly' : 'Public') : undefined
                     })
 
             toast({
@@ -97,17 +100,6 @@
             })
 
             goto($page.url, {invalidateAll: true})
-
-            // If editing a community, update the stored details
-            if (edit) {
-                const storageKey = `getCommunity_${$instance}:${res.community_view.community.name}@${new URL(res.community_view.community.actor_id).hostname}`
-                let getCommunityResponse: GetCommunityResponse | undefined = await storage.get(storageKey)
-                if (getCommunityResponse) {
-                    getCommunityResponse.community_view = res.community_view
-                    await storage.put(storageKey, getCommunityResponse)
-                }
-
-            }
 
             // If creating a community, add the community to the local list of communities they're moderating
             if (!edit) {
@@ -153,6 +145,8 @@
         icon: false,
         banner: false
     }
+
+    let localCommunity = false
 
     let communityPreview:CommunityView
     $:  formData, communityPreview = generateCommunityPreview()
@@ -262,7 +256,12 @@
         <SettingToggle icon={HandRaised} title="Only Moderators Can Post" bind:value={formData.postsLockedToModerators}
             description="When enabled, this option restricts posting in the community to moderators only."
         />
-        
+
+        {#if minAPIVersion('0.19.4')}
+        <SettingToggle icon={Home} title="Local Community" bind:value={localCommunity}
+            description="Local communities are only able to be interacted with my users local to your instance."
+        />
+        {/if}
     </SettingToggleContainer>
 
 
