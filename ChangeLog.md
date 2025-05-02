@@ -4,6 +4,8 @@ All major/minor changes between releases will be documented here.
 # 1.4.39
 ## Bugfixes
 - Fix truncation in post headings to account for community display names where the community creator thinks "Display Name" and "Community Long Description" are the same picture :sigh:
+  - Note:  Backported to 1.4.38
+
 
 
 
