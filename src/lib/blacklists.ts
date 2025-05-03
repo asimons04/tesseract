@@ -96,6 +96,7 @@ export const THROWAWAY_EMAIL_DOMAINS = [
     'spam4.me',
     'teleg.eu',
     'thetechnext.net',
+    'tmprator.win',
     'vuket.org',
     'ytnhy.com'
 ]
