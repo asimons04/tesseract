@@ -364,7 +364,18 @@
         <!---User's Modlog History--->
         {#if action == 'modlog'}
             <ModalPanel>
-                <ModalPanelHeading title="User Modlog History" on:click={()=>returnMainMenu()} />
+                <ModalPanelHeading title="User Modlog History" on:click={()=>returnMainMenu()}>
+                    <span class="flex flex-row gap-1" slot="actions">
+                        <Button size="sm" color="tertiary-border" class="h-8"
+                            icon={ArrowTopRightOnSquare}
+                            title="View in Full Modlog"
+                            on:click={() => {
+                                open = false
+                                goto(`/modlog?other_person_id=${personDetails.person_view.person.id}`)
+                            }}
+                        />
+                    </span>
+                </ModalPanelHeading>
                     <ModalScrollArea card={false}>
                         <EmbeddableModlog moderatee={personDetails.person_view.person} headingRowClass="mt-[-50px]" on:gotoFullModlog={() => open = false }/>    
                     </ModalScrollArea>
