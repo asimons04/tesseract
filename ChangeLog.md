@@ -6,6 +6,12 @@ All major/minor changes between releases will be documented here.
 - Fix truncation in post headings to account for community display names where the community creator thinks "Display Name" and "Community Long Description" are the same picture :sigh:
   - Note:  Backported to 1.4.38
 
+- If an inbox item is expanded, switching accounts or refreshing the list as a new item arrives would keep the text from the previous comment while updating the heading info correctly.  Caused the wrong comment/reply to be displayed.
+
+## Changes
+### Minor
+- Added "View in Full Modlog" button to User `Profile Modal -> User Modlog` panel (Thought I already had this, but it was in the moderation modal)
+
 
 
 
