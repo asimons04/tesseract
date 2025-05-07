@@ -41,6 +41,7 @@ const LINK_SHORTENERS = [
     'rb.gy',
     'search.app',
     'short.cm',
+    'shorturl.at',
     't.co',
     'tinyurl.com',
     'web.archive.org',
@@ -72,6 +73,7 @@ const TWITTER = [
 
 // Very non-comprehensive list of domains that host disposable/temporary/throwaway email aliases. Basically just the low-hanging fruit to aid in decision making.
 export const THROWAWAY_EMAIL_DOMAINS = [
+    'addy.io',
     'asciibinder.net',
     'azuretechtalk.net',
     'barplane.com',
