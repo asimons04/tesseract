@@ -1,5 +1,5 @@
 <script lang="ts">
-    import type { BanCommunityEvent, BanUserEvent, DistinguishCommentEvent, EditCommentEvent, PurgeCommentEvent, PurgePostEvent, RemoveCommentEvent } from '$lib/ui/events'
+    import type { BanCommunityEvent, BanUserEvent, DistinguishCommentEvent, EditCommentEvent, LockPostEvent, PurgeCommentEvent, PurgePostEvent, RemoveCommentEvent } from '$lib/ui/events'
     import { getDepthFromComment, type CommentNodeI } from './comments'
     import type { CommentView, Person, UploadImageResponse } from 'lemmy-js-client';
     
@@ -140,6 +140,13 @@
             }
         },
 
+        LockPostEvent: function (e: LockPostEvent) {
+            if (e.detail.post_id == node.comment_view.post.id) {
+                node.comment_view.post.locked = e.detail.locked
+                node = node
+            }
+        },
+
         PurgeCommentEvent: function(e: PurgeCommentEvent) {
             if (node.comment_view.comment.id == e.detail.comment_id) {
                 node.comment_view.comment.removed = e.detail.purged
@@ -243,6 +250,7 @@
     on:banCommunity={handlers.BanCommunityEvent} 
     on:editComment={handlers.EditCommentEvent}
     on:distinguishComment={handlers.DistinguishCommentEvent}
+    on:lockPost={handlers.LockPostEvent}
     on:removeComment={handlers.RemoveCommentEvent}
     on:purgeComment={handlers.PurgeCommentEvent}
     on:purgePost={handlers.PurgePostEvent}
