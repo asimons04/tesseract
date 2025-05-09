@@ -401,15 +401,8 @@
                     {/if}
 
                 </div>
-
-                <div class="max-w-full break-words text-sm">
-                    <Markdown source={commentText} noImages={node.comment_view.comment.removed} class="px-1" />
-                </div>
-
-                
                 <!---Removal Notice--->
                 {#if node.comment_view.comment.removed}
-                    <!---<Card elevation={elevation == 0 ? 1 : 0} class="mx-2 p-1">--->
                     <Card cardColor='error' class="mx-2 p-1">
                         <div class="flex flex-row gap-1 items-center w-full">
                             
@@ -441,7 +434,11 @@
                         </div>
                     </Card>
                 {/if}
-                
+
+
+                <div class="max-w-full break-words text-sm">
+                    <Markdown source={commentText} noImages={node.comment_view.comment.removed} class="px-1" />
+                </div>
                 
                 <div class="flex flex-row gap-2 items-center">
                     <CommentActions
