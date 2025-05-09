@@ -1,6 +1,7 @@
 <script lang="ts">
     import type { Filters} from './+page.js'
     
+    import { dividerColors } from '$lib/ui/colors.js'
     import { getClient } from '$lib/lemmy'
     import { goto } from '$app/navigation'
     import { page } from '$app/stores'
@@ -32,6 +33,7 @@
         User,
         XCircle 
     } from 'svelte-hero-icons'
+    
 
     export let data
     
@@ -321,7 +323,7 @@
     <div class="flex flex-row w-full h-full gap-4 flex-wrap justify-between">
 
     {#if data.modlog && data.modlog.length > 0}
-        <div class="flex flex-col gap-2 divide-y w-full">
+        <div class="flex flex-col gap-2 divide-y {dividerColors} w-full">
             
             <div class="hidden lg:flex flex-row gap-4 items-start w-full sticky top-[6.8rem] text-sm font-bold bg-white/25 dark:bg-black/25 backdrop-blur-3xl z-5">
                 <div class="w-[5%] flex justify-center">Time</div>
