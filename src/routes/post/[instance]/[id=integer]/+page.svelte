@@ -142,7 +142,7 @@
 
         <div class="flex flex-col gap-2 mx-auto w-full h-full md:w-[90%]">
             <Post 
-                bind:post={data.post.post_view} 
+                post={data.post.post_view} 
                 displayType="post" 
                 actions={true} 
                 {expandCompact}
