@@ -27,6 +27,7 @@ const FAKE_NEWS = [
 
 // Disallow link shorteners
 const LINK_SHORTENERS = [
+    '12ft.io',
     'apple.news',
     'archive.is',
     'archive.ph',
