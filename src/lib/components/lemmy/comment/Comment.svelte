@@ -201,8 +201,8 @@
 
             // Don't lookup purged comments; return early with static 'Purged by admin' message.
             if (node.comment_view.comment.content == '*Purged*') {
-                text += `\n\n > **Removal Reason**: Purged by Admin`
-                return text
+                modlogLookup.reason = `Purged by Admin`
+                return ''
             }
 
             try {
