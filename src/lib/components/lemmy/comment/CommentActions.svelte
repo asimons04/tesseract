@@ -68,10 +68,10 @@
     {#if actions}
         <Button size="sm" color="tertiary-border"
             disabled={comment.post.locked || comment.post.removed || comment.post.deleted || !$profile?.user || !onHomeInstance || comment.banned_from_community} 
-            hidden={comment.post.locked || !$profile?.user}
+            icon={ArrowUturnLeft}
+            iconSize={14}
             on:click={() => (replying = !replying)}
         >
-            <Icon src={ArrowUturnLeft} width={14} height={14} mini />
             <span class="text-xs">Reply</span>
         </Button>
         
