@@ -32,15 +32,15 @@
     
     <!---Date/time column--->
     <div class="flex flex-row gap-2 px-1 text-xs w-full lg:w-[5%]">
-        <span class="lg:hidden text-xs font-bold w-24">When:</span>
+        <span class="lg:hidden text-xs font-bold min-w-[10ch]">When:</span>
         <RelativeDate date={item.when} />
     </div>
 
     <!---Community--->
-    <div class="flex flex-row gap-1 px-1 text-xs w-full lg:w-[15%] items-center">
+    <div class="flex flex-row gap-1 px-1 text-xs w-full lg:w-[15%] truncate items-center">
         
         <span class="flex flex-row gap-2 items-center w-full">
-            <span class="lg:hidden text-xs font-bold w-24">Community:</span>
+            <span class="lg:hidden text-xs font-bold min-w-[10ch]">Community:</span>
             {#if item.community}        
                 <button class="cursor-pointer" title="Filter modlog for {item.community.name}" on:click={() => {
                     filter.community.set = !filter.community.set;
@@ -55,44 +55,46 @@
                     <Icon src={filter.community.set ? MinusCircle : PlusCircle} mini width={24} />
                 </button>
 
-                <CommunityLink showInstance={true} avatar={false} avatarSize={20} community={item.community} inline={false}/>
+                <CommunityLink showInstance={true} avatar={false} avatarSize={20} community={item.community} inline={true} class="truncate"/>
             {/if}
         </span>
         
     </div>
     
     <!---Moderator--->
-    {#if $profile?.user}
-        <div class="flex flex-row gap-1 px-1 text-xs w-full lg:w-[20%] items-center">
-            
-            <span class="flex flex-row gap-2 items-center w-full">    
-                <span class="lg:hidden text-xs font-bold w-24">Mod:</span>
-                {#if item.moderator}    
-                    <button class="cursor-pointer" title="Filter modlog for {item.moderator.name}" on:click={() => {
-                        filter.moderator.set = !filter.moderator.set;
-                        if (item?.moderator && filter.moderator.set) {
-                            filter.moderator.person = item.moderator;
-                            searchParam($page.url, 'mod_id', item.moderator.id.toString(), 'page');
-                        } else {
-                            searchParam($page.url, 'mod_id', '', 'mod_id');
-                        }
-                        
-                    }}>
-                        <Icon src={filter.moderator.set ? MinusCircle : PlusCircle} mini width={24} />
-                    </button>
+    
+    <div class="flex flex-row gap-1 px-1 text-xs w-full lg:w-[20%] truncate items-center">
+        
+        <span class="flex flex-row gap-2 items-center w-full">    
+            <span class="lg:hidden text-xs font-bold min-w-[10ch]">Mod:</span>
+            {#if item.moderator}    
+                <button class="cursor-pointer" title="Filter modlog for {item.moderator.name}" on:click={() => {
+                    filter.moderator.set = !filter.moderator.set;
+                    if (item?.moderator && filter.moderator.set) {
+                        filter.moderator.person = item.moderator;
+                        searchParam($page.url, 'mod_id', item.moderator.id.toString(), 'page');
+                    } else {
+                        searchParam($page.url, 'mod_id', '', 'mod_id');
+                    }
+                    
+                }}>
+                    <Icon src={filter.moderator.set ? MinusCircle : PlusCircle} mini width={24} />
+                </button>
 
-                    <UserLink showInstance={true} avatar={false} avatarSize={20} user={item.moderator} inline={false}/>
-                {/if}
-            </span>
-            
-        </div>
-    {/if}
+                <UserLink showInstance={true} avatar={false} avatarSize={20} user={item.moderator} inline={true} class="truncate"/>
+            {:else}
+                ---
+            {/if}
+        </span>
+        
+    </div>
+    
 
     <!---Moderatee / user --->
-    <div class="flex flex-row gap-1 px-1 text-xs w-full lg:w-[20%] items-center">
+    <div class="flex flex-row gap-1 px-1 text-xs w-full lg:w-[20%] truncate items-center">
         
         <span class="flex flex-row gap-2 items-center w-full">        
-            <span class="lg:hidden text-xs font-bold w-24">User:</span>
+            <span class="lg:hidden text-xs font-bold min-w-[10ch]">User:</span>
             {#if item.moderatee}    
                 <button class="cursor-pointer" title="Filter modlog for {item.moderatee.name}" on:click={() => {
                     filter.moderatee.set = !filter.moderatee.set;
@@ -108,7 +110,7 @@
                 </button>
 
                 
-                <UserLink avatar={false} showInstance={true} user={item.moderatee} inline={false}/>
+                <UserLink avatar={false} showInstance={true} user={item.moderatee} inline={true} class="truncate"/>
             {/if}
         </span>
         
