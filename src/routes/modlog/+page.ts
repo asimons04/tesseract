@@ -77,6 +77,7 @@ export interface ModLog {
     when: string
     post?: Post,
     comment?: Comment
+    type: ModlogActionType
 }
 
 export interface Filters {
@@ -108,6 +109,7 @@ function timestamp (when: string): number {
     return Date.parse(when)
 }
 
+
 export const _toModLog = (item: ModAction): ModLog => {
     if ('mod_ban_from_community' in item) {
         return {
@@ -121,6 +123,7 @@ export const _toModLog = (item: ModAction): ModLog => {
             timestamp: timestamp(item.mod_ban_from_community.when_),
             when: item.mod_ban_from_community.when_,
             expires: item.mod_ban_from_community.expires,
+            type: 'ModBanFromCommunity'
         }
     }
     else if ('mod_remove_comment' in item) {
@@ -136,7 +139,8 @@ export const _toModLog = (item: ModAction): ModLog => {
             moderator: item.moderator,
             reason: item.mod_remove_comment.reason,
             link: `/comment/${item.comment.id}`,
-            comment: item.comment
+            comment: item.comment,
+            type: 'ModRemoveComment'
         }
     }
     else if ('mod_remove_post' in item) {
@@ -150,6 +154,7 @@ export const _toModLog = (item: ModAction): ModLog => {
             reason: item.mod_remove_post.reason,
             link: `/post/${item.post.id}`,
             post: item.post,
+            type: 'ModRemovePost'
         }
     } 
     else if ('mod_remove_community' in item) {
@@ -161,6 +166,7 @@ export const _toModLog = (item: ModAction): ModLog => {
             moderator: item.moderator,
             reason: item.mod_remove_community.reason,
             link: `/c/${item.community.name}@${new URL(item.community.actor_id).hostname}`,
+            type: 'ModRemoveCommunity'
         }
     }
     else if ('mod_hide_community' in item) {
@@ -172,6 +178,7 @@ export const _toModLog = (item: ModAction): ModLog => {
             moderator: item.admin,
             reason: item.mod_hide_community.reason,
             link: `/c/${item.community.name}@${new URL(item.community.actor_id).hostname}`,
+            type: 'ModHideCommunity'
         }
     }
 
@@ -183,6 +190,7 @@ export const _toModLog = (item: ModAction): ModLog => {
             when: item.mod_add_community.when_,
             moderator: item.moderator,
             moderatee: item.modded_person,
+            type: 'ModAddCommunity'
         }
     }
     else if ('mod_feature_post' in item) {
@@ -196,7 +204,8 @@ export const _toModLog = (item: ModAction): ModLog => {
             link: `/post/${item.post.id}`,
             moderator: item.moderator,
             content: item.post.name,
-            post: item.post
+            post: item.post,
+            type: 'ModFeaturePost'
         }
     } 
     else if ('mod_lock_post' in item) {
@@ -208,7 +217,8 @@ export const _toModLog = (item: ModAction): ModLog => {
             link: `/post/${item.post.id}`,
             moderator: item.moderator,
             content: item.post.name,
-            post: item.post
+            post: item.post,
+            type: 'ModLockPost'
         }
     } 
     else if ('mod_transfer_community' in item) {
@@ -219,6 +229,7 @@ export const _toModLog = (item: ModAction): ModLog => {
             moderator: item.moderator,
             moderatee: item.modded_person,
             community: item.community,
+            type: 'ModTransferCommunity'
         }   
     }
     else if ('admin_purge_post' in item) {
@@ -230,6 +241,7 @@ export const _toModLog = (item: ModAction): ModLog => {
             community: item.community,
             content: 'Purged a post',
             reason: item.admin_purge_post.reason,
+            type: 'AdminPurgePost'
         }
     } 
     else if ('admin_purge_comment' in item) {
@@ -240,6 +252,7 @@ export const _toModLog = (item: ModAction): ModLog => {
             moderator: item.admin,
             content: 'Purged a comment',
             reason: item.admin_purge_comment.reason,
+            type: 'AdminPurgeComment'
         }
     } 
     else if ('admin_purge_community' in item) {
@@ -250,6 +263,7 @@ export const _toModLog = (item: ModAction): ModLog => {
             moderator: item.admin,
             content: 'Purged a community',
             reason: item.admin_purge_community.reason,
+            type: 'AdminPurgeCommunity'
         }
     } 
     else if ('admin_purge_person' in item) {
@@ -260,6 +274,7 @@ export const _toModLog = (item: ModAction): ModLog => {
             moderator: item.admin,
             content: 'Purged a user',
             reason: item.admin_purge_person.reason,
+            type: 'AdminPurgePerson'
         }
     } 
     else if ('mod_ban' in item) {
@@ -272,6 +287,7 @@ export const _toModLog = (item: ModAction): ModLog => {
             reason: item.mod_ban.reason,
             link: `/u/${fullUserName(item.banned_person)}`,
             expires: item.mod_ban.expires,
+            type: 'ModBan'
         }
     } 
     else if ('mod_add' in item) {
@@ -281,13 +297,15 @@ export const _toModLog = (item: ModAction): ModLog => {
             when: item.mod_add.when_,
             moderator: item.moderator,
             moderatee: item.modded_person,
+            type: 'ModAdd'
         }
     }
 
     return {
         actionName: 'Unknown',
         timestamp: 0,
-        when: new Date().toISOString()
+        when: new Date().toISOString(),
+        type: 'All'
     }
 }
 
@@ -302,8 +320,7 @@ export async function load({ url }: LoadParams) {
     const commentID     = Number(url.searchParams.get('comment_id')) || undefined
     const postID        = Number(url.searchParams.get('post_id')) || undefined
     const page          = Number(url.searchParams.get('page')) || 1
-    
-    let type: ModlogActionType = (url.searchParams.get('type') as ModlogActionType) || 'All'
+    const type: ModlogActionType = (url.searchParams.get('type') as ModlogActionType) || 'All'
 
     const results = await getClient().getModlog({
         community_id: community,

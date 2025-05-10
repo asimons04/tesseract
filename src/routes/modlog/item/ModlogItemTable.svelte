@@ -26,13 +26,17 @@
     export let item: ModLog
     export let filter: Filters
     export let showModeratorColumn: boolean = true
-
+    
+    $: selectedType = $page.url.searchParams.get('type')
 </script>
 
 <div class="flex flex-col w-full gap-1 pt-2">
-
-    <ModlogAction action={item.actionName} expires={item.expires} />
-
+    
+    <!--
+    <span class="ml-auto text-sm">
+        <ModlogAction action={item.actionName} expires={item.expires} />
+    </span>
+    --->
     <div class="flex flex-col gap-1 items-start lg:flex-row lg:gap-4 lg:items-center w-full max-w-full" >
 
         <!---Date/Time--->
@@ -99,7 +103,7 @@
         <!---Moderatee--->
         <div class="flex flex-row gap-1 px-1 text-xs w-full lg:w-[20%] truncate items-center">
             
-            <span class="flex flex-row gap-2 items-center w-full">        
+            <span class="flex flex-row gap-2 items-center w-full">    
                 <span class="lg:hidden text-xs font-bold min-w-[10ch]">User:</span>
                 {#if item.moderatee}    
                     <button class="cursor-pointer" title="Filter modlog for {item.moderatee.name}" on:click={() => {
@@ -127,6 +131,25 @@
         <!---Details--->
         <div class="px-1 text-xs w-full {showModeratorColumn ? 'lg:w-[35%]' : 'lg:w-[55%]'}">
             <div class="flex flex-col text-xs gap-2 text-xs w-full">
+                
+                <!---Action--->
+                <span class="flex flex-row gap-2 items-start w-full">    
+                    <span class="text-xs font-bold min-w-[10ch]">Action:</span>
+                    
+                    <button class="cursor-pointer" title="Filter modlog for actions of type {item.type}" on:click={() => {
+                        if ( selectedType != item.type) {
+                            searchParam($page.url, 'type', item.type, 'page');
+                        } else {
+                            searchParam($page.url, 'type', 'All', 'page');
+                        }
+                        
+                    }}>
+                        <Icon src={selectedType == item.type ? MinusCircle : PlusCircle} mini width={24} />
+                    </button>
+
+                    <ModlogAction action={item.actionName} expires={item.expires} />
+                </span>
+                
                 <!---Expiration--->
                 {#if item.expires}
                     <span class="flex flex-row gap-2 items-start w-full">    

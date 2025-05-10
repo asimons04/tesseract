@@ -35,6 +35,8 @@
         XCircle 
     } from 'svelte-hero-icons'
     import { amModOfAny } from '$lib/components/lemmy/moderation/moderation.js';
+    import type { ModlogActionType } from 'lemmy-js-client';
+    import SettingButton from '$lib/components/ui/settings/SettingButton.svelte';
     
 
     export let data
@@ -50,6 +52,7 @@
     
     async function setCommunityFilter() {
         // Community Filter
+        if (!$page.url.searchParams.get('community')) filter.community.set = false
         if (!filter.community.set) delete filter.community.community
 
         if (filter.community.set && !filter.community.community) {
@@ -72,6 +75,7 @@
     }
 
     async function setModerateeFilter() {
+        if (!$page.url.searchParams.get('other_person_id')) filter.moderatee.set = false
         if (!filter.moderatee.set) delete filter.moderatee.person
 
         if (filter.moderatee.set && !filter.moderatee.person) {
@@ -95,6 +99,7 @@
     }
 
     async function setModeratorFilter() {
+        if (!$page.url.searchParams.get('mod_id')) filter.moderator.set = false
         if (!filter.moderator.set) delete filter.moderator.person
 
         if (filter.moderator.set && !filter.moderator.person) {
@@ -145,6 +150,17 @@
         <Card class="w-full h-fit p-2">
             
             <div class="flex flex-col w-full p-2 gap-2 cursor-default">
+                <SettingButton
+                    title="Modlog"
+                    description="Use the filters to find specific entries by community, moderator, person as well as filter by the action type performed."
+                    icon={Funnel}
+                    buttonText="Reset"
+                    on:click={() => {
+                        ['type', 'page', 'mod_id', 'other_person_id', 'community'].forEach((k) => $page.url.searchParams.delete(k))
+                        goto('/modlog', {invalidateAll: true})
+                    }}
+                />
+                
                 <SettingMultiSelect
                     padding={false} small={true} justify={false}
                     options={[
@@ -184,10 +200,13 @@
                         'Purge Post',
                         'Purge Comment',
                     ]}
-                    selected={data.type}
-                    on:select={(e) => searchParam($page.url, 'type', e.detail, 'page')}
+                    bind:selected={data.type}
+                    on:select={(e) => {
+                        if ((!$page.url.searchParams.get('type') && data.type != 'All') || $page.url.searchParams.get('type') && data.type != $page.url.searchParams.get('type')) searchParam($page.url, 'type', e.detail, 'page')
+                    }}
                     icon={HandRaised}
                     title="Modlog Action"
+                    description="Filter for specific modlog actions. Note that actions like ban or remove also include their reverse actions."
                 />
 
                 <!--- Community, Moderator, Moderatee Filters--->
@@ -290,22 +309,6 @@
                         </div>
                     </div>
                 </div>
-            
-                <Button color="primary" class="w-fit mx-auto" on:click={() => {
-                    filter.community.set = false
-                    delete filter.community.community
-                    
-                    filter.moderator.set = false
-                    delete filter.moderator.person
-                    
-                    filter.moderatee.set = false
-                    delete filter.moderatee.person
-                    
-                    goto('/modlog') 
-                }}>
-                    <Icon src={ArrowPathRoundedSquare} slot="icon" mini width={16}/>
-                    Reset Modlog Filters
-                </Button>
             </div>
         </Card>
 
