@@ -9,8 +9,8 @@ export const findClosestNumber = (numbers: number[], target: number): number =>
     Math.abs(curr - target) < Math.abs(prev - target) ? curr : prev
   )
 
-export const searchParam = (url: URL, key: string, value: string, ...deleteKeys: string[] ) => {
-    url.searchParams.set(key, value)
+export const searchParam = (url: URL, key: string|undefined, value: string, ...deleteKeys: string[] ) => {
+    if (key) url.searchParams.set(key, value)
     deleteKeys.forEach((k) => url.searchParams.delete(k))
     goto(url, {
         invalidateAll: true,
