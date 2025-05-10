@@ -35,7 +35,7 @@
     export let ring:boolean = false                 // Add a ring effect around the avatar
     export let community_banned:boolean = false     // Set the banned from community indicator
     export let blocked: boolean = false             // Set the blocked indicator
-    
+    export let showNewAccountBadge: boolean = true  // Show the new account badge
     export let inline: boolean = true               // Single line or multi-line formats
     export let noClick: boolean = false             // Prevent clicking on any element / display only
     export let noEmojis:boolean = false             // Strip emojis from the display name
@@ -151,7 +151,7 @@
                     </div>
                 {/if}
 
-                {#if badges && user.published && isNewAccount(user.published)}
+                {#if badges && showNewAccountBadge && user.published && isNewAccount(user.published)}
                     <Badge label="New Account: {user.published}"  color="gray" class="mr-1" icon={Cake} iconSize={inline ? 16 : 12}>
                         <!--{#if inline}-->
                             <RelativeDate date={user.published} class="hidden md:flex"/>
