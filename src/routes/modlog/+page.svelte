@@ -7,6 +7,7 @@
     import { page } from '$app/stores'
     import { profile } from '$lib/auth'
     import { searchParam } from '$lib/util.js'
+    import { site } from '$lib/lemmy'
     
     import Button from '$lib/components/input/Button.svelte'
     import Card from '$lib/components/ui/Card.svelte';
@@ -124,6 +125,8 @@
     $:  filter.community.set, setCommunityFilter()
     $:  filter.moderatee.set, setModerateeFilter()
     $:  filter.moderator.set, setModeratorFilter()
+
+    $: showModeratorColumn = ($profile?.user || $site?.site_view.local_site.hide_modlog_mod_names == false) ? true : false
 </script>
 
 <svelte:head>
@@ -136,7 +139,7 @@
 
 
 <MainContentArea>
-    <div class="flex flex-row w-full h-full gap-4 flex-wrap justify-between">
+    <div class="flex flex-col w-full h-full gap-4">
         
         <!---Filters--->
         <Card class="w-full h-fit p-2">
@@ -225,34 +228,34 @@
                 
                     <!---Lookup a moderator to filter--->
                     <div class="flex flex-col w-full xl:w-1/3 gap-1">
-                        {#if $profile?.user}
-                        <span class="hidden xl:flex font-bold text-sm opacity-80">Moderator</span>
-                        <div class="flex flex-row gap-4 w-full">
-                            {#if filter.moderator.set}
-                                <div class="flex flex-row w-full justify-between">
-                                    {#if filter.moderator.person}
-                                        <UserLink avatar={true} avatarSize={16} user={filter.moderator.person} useDisplayNames={false}  class="!w-[90%] truncate"/>
-                                    {:else}
-                                        <span>
-                                            { new URLSearchParams($page.url.search).get('mod_id') }
-                                        </span>
-                                    {/if}
-                                    <Button color="tertiary-border" size="sm" icon={XCircle} iconSize={16} on:click={() => searchParam($page.url, 'mod_id', '', 'mod_id')} />
-                                </div>
-                            {:else}
-                                <span class="flex flex-row gap-2 w-full">
-                                    
-                                    <PersonAutocomplete
-                                        containerClass="!w-full"    
-                                        placeholder="Moderator"
-                                        on:select={(e) => {
-                                            filter.moderator.person = e.detail
-                                            searchParam($page.url, 'mod_id', e.detail?.id.toString(), 'page')
-                                        }}
-                                    />
-                                </span>
-                            {/if}
-                        </div>
+                        {#if $profile?.user || $site?.site_view.local_site.hide_modlog_mod_names == false}
+                            <span class="hidden xl:flex font-bold text-sm opacity-80">Moderator</span>
+                            <div class="flex flex-row gap-4 w-full">
+                                {#if filter.moderator.set}
+                                    <div class="flex flex-row w-full justify-between">
+                                        {#if filter.moderator.person}
+                                            <UserLink avatar={true} avatarSize={16} user={filter.moderator.person} useDisplayNames={false}  class="!w-[90%] truncate"/>
+                                        {:else}
+                                            <span>
+                                                { new URLSearchParams($page.url.search).get('mod_id') }
+                                            </span>
+                                        {/if}
+                                        <Button color="tertiary-border" size="sm" icon={XCircle} iconSize={16} on:click={() => searchParam($page.url, 'mod_id', '', 'mod_id')} />
+                                    </div>
+                                {:else}
+                                    <span class="flex flex-row gap-2 w-full">
+                                        
+                                        <PersonAutocomplete
+                                            containerClass="!w-full"    
+                                            placeholder="Moderator"
+                                            on:select={(e) => {
+                                                filter.moderator.person = e.detail
+                                                searchParam($page.url, 'mod_id', e.detail?.id.toString(), 'page')
+                                            }}
+                                        />
+                                    </span>
+                                {/if}
+                            </div>
                         {/if}
                     </div>
 
@@ -310,29 +313,28 @@
         {#if data.modlog && data.modlog.length > 0}
             <div class="flex flex-col gap-2 divide-y {dividerColors} w-full">
                 
-                <div class="hidden lg:flex flex-row gap-4 items-start w-full sticky top-[6.8rem] text-sm font-bold bg-white/25 dark:bg-black/25 backdrop-blur-3xl z-5">
-                    <div class="w-[5%] flex justify-center">Time</div>
-                    <div class="w-[15%] flex justify-center">Community</div>
-                    <div class="w-[20%] flex justify-center">Moderator</div>
-                    <div class="w-[20%] flex justify-center">Moderatee</div>
-                    <div class="{$profile?.user ? 'w-[40%]' : 'w-[60%]'} flex justify-center">Details</div>
-                </div>
+                <Card class="hidden lg:flex flex-row p-1 gap-4 items-start w-full sticky top-[7rem] text-sm font-bold z-10">
+                    <div class="w-[5%] flex justify-start">Time</div>
+                    <div class="w-[20%] flex justify-start">Community</div>
+                    {#if showModeratorColumn}
+                        <div class="w-[20%] flex justify-start">Moderator</div>
+                    {/if}
+                    <div class="w-[20%] flex justify-start">Moderatee</div>
+                    <div class="{showModeratorColumn ? 'w-[35%]' : 'w-[55%]'} flex justify-start">Details</div>
+                </Card>
                 
                 {#each data.modlog as modlog}
                     {#if modlog.actionName != "Unknown"}  
-                        <ModlogItemTable item={modlog} bind:filter />
+                        <ModlogItemTable item={modlog} {showModeratorColumn} bind:filter />
                     {/if}
                 {/each}
             </div>
-
-            <Pageination page={data.page} disableNext={data.modlog.length < 1} on:change={(e) => searchParam($page.url, 'page', e.detail.toString())} />
-
         {:else}
             <div class="mx-auto my-auto">
                 <Placeholder title="No Results" description="There are no modlog results for the provided query." icon={ExclamationTriangle} />
             </div>
         {/if}
-    
+        <Pageination page={data.page} disableNext={data.modlog.length < 1} on:change={(e) => searchParam($page.url, 'page', e.detail.toString())} />
     </div>
     
     

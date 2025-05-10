@@ -7,6 +7,7 @@
     import { page } from '$app/stores'
     import { profile } from '$lib/auth'
     import { searchParam } from '$lib/util.js'
+    import { site } from '$lib/lemmy'
     import { toast } from '$lib/components/ui/toasts/toasts.js';
 
     import CommunityLink from '$lib/components/lemmy/community/CommunityLink.svelte'
@@ -24,143 +25,148 @@
     
     export let item: ModLog
     export let filter: Filters
+    export let showModeratorColumn: boolean = true
 
 </script>
 
+<div class="flex flex-col w-full gap-1 pt-2">
 
-<div class="flex flex-col-reverse gap-1 items-start lg:flex-row lg:gap-4 lg:items-center w-full max-w-full" >
-    
-    <!---Date/time column--->
-    <div class="flex flex-row gap-2 px-1 text-xs w-full lg:w-[5%]">
-        <span class="lg:hidden text-xs font-bold min-w-[10ch]">When:</span>
-        <RelativeDate date={item.when} />
-    </div>
+    <ModlogAction action={item.actionName} expires={item.expires} />
 
-    <!---Community--->
-    <div class="flex flex-row gap-1 px-1 text-xs w-full lg:w-[15%] truncate items-center">
+    <div class="flex flex-col gap-1 items-start lg:flex-row lg:gap-4 lg:items-center w-full max-w-full" >
+
+        <!---Date/Time--->
+        <div class="flex flex-row gap-2 px-1 text-xs w-full lg:w-[5%]">
+            <span class="lg:hidden text-xs font-bold min-w-[10ch]">When:</span>
+            <RelativeDate date={item.when} />
+        </div>
+
+        <!---Community--->
+        <div class="flex flex-row gap-1 px-1 text-xs w-full lg:w-[20%] truncate items-center">
+            
+            <span class="flex flex-row gap-2 items-center w-full">
+                {#if item.community}        
+                    <span class="lg:hidden text-xs font-bold min-w-[10ch]">Community:</span>
+                    <button class="cursor-pointer" title="Filter modlog for {item.community.name}" on:click={() => {
+                        filter.community.set = !filter.community.set;
+                        if (item?.community?.id && filter.community.set) {
+                            filter.community.community = item.community;
+                            searchParam($page.url, 'community', item.community.id.toString(), 'page');
+                        } else {
+                            searchParam($page.url, 'community', '', 'community');
+                        }
+                        
+                    }}>
+                        <Icon src={filter.community.set ? MinusCircle : PlusCircle} mini width={24} />
+                    </button>
+
+                    <CommunityLink showInstance={true} avatar={false} avatarSize={20} community={item.community} inline={true} class="truncate"/>
+                {/if}
+            </span>
+            
+        </div>
         
-        <span class="flex flex-row gap-2 items-center w-full">
-            <span class="lg:hidden text-xs font-bold min-w-[10ch]">Community:</span>
-            {#if item.community}        
-                <button class="cursor-pointer" title="Filter modlog for {item.community.name}" on:click={() => {
-                    filter.community.set = !filter.community.set;
-                    if (item?.community?.id && filter.community.set) {
-                        filter.community.community = item.community;
-                        searchParam($page.url, 'community', item.community.id.toString(), 'page');
-                    } else {
-                        searchParam($page.url, 'community', '', 'community');
-                    }
+        <!---Moderator--->
+        {#if showModeratorColumn}
+        <div class="flex flex-row gap-1 px-1 text-xs w-full lg:w-[20%] truncate items-center">
+            
+            <span class="flex flex-row gap-2 items-center w-full">    
+                <span class="lg:hidden text-xs font-bold min-w-[10ch]">Mod:</span>
+                {#if item.moderator}    
+                    <button class="cursor-pointer" title="Filter modlog for {item.moderator.name}" on:click={() => {
+                        filter.moderator.set = !filter.moderator.set;
+                        if (item?.moderator && filter.moderator.set) {
+                            filter.moderator.person = item.moderator;
+                            searchParam($page.url, 'mod_id', item.moderator.id.toString(), 'page');
+                        } else {
+                            searchParam($page.url, 'mod_id', '', 'mod_id');
+                        }
+                        
+                    }}>
+                        <Icon src={filter.moderator.set ? MinusCircle : PlusCircle} mini width={24} />
+                    </button>
+
+                    <UserLink showInstance={true} avatar={false} showNewAccountBadge={false} avatarSize={20} user={item.moderator} inline={true} class="truncate"/>
+                {:else}
+                    ---
+                {/if}
+            </span>
+            
+        </div>
+        {/if}
+        
+
+        <!---Moderatee--->
+        <div class="flex flex-row gap-1 px-1 text-xs w-full lg:w-[20%] truncate items-center">
+            
+            <span class="flex flex-row gap-2 items-center w-full">        
+                <span class="lg:hidden text-xs font-bold min-w-[10ch]">User:</span>
+                {#if item.moderatee}    
+                    <button class="cursor-pointer" title="Filter modlog for {item.moderatee.name}" on:click={() => {
+                        filter.moderatee.set = !filter.moderatee.set;
+                        if (item?.moderatee && filter.moderatee.set) {
+                            filter.moderatee.person = item.moderatee;
+                            searchParam($page.url, 'other_person_id', item.moderatee.id.toString(), 'page');
+                        } else {
+                            searchParam($page.url, 'other_person_id', '', 'other_person_id');
+                        }
+                        
+                    }}>
+                        <Icon src={filter.moderatee.set ? MinusCircle : PlusCircle} mini width={24} />
+                    </button>
+
                     
-                }}>
-                    <Icon src={filter.community.set ? MinusCircle : PlusCircle} mini width={24} />
-                </button>
+                    <UserLink avatar={false} showInstance={true} user={item.moderatee} showNewAccountBadge={false} inline={true} class="truncate"/>
+                {/if}
+            </span>
+            
 
-                <CommunityLink showInstance={true} avatar={false} avatarSize={20} community={item.community} inline={true} class="truncate"/>
-            {/if}
-        </span>
-        
-    </div>
-    
-    <!---Moderator--->
-    
-    <div class="flex flex-row gap-1 px-1 text-xs w-full lg:w-[20%] truncate items-center">
-        
-        <span class="flex flex-row gap-2 items-center w-full">    
-            <span class="lg:hidden text-xs font-bold min-w-[10ch]">Mod:</span>
-            {#if item.moderator}    
-                <button class="cursor-pointer" title="Filter modlog for {item.moderator.name}" on:click={() => {
-                    filter.moderator.set = !filter.moderator.set;
-                    if (item?.moderator && filter.moderator.set) {
-                        filter.moderator.person = item.moderator;
-                        searchParam($page.url, 'mod_id', item.moderator.id.toString(), 'page');
-                    } else {
-                        searchParam($page.url, 'mod_id', '', 'mod_id');
-                    }
-                    
-                }}>
-                    <Icon src={filter.moderator.set ? MinusCircle : PlusCircle} mini width={24} />
-                </button>
-
-                <UserLink showInstance={true} avatar={false} avatarSize={20} user={item.moderator} inline={true} class="truncate"/>
-            {:else}
-                ---
-            {/if}
-        </span>
-        
-    </div>
-    
-
-    <!---Moderatee / user --->
-    <div class="flex flex-row gap-1 px-1 text-xs w-full lg:w-[20%] truncate items-center">
-        
-        <span class="flex flex-row gap-2 items-center w-full">        
-            <span class="lg:hidden text-xs font-bold min-w-[10ch]">User:</span>
-            {#if item.moderatee}    
-                <button class="cursor-pointer" title="Filter modlog for {item.moderatee.name}" on:click={() => {
-                    filter.moderatee.set = !filter.moderatee.set;
-                    if (item?.moderatee && filter.moderatee.set) {
-                        filter.moderatee.person = item.moderatee;
-                        searchParam($page.url, 'other_person_id', item.moderatee.id.toString(), 'page');
-                    } else {
-                        searchParam($page.url, 'other_person_id', '', 'other_person_id');
-                    }
-                    
-                }}>
-                    <Icon src={filter.moderatee.set ? MinusCircle : PlusCircle} mini width={24} />
-                </button>
-
-                
-                <UserLink avatar={false} showInstance={true} user={item.moderatee} inline={true} class="truncate"/>
-            {/if}
-        </span>
-        
-
-    </div>
+        </div>
 
 
-    <!---Details--->
-    <div class="flex flex-row gap-1 px-1 text-xs w-full {$profile?.user ? 'lg:w-[40%]' : 'lg:w-[60%]'}">
-        <div class="flex flex-col gap-2 text-xs w-full">
-            <ModlogAction action={item.actionName} expires={item.expires} />
-
-            <span class="text-xs">
+        <!---Details--->
+        <div class="px-1 text-xs w-full {showModeratorColumn ? 'lg:w-[35%]' : 'lg:w-[55%]'}">
+            <div class="flex flex-col text-xs gap-2 text-xs w-full">
+                <!---Expiration--->
                 {#if item.expires}
-                    <span class="flex flex-nowrap gap-1">
-                        <strong>Expires</strong>: {new Date(item.expires).toLocaleDateString()}
+                    <span class="flex flex-row gap-2 items-start w-full">    
+                        <span class="text-xs font-bold min-w-[10ch]">Expires:</span>
+                        <span class="flex flex-nowrap gap-1">
+                            {new Date(item.expires).toLocaleDateString()}
+                        </span>
                     </span>
                 {/if}
-
                 
-                {#if item.reason}
-                <span class="flex flex-nowrap gap-1 items-start">
-                    <Markdown noPreview={true} source={item.reason} class="w-full" />
-                </span>
-                {/if}
-                
-
+                <!---Removed Item--->
                 {#if item.link || item.content}
                     
-                    <span class="flex flex-row gap-1">
+                    <span class="flex flex-row gap-2 items-start w-full">    
                         {#if item.content && !['Purged a post', 'Purged a comment'].includes(item.content)}
-                            <span class="text-xs font-bold w-24 lg:w-fit">Item:</span>
+                            <span class="text-xs font-bold min-w-[10ch]">Item:</span>
                         {/if}
 
-                        <span class="flex flex-nowrap w-[calc(100%-108px)] gap-1 overflow-hidden">
+                        <span class="flex flex-nowrap w-[calc(100%-12ch)] gap-1 overflow-hidden">
                             {#if item.link && item.content && !['Purged a post', 'Purged a comment'].includes(item.content)}
                                 <Link href={item.link} highlight newtab={true} title={item.content}> {item.content.substring(0, 250)} </Link>
                             {:else if item.content && !['Purged a post', 'Purged a comment'].includes(item.content)}
                                 <span title="{item.content}">{item.content.substring(0,250)}</span>
-                            {:else if item.link}
-                                <Link href={item.link} highlight newtab={true}/>
                             {/if}
                         </span>
                     </span>
                 {/if}
-            </span>
-        </div>
 
+                <!---Reason--->
+                {#if item.reason}
+                    <span class="flex flex-row gap-2 items-start w-full">    
+                        <span class="text-xs font-bold min-w-[10ch]">Reason:</span>
+                        <span class="flex flex-nowrap gap-1 items-start">
+                            <Markdown noPreview={true} source={item.reason} class="w-full" />
+                        </span>
+                    </span>
+                {/if}
+            </div>
+        </div>
+        
 
     </div>
-    
-
 </div>
