@@ -9,35 +9,27 @@
     import { searchParam } from '$lib/util.js'
     import { site } from '$lib/lemmy'
     
-    import Button from '$lib/components/input/Button.svelte'
-    import Card from '$lib/components/ui/Card.svelte';
-    import CommunityAutocomplete from '$lib/components/lemmy/CommunityAutocomplete.svelte'
-    import CommunityLink from '$lib/components/lemmy/community/CommunityLink.svelte';
-    import MainContentArea from '$lib/components/ui/containers/MainContentArea.svelte';
-    import ModlogItemTable from './item/ModlogItemTable.svelte'
-    import PersonAutocomplete from '$lib/components/lemmy/PersonAutocomplete.svelte'
-    import Pageination from '$lib/components/ui/Pageination.svelte'
-    import Placeholder from '$lib/components/ui/Placeholder.svelte'
-    import SettingMultiSelect from '$lib/components/ui/settings/SettingMultiSelect.svelte';
-    import SubNavbar from '$lib/components/ui/subnavbar/SubNavbar.svelte';
-    import SubnvarbarMenu from '$lib/components/ui/subnavbar/SubnavbarMenu.svelte'
-    import UserLink from '$lib/components/lemmy/user/UserLink.svelte';
+    import Button                   from '$lib/components/input/Button.svelte'
+    import Card                     from '$lib/components/ui/Card.svelte'
+    import CommunityAutocomplete    from '$lib/components/lemmy/CommunityAutocomplete.svelte'
+    import CommunityLink            from '$lib/components/lemmy/community/CommunityLink.svelte'
+    import MainContentArea          from '$lib/components/ui/containers/MainContentArea.svelte'
+    import ModlogItemTable          from './item/ModlogItemTable.svelte'
+    import PersonAutocomplete       from '$lib/components/lemmy/PersonAutocomplete.svelte'
+    import Pageination              from '$lib/components/ui/Pageination.svelte'
+    import Placeholder              from '$lib/components/ui/Placeholder.svelte'
+    import SettingButton            from '$lib/components/ui/settings/SettingButton.svelte'
+    import SettingMultiSelect       from '$lib/components/ui/settings/SettingMultiSelect.svelte'
+    import SettingToggleContainer   from '$lib/components/ui/settings/SettingToggleContainer.svelte'
+    import SubNavbar                from '$lib/components/ui/subnavbar/SubNavbar.svelte'
+    import UserLink                 from '$lib/components/lemmy/user/UserLink.svelte'
 
     import { 
-        Icon, 
-        ArrowPathRoundedSquare, 
         ExclamationTriangle, 
         Funnel, 
         HandRaised, 
-        ShieldCheck,        
-        UserGroup,
-        User,
         XCircle 
     } from 'svelte-hero-icons'
-    import { amModOfAny } from '$lib/components/lemmy/moderation/moderation.js';
-    import type { ModlogActionType } from 'lemmy-js-client';
-    import SettingButton from '$lib/components/ui/settings/SettingButton.svelte';
-    
 
     export let data
     
@@ -148,8 +140,7 @@
         
         <!---Filters--->
         <Card class="w-full h-fit p-2">
-            
-            <div class="flex flex-col w-full p-2 gap-2 cursor-default">
+            <SettingToggleContainer>
                 <SettingButton
                     title="Modlog"
                     description="Use the filters to find specific entries by community, moderator, person as well as filter by the action type performed."
@@ -160,7 +151,7 @@
                         goto('/modlog', {invalidateAll: true})
                     }}
                 />
-                
+                    
                 <SettingMultiSelect
                     padding={false} small={true} justify={false}
                     options={[
@@ -309,13 +300,14 @@
                         </div>
                     </div>
                 </div>
-            </div>
+            </SettingToggleContainer>
         </Card>
 
 
         {#if data.modlog && data.modlog.length > 0}
             <div class="flex flex-col gap-2 divide-y {dividerColors} w-full">
                 
+                <!---Table Heading Row--->
                 <Card class="hidden lg:flex flex-row p-1 gap-4 items-start w-full sticky top-[7rem] text-sm font-bold z-10">
                     <div class="w-[5%] flex justify-start">Time</div>
                     <div class="w-[20%] flex justify-start">Community</div>
@@ -339,27 +331,4 @@
         {/if}
         <Pageination page={data.page} disableNext={data.modlog.length < 1} on:change={(e) => searchParam($page.url, 'page', e.detail.toString())} />
     </div>
-    
-    
-    
-
 </MainContentArea>
-
-
-<style lang="postcss">
-    :global(.table thead tr th) {
-        @apply border border-slate-200 dark:border-zinc-800 px-4 py-2 bg-slate-100;
-    }
-
-    :global(.table tr td) {
-        @apply border border-slate-200 px-4 py-2 overflow-auto;
-    }
-
-    :global(.dark .table tr td) {
-        @apply border-zinc-800;
-    }
-
-    :global(.dark thead tr th) {
-        @apply border-zinc-800 bg-zinc-900;
-    }
-</style>
