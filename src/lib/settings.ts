@@ -96,6 +96,7 @@ interface Settings {
         postsInModal: boolean,                                          // Open posts in modals 
     },
     debugInfo: boolean                                                  // Enable to show a 'debug' button on post/comments and other objects for development purposes
+    modlogResolveMissingNames: boolean                                  // Resolve missing Person object for "moderatee" on post events in the modlog
     embeddedMedia: {
         feed: boolean                                                   // Whether to enable media embeds in the feed
         post: boolean                                                   // Whether to enable media embeds on post pages
@@ -252,7 +253,7 @@ export const defaultSettings: Settings = {
         postsInModal:                                                   false,
     },
     experimentalFeatures:                                               false,
-    
+    modlogResolveMissingNames:                                          false,
     embeddedMedia: {
         feed:     toBool(env.PUBLIC_ENABLE_EMBEDDED_MEDIA_FEED)         ??  false,
         post:     toBool(env.PUBLIC_ENABLE_EMBEDDED_MEDIA_POST)         ??  true,
