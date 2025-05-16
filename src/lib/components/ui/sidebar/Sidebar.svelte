@@ -4,6 +4,7 @@
     import { dispatchWindowEvent } from "$lib/ui/events"
     import { profile } from '$lib/auth.js'
     import { getGroupIndex, sortGroups } from '$lib/favorites'
+    import { languageText } from '$lib/language'
     import { page } from "$app/stores"
     import { userSettings } from '$lib/settings.js'
     
@@ -75,21 +76,21 @@
     <span class="flex  {$userSettings.uiState.expandSidebar ? 'flex-row justify-between' : 'flex-col gap-1'}">
         
         <!---Popular --->
-        <SidebarButton href="/home/{$userSettings.defaultSort.feed.toLowerCase() ?? 'all'}/active" expanded={$userSettings.uiState.expandSidebar} title="Popular" data-sveltekit-preload-data="off">
-            <Icon src={ArrowTrendingUp} mini size="18" title="Popular" />
-            <span class:hidden={!$userSettings.uiState.expandSidebar}>Popular</span>
+        <SidebarButton href="/home/{$userSettings.defaultSort.feed.toLowerCase() ?? 'all'}/active" expanded={$userSettings.uiState.expandSidebar} title="{languageText('POPULAR','Popular')}" data-sveltekit-preload-data="off">
+            <Icon src={ArrowTrendingUp} mini size="18" title="{languageText('POPULAR','Popular')}" />
+            <span class:hidden={!$userSettings.uiState.expandSidebar}>{languageText('POPULAR','Popular')}</span>
         </SidebarButton>
 
         <!---Hot --->
-        <SidebarButton href="/home/{$userSettings.defaultSort.feed.toLowerCase() ?? 'all'}/hot" expanded={$userSettings.uiState.expandSidebar} title="Hot" data-sveltekit-preload-data="off">
-            <Icon src={Fire} mini size="18" title="Hot" />
-            <span class:hidden={!$userSettings.uiState.expandSidebar}>Hot</span>
+        <SidebarButton href="/home/{$userSettings.defaultSort.feed.toLowerCase() ?? 'all'}/hot" expanded={$userSettings.uiState.expandSidebar} title="{languageText('HOT','Hot')}" data-sveltekit-preload-data="off">
+            <Icon src={Fire} mini size="18" title="{languageText('HOT','Hot')}" />
+            <span class:hidden={!$userSettings.uiState.expandSidebar}>{languageText('HOT','Hot')}</span>
         </SidebarButton>
 
         <!---Top Day --->
-        <SidebarButton href="/home/{$userSettings.defaultSort.feed.toLowerCase() ?? 'all'}/topday" expanded={$userSettings.uiState.expandSidebar} title="Top Day" data-sveltekit-preload-data="off">
-            <Icon src={CalendarDays} mini size="18" title="Top Day" />
-            <span class:hidden={!$userSettings.uiState.expandSidebar}>Top Day</span>
+        <SidebarButton href="/home/{$userSettings.defaultSort.feed.toLowerCase() ?? 'all'}/topday" expanded={$userSettings.uiState.expandSidebar} title="{languageText('TOP_DAY','Top Day')}" data-sveltekit-preload-data="off">
+            <Icon src={CalendarDays} mini size="18" title="{languageText('TOP_DAY','Top Day')}" />
+            <span class:hidden={!$userSettings.uiState.expandSidebar}>{languageText('TOP_DAY','Top Day')}</span>
         </SidebarButton>
     </span>
 
@@ -98,13 +99,13 @@
     <div class="flex {$userSettings.uiState.expandSidebar ? 'flex-row justify-between' : 'flex-col gap-1'}">
         
         <!---Frontpage--->
-        <SidebarButton href="/home/{$userSettings.defaultSort.feed.toLowerCase() ?? 'all'}/{$userSettings?.defaultSort.sort.toLowerCase() ?? 'new'}" expanded={$userSettings.uiState.expandSidebar} title="Home" data-sveltekit-preload-data="off" class="w-full">
-            <Icon src={Home} mini size="18" title="Home" />
-            <span class:hidden={!$userSettings.uiState.expandSidebar}>Home</span>
+        <SidebarButton href="/home/{$userSettings.defaultSort.feed.toLowerCase() ?? 'all'}/{$userSettings?.defaultSort.sort.toLowerCase() ?? 'new'}" expanded={$userSettings.uiState.expandSidebar} title="{languageText('HOME', 'Home')}" data-sveltekit-preload-data="off" class="w-full">
+            <Icon src={Home} mini size="18" title="{languageText('HOME', 'Home')}" />
+            <span class:hidden={!$userSettings.uiState.expandSidebar}>{languageText('HOME', 'Home')}</span>
         </SidebarButton>
 
         <!---Latest (New + Refresh)--->
-        <SidebarButton expanded={$userSettings.uiState.expandSidebar} title="Refresh" data-sveltekit-preload-data="off"
+        <SidebarButton expanded={$userSettings.uiState.expandSidebar} title="{languageText('REFRESH', 'Refresh')}" data-sveltekit-preload-data="off"
             on:click={() => {
                 if ($page.url.pathname.startsWith('/home')) {
                     dispatchWindowEvent('refreshFeed')
@@ -121,15 +122,15 @@
     <!--- Explore Communities / Favorites --->
     
     <!---Communities--->
-    <SidebarButton href="/communities" expanded={$userSettings.uiState.expandSidebar} title="Communities" data-sveltekit-preload-data="off">
-        <Icon src={GlobeAlt} mini size="18" title="Communities" />
-        <span class:hidden={!$userSettings.uiState.expandSidebar}>Explore Communities</span>
+    <SidebarButton href="/communities" expanded={$userSettings.uiState.expandSidebar} title="{languageText('EXPLORE_COMMUNITIES', 'Explore Communities')}" data-sveltekit-preload-data="off">
+        <Icon src={GlobeAlt} mini size="18" title="{languageText('EXPLORE_COMMUNITIES', 'Explore Communities')}" />
+        <span class:hidden={!$userSettings.uiState.expandSidebar}>{languageText('EXPLORE_COMMUNITIES', 'Explore Communities')}</span>
     </SidebarButton>
 
     <!---Settings--->
-    <SidebarButton href="/settings" expanded={$userSettings.uiState.expandSidebar} title="App Settings" data-sveltekit-preload-data="off">
-        <Icon src={Cog6Tooth} mini size="18" title="Settings" />
-        <span class:hidden={!$userSettings.uiState.expandSidebar}>Settings</span>
+    <SidebarButton href="/settings" expanded={$userSettings.uiState.expandSidebar} title="{languageText('SETTINGS', 'Settings')}" data-sveltekit-preload-data="off">
+        <Icon src={Cog6Tooth} mini size="18" title="{languageText('SETTINGS', 'Settings')}" />
+        <span class:hidden={!$userSettings.uiState.expandSidebar}>{languageText('SETTINGS', 'Settings')}</span>
     </SidebarButton>
     
 
@@ -145,28 +146,28 @@
         <div class="flex {$userSettings.uiState.expandSidebar ? 'flex-row' : 'flex-col'} gap-1">
             <div class="ml-auto"/>
 
-            <SidebarButton title="Subscribed" expanded={$userSettings.uiState.expandSidebar} on:click={()=> panel='subscribed'}>
+            <SidebarButton title="{languageText('SUBSCRIBED', 'Subscribed')}" expanded={$userSettings.uiState.expandSidebar} on:click={()=> panel='subscribed'}>
                 <span class="flex flex-col items-center {panel=='subscribed' ? 'text-sky-700 dark:text-sky-500 font-bold' : '' }">
-                    <Icon src={InboxArrowDown} mini size="18" title="Subscribed" />
-                    <span class="hidden {$userSettings.uiState.expandSidebar ? 'sm:block' : ''} text-xs">Subscribed</span>
+                    <Icon src={InboxArrowDown} mini size="18" />
+                    <span class="hidden {$userSettings.uiState.expandSidebar ? 'sm:block' : ''} text-xs">{languageText('SUBSCRIBED', 'Subscribed')}</span>
                 </span>
             </SidebarButton>
 
 
             {#if $userSettings.uiState.expandSidebar}
-                <SidebarButton title="Groups" expanded={$userSettings.uiState.expandSidebar} on:click={()=> panel='groups'}>
+                <SidebarButton title="{languageText('GROUPS', 'Groups')}" expanded={$userSettings.uiState.expandSidebar} on:click={()=> panel='groups'}>
                     <span class="flex flex-col items-center {panel=='groups' ? 'text-sky-700 dark:text-sky-500 font-bold' : '' }">
-                        <Icon src={Folder} mini size="18" title="Groups" />
-                        <span class="hidden {$userSettings.uiState.expandSidebar ? 'sm:block' : ''} text-xs">Groups</span>
+                        <Icon src={Folder} mini size="18" />
+                        <span class="hidden {$userSettings.uiState.expandSidebar ? 'sm:block' : ''} text-xs">{languageText('GROUPS', 'Groups')}</span>
                     </span>
                 </SidebarButton>
             {/if}
 
             
-            <SidebarButton title="Favorites" expanded={$userSettings.uiState.expandSidebar} on:click={()=> panel='favorites'}>
+            <SidebarButton title="{languageText('FAVORITES', 'Favorites')}" expanded={$userSettings.uiState.expandSidebar} on:click={()=> panel='favorites'}>
                 <span class="flex flex-col items-center {panel=='favorites' ? 'text-sky-700 dark:text-sky-500 font-bold' : '' }">
-                    <Icon src={Star} mini size="18" title="Favorites" />
-                    <span class="hidden {$userSettings.uiState.expandSidebar ? 'sm:block' : ''} text-xs ">Favorites</span>
+                    <Icon src={Star} mini size="18" />
+                    <span class="hidden {$userSettings.uiState.expandSidebar ? 'sm:block' : ''} text-xs ">{languageText('FAVORITES', 'Favorites')}</span>
                 </span>
             </SidebarButton>
 
@@ -187,7 +188,7 @@
                     <form class="p-2 flex flex-row items-center gap-2" on:submit|preventDefault>
                         <TextInput 
                             type="text" autocomplete="new-password"    
-                            placeholder="Filter Communities"
+                            placeholder="{languageText('FILTER_COMMUNITIES', 'Filter Communities')}"
                             class="h-8 w-full"
                             bind:value={communityFiltervalue}
                             on:keyup={(e) => { 
@@ -196,14 +197,17 @@
                             }}
                         />
 
-                        <Button size="square-md" color="tertiary" title="Reset Search Filter" class="ml-auto" icon={XCircle} iconSize={22}
+                        <Button size="square-md" color="tertiary" 
+                            title="{languageText('RESET', 'Reset')}" 
+                            class="ml-auto" 
+                            icon={XCircle} 
+                            iconSize={22}
                             on:click={async () => {
                                 debounce('')
                                 communityFiltervalue = ''
                                 communityScrollArea.scrollTo(0,0)
                             }}
-                        >
-                        </Button>
+                        />
                     </form>
                 {/if}
 
@@ -221,7 +225,10 @@
                         />
                     {:else}
                         {#if $userSettings.uiState.expandSidebar}
-                            <Placeholder size="22" icon={ArchiveBox} title="No Subscriptions" description="You're not subscribed to any communities. When you are, they will be listed here." />
+                            <Placeholder size="22" icon={ArchiveBox} 
+                                title="{languageText('NO_SUBSCRIPTIONS_TITLE', 'No Subscriptions')}" 
+                                description="{languageText('NO_SUBSCRIPTIONS_DESC', "You're not subscribed to any communities. When you are, they will be listed here.")}" 
+                            />
                         {/if}
                     {/if}
                 </div>
@@ -235,8 +242,8 @@
                     <div class="flex flex-col gap-2 mb-1">
                         <div class="pl-2 text-sm flex flex-row items-center">
                             <span class="flex flex-col text-xs">
-                                <span class="font-bold">Moderating</span>
-                                <span class="font-normal">Show only communities I moderate</span>
+                                <span class="font-bold">{languageText('COMMUNITY_LIST_ONLY_MODERATING_TITLE', "Only Moderating")}</span>
+                                <span class="font-normal">{languageText('COMMUNITY_LIST_ONLY_MODERATING_DESC', "Show only communities I moderate")}</span>
                             </span>
                             <span class="ml-auto"/>
                             <Switch bind:enabled={onlyShowModerating} on:change={() => communityScrollArea.scrollTo(0,0) }/>
@@ -254,7 +261,10 @@
                             <CommunityGroup group={group} bind:showEmptyGroups/>
                         {/each}
                     {:else}
-                        <Placeholder size="22" icon={UserGroup} title="No Groups" description="Your favoritie and grouped communities will appear here." />
+                        <Placeholder size="22" icon={UserGroup} 
+                            title="{languageText('NO_GROUPS_TITLE', "No Groups")}"
+                            description="{languageText('NO_GROUPS_DESC', "Your grouped communities will appear here.")}"
+                        />
                     {/if}
                 </div>
 
