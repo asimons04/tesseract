@@ -21,6 +21,7 @@ function normalizeDomain(domain:string):string {
         .replace('tcrn.ch', 'techcrunch.com')
         .replace('text.npr.org', 'npr.org')
         .replace('text.hrw.org', 'hrw.org')
+        .replace('the-independent.com', 'independent.co.uk')
         .replace('tjvnews.com', 'thejewishvoice.com')
         .replace('tvpworld.com', 'tvp.info')
         .replace('wapo.st', 'washingtonpost.com')
