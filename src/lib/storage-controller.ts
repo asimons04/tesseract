@@ -111,6 +111,15 @@ export class StorageController {
         
     }
 
+    async isExpired(key: string): Promise<boolean> {
+        if (!key) return false
+        let item = (await this.get(key, true))
+        if (!item.timestamp) return false
+        if (this.now - item.timestamp > item.ttl) return true
+        return false
+
+    }
+
     // Alias for retrieve
     async get (key:string, raw:boolean=false): Promise<any> {
         return await this.retrieve(key, raw)
@@ -287,12 +296,10 @@ export class StorageCache {
 
     async housekeep() {
         this.storage.keys.forEach(async (key) => {
-            let keyData = await this.storage.get(key, true)
-            if (this.storage.expired(keyData.timestamp)) {
+            if (await this.storage.isExpired(key)) {
                 if (get(userSettings).debugInfo) console.log("storage-controller: Housekeeping expired key ", key)
                 this.storage.remove(key)
             }
-            
         })
     }
 
