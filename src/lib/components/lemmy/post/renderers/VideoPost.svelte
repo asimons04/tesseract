@@ -10,6 +10,7 @@
     import Crossposts           from '$lib/components/lemmy/post/components/Crossposts.svelte'
     import Image                from '$lib/components/lemmy/post/components/Image.svelte'
     import Link                 from '$lib/components/input/Link.svelte'
+    import MBFC                 from '$lib/MBFC/MBFC.svelte'
     import PostActions          from '$lib/components/lemmy/post/components/PostActions.svelte'
     import PostBody             from '$lib/components/lemmy/post/components/PostBody.svelte'
     import PostEmbedDescription from '$lib/components/lemmy/post/components/PostEmbedDescription.svelte'
@@ -76,7 +77,7 @@
                     > 
                         <ArchiveLinkSelector url={post.post?.url} {postType} />    
                         <Link href={post.post.url} title={post.post.url} newtab={true}   domainOnly={!$userSettings.uiState.showFullURL} highlight nowrap  class="text-xs"/>
-                        
+                        <MBFC bind:post rightJustify={true}/>
                     </PostEmbedDescription>
 
 
@@ -116,6 +117,7 @@
     <PostEmbedDescription {compact} title={post.post.embed_title} description={post.post.embed_description}  url={post.post.url} > 
         <ArchiveLinkSelector url={post.post?.url} {postType} />    
         <Link  href={post.post.url} title={post.post.url} newtab={true}   domainOnly={!$userSettings.uiState.showFullURL} highlight nowrap  class="text-xs"/>
+        <MBFC bind:post rightJustify={true}/>
     </PostEmbedDescription>
     
 
