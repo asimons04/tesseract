@@ -1,6 +1,6 @@
 <script lang="ts">
-    import type { Filters} from './+page.js'
-    
+    import type { Filters } from './+page.js'
+
     import { dividerColors } from '$lib/ui/colors.js'
     import { getClient } from '$lib/lemmy'
     import { goto } from '$app/navigation'
@@ -8,6 +8,7 @@
     import { profile } from '$lib/auth'
     import { searchParam } from '$lib/util.js'
     import { site } from '$lib/lemmy'
+    import { userSettings } from '$lib/settings'
     
     import Button                   from '$lib/components/input/Button.svelte'
     import Card                     from '$lib/components/ui/Card.svelte'
@@ -20,6 +21,7 @@
     import Placeholder              from '$lib/components/ui/Placeholder.svelte'
     import SettingButton            from '$lib/components/ui/settings/SettingButton.svelte'
     import SettingMultiSelect       from '$lib/components/ui/settings/SettingMultiSelect.svelte'
+    import SettingToggle            from '$lib/components/ui/settings/SettingToggle.svelte'
     import SettingToggleContainer   from '$lib/components/ui/settings/SettingToggleContainer.svelte'
     import SubNavbar                from '$lib/components/ui/subnavbar/SubNavbar.svelte'
     import UserLink                 from '$lib/components/lemmy/user/UserLink.svelte'
@@ -28,6 +30,7 @@
         ExclamationTriangle, 
         Funnel, 
         HandRaised, 
+        User, 
         XCircle 
     } from 'svelte-hero-icons'
 
@@ -41,7 +44,7 @@
         community:  {set: false, community: undefined, loading: false},
         action:     {set: false}
     }
-    
+
     async function setCommunityFilter() {
         // Community Filter
         if (!$page.url.searchParams.get('community')) filter.community.set = false
@@ -131,9 +134,7 @@
 </svelte:head>
 
 
-<SubNavbar home back refreshButton scrollButtons />
-
-
+<SubNavbar home back refreshButton scrollButtons quickSettings />
 
 <MainContentArea>
     <div class="flex flex-col w-full h-full gap-4">
@@ -150,6 +151,13 @@
                         ['type', 'page', 'mod_id', 'other_person_id', 'community'].forEach((k) => $page.url.searchParams.delete(k))
                         goto('/modlog', {invalidateAll: true})
                     }}
+                />
+
+                <SettingToggle
+                    title="Resolve Missing Moderatees"
+                    description="Lookup the person object for remove/restore/lock/unlock post events since the API does not include those."
+                    icon={User}
+                    bind:value={$userSettings.modlogResolveMissingNames}
                 />
                     
                 <SettingMultiSelect

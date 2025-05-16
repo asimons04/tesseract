@@ -1,26 +1,25 @@
 <script lang="ts">
     import type {Filters, ModLog} from '../+page.js'
-    import type { Post } from 'lemmy-js-client'
+    import type { Person } from 'lemmy-js-client'
 
     import { getClient } from '$lib/lemmy'
-    import { instance } from '$lib/instance.js'
     import { page } from '$app/stores'
-    import { profile } from '$lib/auth'
     import { searchParam } from '$lib/util.js'
-    import { site } from '$lib/lemmy'
-    import { toast } from '$lib/components/ui/toasts/toasts.js';
+    import { StorageCache } from '$lib/storage-controller'
+    import { userSettings } from '$lib/settings'
 
-    import CommunityLink from '$lib/components/lemmy/community/CommunityLink.svelte'
-    import Link from '$lib/components/input/Link.svelte'
-    import Markdown from '$lib/components/markdown/Markdown.svelte'
-    import ModlogAction from '../ModlogAction.svelte'
-    import RelativeDate from '$lib/components/util/RelativeDate.svelte'
-    import UserLink from '$lib/components/lemmy/user/UserLink.svelte'
+    import CommunityLink    from '$lib/components/lemmy/community/CommunityLink.svelte'
+    import Link             from '$lib/components/input/Link.svelte'
+    import Markdown         from '$lib/components/markdown/Markdown.svelte'
+    import ModlogAction     from '../ModlogAction.svelte'
+    import RelativeDate     from '$lib/components/util/RelativeDate.svelte'
+    import UserLink         from '$lib/components/lemmy/user/UserLink.svelte'
     
     import { Icon, 
         MinusCircle, 
         PlusCircle, 
     } from 'svelte-hero-icons'
+    import { sleep } from '$lib/components/lemmy/post/helpers.js';
     
     
     export let item: ModLog
@@ -28,15 +27,48 @@
     export let showModeratorColumn: boolean = true
     
     $: selectedType = $page.url.searchParams.get('type')
+    $: item, $userSettings.modlogResolveMissingNames,  populateModeratee()
+    
+    function randomInteger(min:number, max:number): number {
+        return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+
+    // Lemmy stupidly doesn't include the moderatee/person in post removal responses. Add it dynamically.
+    const populateModeratee = async () => {
+        if ($userSettings.modlogResolveMissingNames && ['postRemoval', 'postRestore', 'postLock', 'postUnlock'].includes(item.actionName) && item.post && !item.moderatee) {
+            try {
+                await sleep(randomInteger(10, 100))
+                const storage = new StorageCache({
+                    type: 'session',
+                    ttl: 5,
+                    useCompression: false
+                })
+                const key = `person_id: ${item.post.creator_id}`
+                
+                // Try to use the already populated person object from the filter if it's available.
+                if (filter.moderatee?.person?.id == item.post.creator_id) {
+                    item.moderatee = filter.moderatee.person
+                    storage.put(key, filter.moderatee.person)
+                    return
+                }
+                
+                // Check if the person details are already in the session cache
+                let person = await storage.get(key) as Person|undefined
+                
+                // If not otherwise available, call the API to get the person's details.
+                if (!person) {
+                    person = (await getClient().getPersonDetails({person_id: item.post.creator_id, limit: 1})).person_view.person 
+                    storage.put(key, person)
+                }
+
+                item.moderatee = person
+            }
+            catch {}
+        }
+    }
 </script>
 
-<div class="flex flex-col w-full gap-1 pt-2">
-    
-    <!--
-    <span class="ml-auto text-sm">
-        <ModlogAction action={item.actionName} expires={item.expires} />
-    </span>
-    --->
+<div class="flex flex-col w-full gap-1 pt-2 overflow-x-scroll">
     <div class="flex flex-col gap-1 items-start lg:flex-row lg:gap-4 lg:items-center w-full max-w-full" >
 
         <!---Date/Time--->
@@ -64,7 +96,7 @@
                         <Icon src={filter.community.set ? MinusCircle : PlusCircle} mini width={24} />
                     </button>
 
-                    <CommunityLink showInstance={true} avatar={false} avatarSize={20} community={item.community} inline={true} class="truncate"/>
+                    <CommunityLink avatar={false} avatarSize={20} community={item.community} inline={true} class="truncate"/>
                 {/if}
             </span>
             
@@ -90,7 +122,7 @@
                         <Icon src={filter.moderator.set ? MinusCircle : PlusCircle} mini width={24} />
                     </button>
 
-                    <UserLink showInstance={true} avatar={false} showNewAccountBadge={false} avatarSize={20} user={item.moderator} inline={true} class="truncate"/>
+                    <UserLink avatar={false} showNewAccountBadge={false} avatarSize={20} user={item.moderator} inline={true} class="truncate"/>
                 {:else}
                     ---
                 {/if}
@@ -120,7 +152,7 @@
                     </button>
 
                     
-                    <UserLink avatar={false} showInstance={true} user={item.moderatee} showNewAccountBadge={false} inline={true} class="truncate"/>
+                    <UserLink avatar={false} user={item.moderatee} showNewAccountBadge={false} inline={true} class="truncate"/>
                 {/if}
             </span>
             

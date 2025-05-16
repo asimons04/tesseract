@@ -24,6 +24,10 @@ import type {
     Post,
 } from 'lemmy-js-client'
 
+import { get } from 'svelte/store'
+import { userSettings } from '$lib/settings'
+
+
 export type ActionName =
     | 'ban'
     | 'banCommunity'
@@ -320,7 +324,7 @@ export async function load({ url }: LoadParams) {
     const commentID     = Number(url.searchParams.get('comment_id')) || undefined
     const postID        = Number(url.searchParams.get('post_id')) || undefined
     const page          = Number(url.searchParams.get('page')) || 1
-    const type: ModlogActionType = (url.searchParams.get('type') as ModlogActionType) || 'All'
+    const type          = (url.searchParams.get('type') as ModlogActionType) || 'All'
 
     const results = await getClient().getModlog({
         community_id: community,
@@ -350,11 +354,21 @@ export async function load({ url }: LoadParams) {
         ...results.banned,
         ...results.added,
     ]
-
+    
     const moderationActions = moderation
         .map(_toModLog)
         .sort((a, b) => b.timestamp - a.timestamp)
 
+    // Try to find missing "moderatee" value from other entries in the modlog batch before falling back to a direct lookup in the ModlogItemTable component.
+    for (let i:number = 0; i<moderationActions.length; i++) {
+        if (['postRemoval', 'postRestore', 'postLock', 'postUnlock'].includes(moderationActions[i].actionName) && !moderationActions[i].moderatee) {
+            const index = moderationActions.findIndex((action) => (
+                action.moderatee?.id == moderationActions[i].post?.creator_id 
+            ))
+            if (index > -1) moderationActions[i].moderatee = moderationActions[index].moderatee
+        }
+    }
+    
     return {
         page: page,
         type: type,
