@@ -97,7 +97,7 @@
     </Badge>
 
 
-    <Modal {open} icon={CheckBadge} card={false} title="Media Bias Fact Check" width="max-w-4xl" preventCloseOnClickOut on:close={() => history.back()}>
+    <Modal {open} icon={CheckBadge} card={false} title="Media Bias Fact Check" width="max-w-4xl" on:close={() => history.back()}>
         {#if action == 'none'}
         <ModalPanel>
             <ModalScrollArea>    
