@@ -45,7 +45,7 @@ export function buildCommentsTree(comments: CommentView[], baseDepth: number = 0
     for (const comment_view of comments) {
         const cNode = map.get(comment_view.comment.id)
         
-        if (cNode && comment_view.comment.distinguished) {
+        if (cNode && comment_view.comment.distinguished && cNode.depth==0) {
             tree.push(cNode)
         }
     }
