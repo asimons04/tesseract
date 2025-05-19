@@ -509,6 +509,7 @@ export function isAdmin (me?: MyUserInfo):boolean {
 
 export function isTopMod(me: MyUserInfo|undefined, community: GetCommunityResponse): boolean {
     if (!me) return false
+    if (community.moderators.length == 0) return false
     return me.local_user_view.person.id == community.moderators[0].moderator.id
 }
 
