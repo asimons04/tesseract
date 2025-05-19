@@ -116,12 +116,12 @@
             name: data.community.community_view.community.name,
             displayName: data.community.community_view.community.title,
             nsfw: data.community.community_view.community.nsfw,
-            postsLockedToModerators:
-            data.community.community_view.community.posting_restricted_to_mods,
+            postsLockedToModerators: data.community.community_view.community.posting_restricted_to_mods,
             sidebar: data.community.community_view.community.description ?? '',
             icon: data.community.community_view.community.icon,
             banner: data.community.community_view.community.banner,
             submitting: false,
+            visibility: data.community.community_view.community.visibility
         }}
     >
         <svelte:fragment slot="formtitle">Settings</svelte:fragment>

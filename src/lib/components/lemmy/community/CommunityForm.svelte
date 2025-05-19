@@ -53,6 +53,7 @@
         nsfw: false,
         postsLockedToModerators: false,
         submitting: false,
+        visibility: 'Public'
     }
 
     const storage = new StorageController({
@@ -146,7 +147,7 @@
         banner: false
     }
 
-    let localCommunity = false
+    let localCommunity = formData.visibility == 'Public' ? false : true
 
     let communityPreview:CommunityView
     $:  formData, communityPreview = generateCommunityPreview()
