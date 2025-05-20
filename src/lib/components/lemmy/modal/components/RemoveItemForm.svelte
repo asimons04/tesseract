@@ -139,7 +139,7 @@
                                 })
                             })
                     } else {
-                        await getClient().createComment({
+                        let commentReply = await getClient().createComment({
                             content: remove.replyReason,
                             post_id: item.post.id,
                             parent_id: isCommentView(item) ? item.comment.id : undefined,
@@ -150,6 +150,18 @@
                                 type: 'warning',
                             })
                         })
+
+                        // Distinguish the comment
+                        if (commentReply) {
+                            await getClient().distinguishComment({comment_id: commentReply.comment_view.comment.id, distinguished: true})
+                            .catch(() => {
+                                toast({
+                                    content: 'Failed to distinguish reply. Removing anyway...',
+                                    type: 'warning',
+                                })
+                            })
+                        }
+
                     }
                 }
 
