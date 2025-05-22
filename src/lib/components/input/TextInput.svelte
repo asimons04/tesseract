@@ -49,7 +49,7 @@
 
 <label class="flex flex-col items-center {$$props.class}">
     {#if label}
-        <span class="font-bold text-sm text-left mb-1 w-max self-start">
+        <span class="font-bold text-sm text-left py-1 w-max self-start">
             {label}
             {#if required}
                 <span class="text-red-500">*</span>

@@ -16,6 +16,7 @@
     export let containerClass:string = ''
     export let containerStyle: string = ''
     export let focused: boolean = false
+    export let required: boolean = false
     
     let page: number = 0
     let limit: number = 50
@@ -84,8 +85,11 @@
 <!-- svelte-ignore a11y-label-has-associated-control -->
 <label class="flex flex-col w-full {$$props.class}">
     {#if label != ''}
-        <span class="font-bold text-sm text-left mb-1 w-max self-start">
+        <span class="font-bold text-sm text-left py-1 w-max self-start">
             {label}
+            {#if required}
+                <span class="text-red-500">*</span>
+            {/if}
         </span>
     {/if}
 
