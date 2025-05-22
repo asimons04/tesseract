@@ -19,6 +19,8 @@
     export let containerClass:string = ''
     export let containerStyle:string = ''
     export let focused: boolean = false
+    export let maxResultsHeight="!max-h-[50vh]"
+    
     export let infiniteScrollState:InfiniteScrollStateVars = {
         exhausted: false,
         loading: false
@@ -59,7 +61,7 @@
     {#if open}
         <Menu bind:open
             alignment="bottom-left"
-            containerClass="!max-h-[50vh] {containerClass}"
+            containerClass="{maxResultsHeight} {containerClass}"
             containerStyle={containerStyle}
             let:menu
         >
