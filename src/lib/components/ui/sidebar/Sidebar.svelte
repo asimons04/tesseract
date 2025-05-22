@@ -33,8 +33,10 @@
         ArrowPath,
         Folder,
         Cog6Tooth,
+        Bars3BottomLeft,
     } from 'svelte-hero-icons'
     import { goto } from "$app/navigation";
+    import { amModOfAny } from "$lib/components/lemmy/moderation/moderation";
 
     
     
@@ -95,6 +97,7 @@
 
     <hr class="border-slate-300 dark:border-zinc-800 mt-2"/>
 
+    <!---Home Button + Refresh--->
     <div class="flex {$userSettings.uiState.expandSidebar ? 'flex-row justify-between' : 'flex-col gap-1'}">
         
         <!---Frontpage--->
@@ -117,6 +120,19 @@
             <Icon src={ArrowPath} mini size="18" title="Refresh Latest" />
         </SidebarButton>
     </div>
+    
+    <!---Moderator Feed--->
+    {#if $profile?.user && $profile.user.moderates.length > 0}
+        <SidebarButton 
+            href="/home/moderatorview/{$userSettings?.defaultSort.sort.toLowerCase() ?? 'new'}" 
+            expanded={$userSettings.uiState.expandSidebar} 
+            title="Moderator View" 
+            data-sveltekit-preload-data="off" class="w-full"
+            icon={Bars3BottomLeft} iconSize={18}
+        >
+            <span class:hidden={!$userSettings.uiState.expandSidebar}>Moderator View</span>
+        </SidebarButton>
+    {/if}
 
     <!--- Explore Communities / Favorites --->
     
@@ -139,7 +155,7 @@
 
     {#if $profile?.user}
         <!--- Favorites, Subscribed, and Moderating Communities--->
-        <hr class="border-slate-300 dark:border-zinc-800 my-1"/>
+        <hr class="border-slate-300 dark:border-zinc-800 my-0"/>
         
         <!---Switcher Buttons--->
         <div class="flex {$userSettings.uiState.expandSidebar ? 'flex-row' : 'flex-col'} gap-1">
@@ -175,7 +191,7 @@
 
         
         
-        <hr class="border-slate-300 dark:border-zinc-800 my-1"/>
+        <hr class="border-slate-300 dark:border-zinc-800 my-0"/>
         
         <div class="flex flex-col gap-1 h-full overflow-y-auto">
             
