@@ -618,14 +618,20 @@
                         {/if}
 
                         <!---Community Modlog--->
-                        <Button color="tertiary-border" icon={Newspaper} iconSize={20} alignment="left" class="w-full"
-                            on:click={()=> {
-                                modalWidth = 'max-w-3xl'
-                                action='modlog'
-                            }}
-                        >
-                            Community Modlog...
-                        </Button>
+                        <div class="flex flex-row gap-2 items-center w-full">
+                            <Button color="tertiary-border" icon={Newspaper} iconSize={20} alignment="left" class="w-full"
+                                on:click={()=> {
+                                    modalWidth = 'max-w-3xl'
+                                    action='modlog'
+                                }}
+                            >
+                                Community Modlog...
+                            </Button>
+
+                            <Button color="tertiary-border" icon={ArrowTopRightOnSquare} iconSize={20} size="square-md" title="Open in Full Modlog"
+                                href="/modlog?community={communityDetails.community_view.community.id}"
+                            />
+                        </div>
                         
 
                         <!---Options that Required Authenticated User--->

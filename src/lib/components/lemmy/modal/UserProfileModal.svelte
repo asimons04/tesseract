@@ -472,16 +472,22 @@
                 
 
                             <!---See User's Modlog History--->
-                            <Button color="tertiary-border" icon={Newspaper} iconSize={20} alignment="left" class="w-full"
-                                on:click={() => {
-                                    if (!personDetails) return
-                                    action = 'modlog'
-                                    modalWidth = "max-w-4xl"
-                                    
-                                }}
-                            >
-                                Modlog History...
-                            </Button>
+                            <div class="flex flex-row gap-2 items-center w-full">
+                                <Button color="tertiary-border" icon={Newspaper} iconSize={20} alignment="left" class="w-full"
+                                    on:click={() => {
+                                        if (!personDetails) return
+                                        action = 'modlog'
+                                        modalWidth = "max-w-4xl"
+                                        
+                                    }}
+                                >
+                                    Modlog History...
+                                </Button>
+
+                                <Button color="tertiary-border" icon={ArrowTopRightOnSquare} iconSize={20} size="square-md" title="Open in Full Modlog"
+                                    href="/modlog?other_person_id={personDetails.person_view.person.id}"
+                                />
+                            </div>
                         
                             <div class="flex flex-row gap-2 items-center w-full">
                                 <!---Send Direct Message--->
