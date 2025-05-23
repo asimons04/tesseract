@@ -69,7 +69,7 @@
     }
 
     let displayVal = formatRelativeDate(stringToDate(date))
-    let dateTime = toLocaleDateString(stringToDate(date))
+    $:  dateTime = toLocaleDateString(stringToDate(date))
 
     $:  relativeTo, displayVal = formatRelativeDate(stringToDate(date))
 </script>
