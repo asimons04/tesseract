@@ -74,13 +74,15 @@
     interface CommentModlogLookup {
         reason: string | undefined
         moderator: Person | undefined
-        when: string | undefined
+        when: string | undefined,
+        loading: boolean
     }
 
     let modlogLookup: CommentModlogLookup = {
         reason: undefined,
         moderator: undefined,
-        when: undefined
+        when: undefined,
+        loading: false,
     }
 
     // If linking to a thread, scroll to the speciic comment and highlight it
@@ -200,11 +202,11 @@
         return color
     }
 
-    async function getCommentText() {
+    async function getCommentText(forceModlogLookup:boolean = false) {
         let text = node.comment_view.comment.content
 
         // If the content is removed, try to append the removal reason.  If current account is a mod, append the original content from the modlog lookup
-        if (onHomeInstance && node.comment_view.comment.removed && $userSettings.autoLookupRemovedCommentReasons && minAPIVersion('0.19.6')) {
+        if (onHomeInstance && node.comment_view.comment.removed && ($userSettings.autoLookupRemovedCommentReasons || forceModlogLookup) && minAPIVersion('0.19.6')) {
 
             // Don't lookup purged comments; return early with static 'Purged by admin' message.
             if (node.comment_view.comment.content == '*Purged*') {
@@ -213,6 +215,7 @@
             }
 
             try {
+                modlogLookup.loading = true
                 let results = await getClient().getModlog({comment_id: node.comment_view.comment.id})
                 
                 // Assume removed reason is ban w/removal if no modlog entry for the removed item.
@@ -222,12 +225,13 @@
                 
                 if (results?.removed_comments.length > 0) {
                     
-                    modlogLookup.reason = results.removed_comments[0].mod_remove_comment.reason ?? 'Failed to lookup reason automatically. Please see modlog.'
+                    modlogLookup.reason = results.removed_comments[0].mod_remove_comment.reason 
+                        ?? `Failed to lookup reason automatically. Please see [modlog](/modlog?comment_id=${node.comment_view.comment.id}).`
                     modlogLookup.when = results.removed_comments[0].mod_remove_comment.when_
-                    if (admin || mod) modlogLookup.moderator = results.removed_comments[0].moderator
 
-                    // Let mods see removed comments again (stupid Lemmy devs!!)
+                    // Let mods see the mod who performed the actoin as well as the removed comments again (stupid Lemmy devs!!)
                     if (admin || mod) {
+                        modlogLookup.moderator = results.removed_comments[0].moderator
                         text = admin
                             ? node.comment_view.comment.content
                             : results.removed_comments[0].comment.content
@@ -236,7 +240,7 @@
              }
             catch {}
         }
-
+        modlogLookup.loading = false
         return text
     }
 
@@ -401,14 +405,40 @@
                     {/if}
 
                 </div>
+                
                 <!---Removal Notice--->
                 {#if node.comment_view.comment.removed}
                     <Card cardColor='error' class="mx-2 p-1">
                         <div class="flex flex-row gap-1 items-center w-full">
                             
                             <div class="w-[42px]">
-                                <Button color="tertiary" size="square-lg" icon={HandRaised} iconSize={28} title="View Modlog for Comment"
-                                    on:click={() => goto(`/modlog?comment_id=${node.comment_view.comment.id}`) }
+                                <Button color="tertiary" size="square-lg" icon={HandRaised} iconSize={28} 
+                                    loading={modlogLookup.loading}
+                                    disabled={modlogLookup.loading}
+                                    title="Lookup Modlog for Comment"
+                                    on:click={async () => {
+                                        if (!onHomeInstance) {
+                                            toast({
+                                                type: 'warning',
+                                                title: 'Not Supported',
+                                                content: "Resolving modlog entries is only supported when you are viewing an item on your home instance."
+                                            })
+                                            return
+                                        }
+                                        if (!minAPIVersion('0.19.6')) {
+                                            toast({
+                                                type: 'warning',
+                                                title: 'Not Supported',
+                                                content: "You must be on at least API version 0.19.6 to lookup comments in the modlog."
+                                            })
+                                            return
+                                        }
+                                        if (!$userSettings.autoLookupRemovedCommentReasons) {
+                                            commentText = await getCommentText(true)
+                                            modlogLookup = modlogLookup
+                                        }
+                                        else goto(`/modlog?comment_id=${node.comment_view.comment.id}`) 
+                                    }}
                                 />
                             </div>
                             
