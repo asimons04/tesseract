@@ -181,11 +181,9 @@
             !(token.href.startsWith('/')) && 
             $userSettings.uiState.linkPreviews &&
             !(options?.custom?.noPreview ?? false)
-        } 
+        }
+        
         newtab={true}
-    >
-        <slot/>
-    </Link>
-
-    
+    />
+    <!--text={token.text ?? token.href}-->
 {/if}

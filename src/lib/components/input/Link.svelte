@@ -2,6 +2,7 @@
     import { createEventDispatcher } from "svelte"
     import { goto } from "$app/navigation";
     import { linkPreviewModal } from "$lib/components/lemmy/moderation/moderation";
+    import { fixLemmyEncodings } from "../lemmy/post/helpers";
 
     export let href: string|undefined
     export let highlight: boolean = false
@@ -17,7 +18,13 @@
 
     const dispatcher = createEventDispatcher()
 
+    function removeAmps(text?:string) {
+        if (!text) return undefined
+        return text.replaceAll('&amp;', '&')
+    }
+
 </script>
+
 {#if href}
     <a {href}
         id={id}
@@ -25,7 +32,7 @@
             {$$props.class}
             {nowrap ? 'truncate' : ''}
         "
-        rel="nofollow noreferrer"
+        rel="nofollow noreferrer noopener"
         target="{newtab
             ? '_blank'
             : '_self'
@@ -57,12 +64,10 @@
         }}
         title = "{title ?? href}"
     >
+
         <slot name="icon" />
         <slot>
-            
-                {text ?? (domainOnly ? new URL(href).hostname : href)}
-            
+            {removeAmps(text) ?? (domainOnly ? new URL(href).hostname : removeAmps(href))}
         </slot>
-    
     </a>
 {/if}
