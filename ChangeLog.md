@@ -3,14 +3,66 @@ All major/minor changes between releases will be documented here.
 
 # 1.4.39
 ## Bugfixes
-- Fix truncation in post headings to account for community display names where the community creator thinks "Display Name" and "Community Long Description" are the same picture :sigh:
+- [Display] Fix truncation in post headings to account for community display names where the community creator thinks "Display Name" and "Community Long Description" are the same picture :sigh:
   - Note:  Backported to 1.4.38
 
-- If an inbox item is expanded, switching accounts or refreshing the list as a new item arrives would keep the text from the previous comment while updating the heading info correctly.  Caused the wrong comment/reply to be displayed.
+- [Reactivity] If an inbox item is expanded, switching accounts or refreshing the list as a new item arrives would keep the text from the previous comment while updating the heading info correctly.  Caused the wrong comment/reply to be displayed.
+
+- [Reactivity] Fix bug where expanding/collapsing the post image would trigger unwanted reactivity causing the comment section to refresh.
+
+- [Reactivity] Comments now respond to the "lockPost" event in order to disable/enable the reply button appropriately.
+
+- [Comment Section] When distinghishing a mod comment, only push top-level comments to the top of the tree.  e.g. if you need to distinguish a comment that is a reply to another comment, that would previously push a copy of that distinguished reply up as a top-level comment.
+
+- [Community Settings] Unhandled error when an admin enters the community settings when there are no moderators.
+
+- [Community Settings] "Local Community" toggle not reflecting API state after reload.
+
+- [Moderation] Don't invalidate/refresh Reports page when resolving a report (not needed).
+
+- [Annoyance] Svelte was URI-encoding ampersands when rendering links
+
+- [Time Display] The absolute time displayed in the tooltip of the RelativeTime component was not updating correctly when re-rendering due to a reacctive event.
+
 
 ## Changes
 ### Minor
+
+
+#### Moderation
+- When removing a post/comment and opting to reply with a reason via comment, automatically distinguish the comment.
+
+- In the Community Profile Modal -> Ban/Unban User panel, you can now search for a user as well as enter the actor ID, @user@instance.xyz, or https://lemmyverse.link/u/user@instance.xyz format.
+
+- Added a quick shortcut to "Moderator View" in the sidebar. Will not show unless the current account is moderating at least one community (e.g. if you're an admin that isn't explicitly a moderator of any community, it will be hidden). 
+
+- Added a button on reports that will copy the report text to the clipboard if you want to use it in the removal reason.
+
+#### User and Community Profile Modals
+- Added button to view user's modlog history in the full modlog (without having to open the embededded, mini-modlog first.
+- Both can be middle-clicked to open in a new tab on desktop
 - Added "View in Full Modlog" button to User `Profile Modal -> User Modlog` panel (Thought I already had this, but it was in the moderation modal)
+
+#### Inline Comment Removal Reasons
+- Clicking the "hand" icon will now load the modlog for the comment even if you have the setting disabled.  If the setting is enabled, then it will take you to the full modlog for the entry.
+
+- Move comment removal reason box above the comment text. 
+
+
+
+### Enhancements to Modlog
+Gave the modlog a slight visual and functional refresh
+  - Can now +/- quick filter by action type
+  - More consistent and uniform layout
+  - Removed redundant components
+  - Moved filter options out of sub-navbar and into page proper
+  - Cleaner mobile/desktop reflow
+  - Can switch between relative timestamps (1 hr ago) and absolute timestamps for modlog events
+
+  Additionally, it can now lookup the moderatee on "remove post" action types.  The API *very stupidly* doesn't include the person details on the "Remove Post" (or lock post) events, so Tesseract can optionally/automatically perform a lookup based on the post's creator ID if you have that option toggled on. 
+  
+  Note that an API-lookup is a "last resort".  In the modlog loader, it will attempt to resolve the creator_id by looking at other entries in the batch of modlog entries it retrieves.  If it finds a person object matching that id, it will add it transparently and not trigger an API-lookup.  The API lookups are also cached for 5 minutes (too short, and they're not useful, too long, and ban indicators may not show when they should).  Attempting to resolve those in the loader, synchronously, caused too much delay in loading the page, so they fill in dynamically/asynchronously after the modlog renders.
+
 
 
 
