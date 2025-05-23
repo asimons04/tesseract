@@ -35,7 +35,9 @@
         Envelope,
         User,
         Eye,
+        ClipboardDocument,
     } from "svelte-hero-icons"
+    import { toast } from "$lib/components/ui/toasts/toasts";
     
     
     
@@ -83,7 +85,7 @@
         $profile.user.reports = reports.comment_reports + reports.post_reports + (reports.private_message_reports ?? 0)
 
         dispatcher('resolveReport', { resolved: report.resolved})
-        goto($page.url, {invalidateAll: true})
+        //goto($page.url, {invalidateAll: true})
     }
 
     function handleExpandAll(e:ExpandAllInboxItemEvent) {
@@ -162,7 +164,23 @@
         
         <!---Report Reason--->
         <span class="text-sm font-bold">Reason:</span>
-        <Markdown source={report.reason} class="text-sm max-h-[150px] overflow-y-scroll overflow-x-hidden"/>
+        
+        <div class="flex flex-row gap-2 w-full">
+            <div class="w-[32px]">
+                <Button color="tertiary-border" size="square-md" icon={ClipboardDocument} title="Copy report text to clipboard" on:click={() => {
+                    navigator.clipboard.writeText(report.reason)
+                    toast({
+                        type: 'success',
+                        title: 'Copied!',
+                        content: 'Copied report text to clipboard.'
+                    })
+                }}/>
+            </div>
+
+            <div class="w-calc[100%-40px]">
+                <Markdown source={report.reason} class="text-sm max-h-[150px] overflow-y-scroll overflow-x-hidden"/>
+            </div>
+        </div>
 
 
         <!---Item View and Actions--->
