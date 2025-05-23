@@ -27,6 +27,7 @@
     import UserLink                 from '$lib/components/lemmy/user/UserLink.svelte'
 
     import { 
+    Clock,
         ExclamationTriangle, 
         Funnel, 
         HandRaised, 
@@ -44,6 +45,8 @@
         community:  {set: false, community: undefined, loading: false},
         action:     {set: false}
     }
+
+    let showAbsoluteTime = false
 
     async function setCommunityFilter() {
         // Community Filter
@@ -158,6 +161,13 @@
                     description="Lookup the person object for remove/restore/lock/unlock post events since the API does not include those."
                     icon={User}
                     bind:value={$userSettings.modlogResolveMissingNames}
+                />
+
+                <SettingToggle
+                    title="Show Absolute Time"
+                    description="Show the absolute time for actions rather than relative."
+                    icon={Clock}
+                    bind:value={showAbsoluteTime}
                 />
                     
                 <SettingMultiSelect
@@ -328,7 +338,7 @@
                 
                 {#each data.modlog as modlog}
                     {#if modlog.actionName != "Unknown"}  
-                        <ModlogItemTable item={modlog} {showModeratorColumn} bind:filter />
+                        <ModlogItemTable item={modlog} {showModeratorColumn} {showAbsoluteTime} bind:filter />
                     {/if}
                 {/each}
             </div>

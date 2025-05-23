@@ -25,7 +25,8 @@
     export let item: ModLog
     export let filter: Filters
     export let showModeratorColumn: boolean = true
-    
+    export let showAbsoluteTime: boolean = false
+
     $: selectedType = $page.url.searchParams.get('type')
     $: item, $userSettings.modlogResolveMissingNames,  populateModeratee()
     
@@ -74,7 +75,7 @@
         <!---Date/Time--->
         <div class="flex flex-row gap-2 px-1 text-xs w-full lg:w-[5%]">
             <span class="lg:hidden text-xs font-bold min-w-[10ch]">When:</span>
-            <RelativeDate date={item.when} />
+            <RelativeDate date={item.when} {showAbsoluteTime}/>
         </div>
 
         <!---Community--->
