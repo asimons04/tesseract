@@ -120,6 +120,7 @@
                             type: 'warning',
                             title: 'Reply Text is Required'
                         })
+                        remove.loading = false
                         return
                     }
                     
