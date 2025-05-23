@@ -12,6 +12,7 @@ function normalizeDomain(domain:string):string {
         .replace(/^m\./,'')
         .replace('bbc.co.uk', 'bbc.com')
         .replace('bbc.in', 'bbc.com')
+        .replace('economictimes.com', 'economictimes.indiatimes.com')
         .replace('english.aawsat.com', 'aawsat.com')
         .replace('eu.usatoday.com', 'usatoday.com')
         .replace('messaging-custom-newsletters.nytimes.com', 'nytimes.com')
