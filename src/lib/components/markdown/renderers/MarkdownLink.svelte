@@ -182,8 +182,7 @@
             $userSettings.uiState.linkPreviews &&
             !(options?.custom?.noPreview ?? false)
         }
-        
+        text={token.text}
         newtab={true}
     />
-    <!--text={token.text ?? token.href}-->
 {/if}
