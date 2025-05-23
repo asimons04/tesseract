@@ -77,27 +77,13 @@
     <Card class="flex flex-col p-2 flex-1 gap-1 mx-auto {($userSettings.uiState.feedMargins && !inModal) ? 'max-w-3xl' : 'w-full'}">
         
         <div class="flex flex-row justify-between gap-1 items-center">
-            <CommentMeta bind:comment bind:inProfile noClick={!actions} />
+            
+            <div class="w-[calc(100%-100px)]">
+                <CommentMeta bind:comment bind:inProfile noClick={!actions} />
+            </div>
             
             <!---Row with badges and jump to comment buttons--->
-            <div class="flex flex-col gap-1">
-                <!---Badges For Post Indicatiors--->
-                <div class="flex flex-row ml-auto mb-auto gap-2 items-center">
-                
-                    <!---Badge accounts less than 5 days old (1440 minutes = 24 hours * 5)-->
-                    {#if comment.post.locked}
-                        <Badge label="Locked" color="yellow" click={false} icon={LockClosed} iconSize={14}/>
-                    {/if}
-                    
-                    {#if comment.post.removed}
-                        <Badge label="Removed" color="red" icon={NoSymbol} iconSize={14} click={false}/>
-                    {/if}
-                    
-                    {#if comment.post.deleted}
-                        <Badge label="Deleted" color="red" icon={Trash} iconSize={14} click={false}/>
-                    {/if}
-                    
-                </div>
+            <div class="flex flex-col gap-1 w-[100px]">
 
                 <!---Jump to Comment Buttons--->
                 <div class="flex flex-row gap-1 ml-auto items-center">
@@ -123,7 +109,26 @@
                         on:click={() => dispatchWindowEvent('clickIntoPost') }
                     />
                 </div>
+
+                <!---Badges For Post Indicatiors--->
+                <div class="flex flex-row ml-auto mb-auto gap-2 items-center">
+
+                    <!---Badge accounts less than 5 days old (1440 minutes = 24 hours * 5)-->
+                    {#if comment.post.locked}
+                        <Badge label="Locked" color="yellow" click={false} icon={LockClosed} iconSize={14}/>
+                    {/if}
+                    
+                    {#if comment.post.removed}
+                        <Badge label="Removed" color="red" icon={NoSymbol} iconSize={14} click={false}/>
+                    {/if}
+                    
+                    {#if comment.post.deleted}
+                        <Badge label="Deleted" color="red" icon={Trash} iconSize={14} click={false}/>
+                    {/if}
+                    
+                </div>
             </div>
+            
         </div>
         
         <!---Post Title--->

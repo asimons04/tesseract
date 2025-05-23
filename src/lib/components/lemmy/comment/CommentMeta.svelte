@@ -33,7 +33,7 @@
                 <Avatar url={comment.community.icon} width={avatarSize} alt={comment.community.name} community={true}/>
             </span>
 
-            <div class="flex flex-col w-full text-xs">
+            <div class="flex flex-col w-full truncate text-xs">
                 
                 <CommunityLink community={comment.community} {avatarSize} />
                 
