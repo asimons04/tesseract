@@ -5,6 +5,7 @@
     export let relativeTo: Date = new Date()
     export let short: boolean = false
     export let updateInterval: number = 30
+    export let showAbsoluteTime: boolean = false
     export let options: Intl.RelativeTimeFormatOptions = {
         numeric: 'always',
         style: 'narrow',
@@ -74,7 +75,14 @@
 </script>
 
 <svelte:window on:systemTimer={handleSystemTimerEvent} />
-  
-<time class="whitespace-nowrap {$$props.class}" datetime={dateTime} title={dateTime}>
-    {displayVal}
-</time>
+
+{#if showAbsoluteTime}
+    <time class="{$$props.class}" datetime={dateTime} title={dateTime}>
+        {dateTime}
+    </time>
+    
+{:else}
+    <time class="whitespace-nowrap {$$props.class}" datetime={dateTime} title={dateTime}>
+        {displayVal}
+    </time>
+{/if}
