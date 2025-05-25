@@ -7,6 +7,7 @@
     import { amMod, type ModQueue }      from '../moderation/moderation'
     import { 
         buildCommentsTree, 
+        getDepthFromComment, 
         type CommentNodeI 
     }                               from './comments'
     import { fly }                  from 'svelte/transition'
@@ -30,6 +31,7 @@
     export let onHomeInstance: boolean  = false
     export let modQueue: ModQueue
     export let selectable = true
+    export let depth: number    = 0
 
     if (isParent) {
         setContext('comments:tree', nodes)
@@ -100,10 +102,30 @@
             })
         }
     }
-     
+    
+    function getThreadBorderColor(depth:number): string {
+        if (!$userSettings.uiState.showCommentThreadLines) return ''
+        const colorIndex = depth % 5
+        switch(colorIndex) {
+            case 0:
+                return 'border-l-2 border-red-900/80 dark:border-red-500/80'
+            case 1:
+                return 'border-l-2 border-green-900/80 dark:border-green-500/80'
+            case 2:
+                return 'border-l-2 border-sky-900/80 dark:border-sky-500/80'
+            case 3:
+                return 'border-l-2 border-amber-900/80 dark:border-amber-500/80'
+            case 4:
+                return 'border-l-2 border-orange-900/80 dark:border-orange-500/80'
+            
+            default:
+                return 'border-l-2 border-black/80 dark:border-white/80'
+        }
+    }
+
 </script>
 
-<div class="flex flex-col gap-4 {isParent ? '' : 'pl-1 pt-2'}" in:fly={{ opacity: 0, y: -4 }} >
+<div class="flex flex-col gap-2 {isParent ? 'gap-8' : ` ${getThreadBorderColor(depth)} ml-1 mt-2 pl-1`}" in:fly={{ opacity: 0, y: -4 }} >
     {#each nodes as node, idx (node.comment_view.comment.id)}
         <!--- Comment filtering  --->
         {#if    !(
@@ -117,6 +139,7 @@
                     && !amMod($profile?.user, node.comment_view.community)
                 )
         }
+
             <Comment postId={post.id} bind:node {jumpTo} {onHomeInstance} {selectable}
                 on:select={(e) => { 
                     modQueue.add(e.detail)
@@ -127,7 +150,7 @@
             >
                 
                 {#if node.children?.length > 0}
-                    <svelte:self {post} bind:nodes={node.children} bind:modQueue moderators={moderators} isParent={false} {jumpTo} {onHomeInstance}/>
+                    <svelte:self {post} bind:nodes={node.children} bind:modQueue moderators={moderators} isParent={false} depth={getDepthFromComment(node.comment_view.comment)}  {jumpTo} {onHomeInstance}/>
                 {/if}
 
                 {#if node.comment_view.counts.child_count > 0 && node.children.length == 0}

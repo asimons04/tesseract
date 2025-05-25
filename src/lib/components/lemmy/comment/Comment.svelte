@@ -7,6 +7,8 @@
         ArrowUp,
         Bookmark,
         ChatBubbleLeftEllipsis,
+        ChevronDown,
+        ChevronUp,
         HandRaised,
         Icon,
         Minus,
@@ -70,7 +72,10 @@
     let admin                       = isAdmin($profile?.user)
     let mod                         = amMod($profile?.user, node.comment_view.community)
     let selected                    = false
-
+    let commentBodyContainer: HTMLDivElement
+    let commentBodyExpanded:boolean = false
+    $: commentBodyContainerDoesScroll = commentBodyContainer?.scrollHeight > commentBodyContainer?.clientHeight || (node.comment_view.comment.content?.substring(0,150).includes('!['))
+    
     interface CommentModlogLookup {
         reason: string | undefined
         moderator: Person | undefined
@@ -308,16 +313,17 @@
     </Modal>
 {/if}
 
-<Card elevation={elevation} cardColor={color} class="pl-1">
+<Card elevation={elevation} cardColor={color} class="pl-1" >
 
-    <div bind:this={commentContainer} class="py-1 {$$props.class}" id="#{node.comment_view.comment.id.toString()}" transition:slide>
+    <div bind:this={commentContainer} class="py-1 {$$props.class}" id="#{node.comment_view.comment.id.toString()}" >
         <details bind:open class="flex flex-col gap-0">
             
             <summary class="
                 flex flex-col md:flex-row flex-wrap w-full cursor-pointer gap-2 group text-xs 
                 hover:bg-slate-300 hover:dark:bg-zinc-800 hover:dark:border-zinc-700
                 hover:rounded-lg overflow-hidden
-            ">
+                "
+            >
                 <span class:font-bold={op} class="flex flex-row gap-1 items-center w-full">
                     <UserLink avatarSize={20} avatar user={node.comment_view.creator} mod={node.comment_view.creator_is_moderator} admin={node.comment_view.creator_is_admin} community_banned={node.comment_view.creator_banned_from_community}/>
 
@@ -465,10 +471,34 @@
                     </Card>
                 {/if}
 
-
-                <div class="max-w-full break-words text-sm">
+                <!---Comment Text Body (Expandable--->
+                <div bind:this={commentBodyContainer} transition:slide class="
+                    max-w-full break-words text-sm
+                    {$userSettings.uiState.limitCommentHeight && !commentBodyExpanded ? 'max-h-[120px] overflow-y-hidden': ''}
+                    {$userSettings.uiState.limitCommentHeight && (!commentBodyExpanded && (commentBodyContainerDoesScroll || commentBodyContainer?.scrollHeight > commentBodyContainer?.clientHeight))
+                        ? 'bg-gradient-to-b text-transparent from-slate-800 via-slate-800 dark:from-zinc-100 dark:via-zinc-100 bg-clip-text z-0'
+                        : ''
+                    }
+                ">
                     <Markdown source={commentText} noImages={node.comment_view.comment.removed} class="px-1" />
                 </div>
+                
+                {#if $userSettings.uiState.limitCommentHeight && (commentBodyExpanded || commentBodyContainerDoesScroll || commentBodyContainer?.scrollHeight > commentBodyContainer?.clientHeight)}
+                <Button color="tertiary" size="sm" 
+                    class="mx-auto text-xs font-bold !py-0 !px-1 w-full {commentBodyExpanded ? '' : 'mb-[5px]'}"
+                    title="{commentBodyExpanded ? 'Collapse' : 'Expand'}"
+                    on:click={() => {
+                        commentBodyExpanded = !commentBodyExpanded
+                    }}
+                >
+                    <span class="flex flex-row gap -1 text-xs mx-auto opacity-80">
+                        <Icon src={commentBodyExpanded ? ChevronUp : ChevronDown} width={20} mini />
+                        {commentBodyExpanded ? 'Show Less' : 'Show More'}
+                        <Icon src={commentBodyExpanded ? ChevronUp : ChevronDown} width={20} mini />
+                    </span>
+                </Button>
+                {/if}
+
                 
                 <div class="flex flex-row gap-2 items-center">
                     <CommentActions

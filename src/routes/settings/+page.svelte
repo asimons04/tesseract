@@ -86,6 +86,7 @@
         UserGroup,
         WrenchScrewdriver,
         Newspaper,
+        ArrowLongDown,
     } from 'svelte-hero-icons'
     
     
@@ -618,9 +619,17 @@
             bind:value={$userSettings.uiState.largeEmojis}
         />
 
+        <SettingToggle title="Show Comment Thread Lines" icon={ArrowLongDown} description="Show colored bars in the comment threads to indicate their depth." 
+            bind:value={$userSettings.uiState.showCommentThreadLines} 
+        />
+
+        <SettingToggle title="Limit Comment Height" icon={BarsArrowDown} description="Limit the height of long comments by default and show an expand/collapse button to see the full comment." 
+            bind:value={$userSettings.uiState.limitCommentHeight}
+        />
+
         {#if minAPIVersion('0.19.6')}
         <SettingToggle title="Show Inline Comment Removal Reasons" icon={Newspaper} description="Automatically fetch the removal reason from the modlog for removed comments
-        and show them below the removed content. Enabling this also allows community mods to see the original comment contents."
+            and show them below the removed content. Enabling this also allows community mods to see the original comment contents."
             bind:value={$userSettings.autoLookupRemovedCommentReasons}
         />
         {/if}
