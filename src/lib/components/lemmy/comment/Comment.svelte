@@ -68,14 +68,24 @@
     let newComment                  = node.comment_view.comment.content
     let jumpToComment               = false
     let commentContainer: HTMLDivElement
+    let commentBodyContainer: HTMLDivElement
     let op                          = (node.comment_view.post.creator_id == node.comment_view.creator.id)
     let commentText                 = node.comment_view.comment.content
     let admin                       = isAdmin($profile?.user)
     let mod                         = amMod($profile?.user, node.comment_view.community)
     let selected                    = false
-    let commentBodyContainer: HTMLDivElement
     let commentBodyExpanded:boolean = false
-    $: commentBodyContainerDoesScroll = commentBodyContainer?.scrollHeight > commentBodyContainer?.clientHeight || (node.comment_view.comment.content?.substring(0,150).includes('!['))
+    let depth                       = getDepthFromComment(node.comment_view.comment) ?? 0
+    let color: 'default' | 'warning' | 'error' | 'success' | 'info' = getCardColor(node)
+    let borderColor = ''
+    let commentBodyContainerDoesScroll = false
+
+    const dispatcher                = createEventDispatcher<{select: CommentView, unselect: CommentView }>()
+    
+    $: node, commentBodyContainerDoesScroll = 
+                commentBodyContainer?.scrollHeight > commentBodyContainer?.clientHeight ||
+                node.comment_view.comment.content?.substring(0,150).includes('![')
+    $: node, borderColor = getThreadBorderColor()
     
     interface CommentModlogLookup {
         reason: string | undefined
@@ -134,7 +144,7 @@
             if (node.comment_view.comment.id == e.detail.comment_id) {
                 node.comment_view.comment.distinguished = e.detail.distinguished
                 node = node
-                color = e.detail.distinguished ? 'success' : getCardColor(node)
+                //color = e.detail.distinguished ? 'success' : getCardColor(node)
             }
         },
 
@@ -193,12 +203,8 @@
 
     function getCardColor(node: CommentNodeI): 'default' | 'warning' | 'error' | 'success' | 'info' {
         let color: 'default' | 'warning' | 'error' | 'success' | 'info' = 'default'
-        
-        //if (node.comment_view.comment.distinguished) return 'success'
         if (jumpToComment) return 'warning'
         if (selected) return 'info'
-        //if (node.comment_view.comment.removed) return 'error'
-
         return color
     }
 
@@ -243,14 +249,6 @@
         modlogLookup.loading = false
         return text
     }
-
-    const dispatcher = createEventDispatcher<{select: CommentView, unselect: CommentView }>()
-
-    let color: 'default' | 'warning' | 'error' | 'success' | 'info' = getCardColor(node)
-    let borderColor = ''
-    
-    $: node, borderColor = getThreadBorderColor()
-    let depth = getDepthFromComment(node.comment_view.comment) ?? 0
 
     function getThreadBorderColor(): string {
         if (elevation == -1 || (depth == 0 && node.children.length < 1)) return ''
@@ -494,7 +492,12 @@
                 <Card elevation={-1} cardColor={color} class="p-1" >
                     <div bind:this={commentBodyContainer} transition:slide class="
                         max-w-full break-words text-sm
-                        {$userSettings.uiState.limitCommentHeight && !commentBodyExpanded && !node.comment_view.comment.distinguished ? 'max-h-[120px] overflow-y-hidden': ''}
+                        {   $userSettings.uiState.limitCommentHeight && 
+                            !commentBodyExpanded && 
+                            !node.comment_view.comment.distinguished 
+                                ? 'max-h-[120px] overflow-y-hidden'
+                                : ''
+                        }
                         "
                     >
                         {#if node.comment_view.comment.distinguished}
@@ -506,9 +509,7 @@
                                     </div>
                                     
                                     <div class="flex flex-col w-[calc(100%-48px)] gap-0 text-xs font-normal">
-                                        <Markdown source={'**Moderator Message**'} />
-
-                                        <Markdown source={commentText} noImages={node.comment_view.comment.removed} />
+                                        <Markdown source={'**Moderator Message**\n\n' + commentText} noImages={node.comment_view.comment.removed} />
                                     </div>
                                 </div>
                             </Card>
@@ -518,7 +519,7 @@
                     </div>
                 </Card>
                 
-                {#if $userSettings.uiState.limitCommentHeight && (commentBodyExpanded || commentBodyContainerDoesScroll || commentBodyContainer?.scrollHeight > commentBodyContainer?.clientHeight)}
+                {#if $userSettings.uiState.limitCommentHeight && (commentBodyExpanded || commentBodyContainerDoesScroll)}
                 <Button color="tertiary" size="sm" 
                     class="mx-auto text-xs font-bold !py-0 !px-1 w-full {commentBodyExpanded ? '' : 'mb-[5px]'}"
                     title="{commentBodyExpanded ? 'Collapse' : 'Expand'}"
