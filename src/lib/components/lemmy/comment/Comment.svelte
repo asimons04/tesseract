@@ -11,6 +11,7 @@
         ChevronUp,
         HandRaised,
         Icon,
+        Megaphone,
         Minus,
         NoSymbol,
         Pencil,
@@ -57,7 +58,7 @@
     export let actions: boolean     = true
     export let open                 = true
     export let replying             = false
-    export let elevation: -1|0|1|2  = getCardElevation(node)
+    export let elevation: -1|0|1|2  = 1 //getCardElevation(node)
     export let jumpTo:number        = -1
     export let onHomeInstance       = false
     export let selectable           = false
@@ -190,16 +191,10 @@
             $profile?.user?.local_user_view.person.id != node.comment_view.creator.id
     ) ? false : open
 
-    function getCardElevation(node: CommentNodeI): 0|1|2 {
-        let depth = getDepthFromComment(node.comment_view.comment)
-        if (!depth) return 1
-        return (depth % 2 == 0) ? 1 : 0
-    }
-
     function getCardColor(node: CommentNodeI): 'default' | 'warning' | 'error' | 'success' | 'info' {
         let color: 'default' | 'warning' | 'error' | 'success' | 'info' = 'default'
         
-        if (node.comment_view.comment.distinguished) return 'success'
+        //if (node.comment_view.comment.distinguished) return 'success'
         if (jumpToComment) return 'warning'
         if (selected) return 'info'
         //if (node.comment_view.comment.removed) return 'error'
@@ -252,6 +247,30 @@
     const dispatcher = createEventDispatcher<{select: CommentView, unselect: CommentView }>()
 
     let color: 'default' | 'warning' | 'error' | 'success' | 'info' = getCardColor(node)
+    let borderColor = ''
+    
+    $: node, borderColor = getThreadBorderColor()
+    let depth = getDepthFromComment(node.comment_view.comment) ?? 0
+
+    function getThreadBorderColor(): string {
+        if (elevation == -1 || (depth == 0 && node.children.length < 1)) return ''
+        const padding = "ml-1 pl-1 md:ml-2 md:pl-2"
+        switch((depth % 5)) {
+            case 0:
+                return `border-l-2 border-red-500/80 dark:border-red-500/80 ${padding}`
+            case 1:
+                return `border-l-2 border-green-500/80 dark:border-green-500/80 ${padding}`
+            case 2:
+                return `border-l-2 border-sky-700/80 dark:border-sky-500/80 ${padding}`
+            case 3:
+                return `border-l-2 border-amber-700/80 dark:border-amber-500/80 ${padding}`
+            case 4:
+                return `border-l-2 border-orange-700/80 dark:border-orange-500/80 ${padding}`
+            
+            default:
+                return `border-l-2 border-black/80 dark:border-white/80 ${padding}`
+        }
+    }
 </script>
 
 <svelte:window 
@@ -313,9 +332,9 @@
     </Modal>
 {/if}
 
-<Card elevation={elevation} cardColor={color} class="pl-1" >
+<div class="pl-1" >
 
-    <div bind:this={commentContainer} class="py-1 {$$props.class}" id="#{node.comment_view.comment.id.toString()}" >
+    <div bind:this={commentContainer} class="{elevation > 0 ? 'pt-2' : ''} {$$props.class}" id="#{node.comment_view.comment.id.toString()}" >
         <details bind:open class="flex flex-col gap-0">
             
             <summary class="
@@ -368,7 +387,7 @@
                 </span>
             </summary>
 
-            <div class="flex flex-col gap-1">
+            <div class="flex flex-col gap-1  {borderColor}">
                 
                 <!---Indicator Badges--->
                 <div class="flex flex-row flex-wrap w-full gap-2 px-1 items-center">
@@ -472,16 +491,32 @@
                 {/if}
 
                 <!---Comment Text Body (Expandable--->
-                <div bind:this={commentBodyContainer} transition:slide class="
-                    max-w-full break-words text-sm
-                    {$userSettings.uiState.limitCommentHeight && !commentBodyExpanded ? 'max-h-[120px] overflow-y-hidden': ''}
-                    {$userSettings.uiState.limitCommentHeight && (!commentBodyExpanded && (commentBodyContainerDoesScroll || commentBodyContainer?.scrollHeight > commentBodyContainer?.clientHeight))
-                        ? 'bg-gradient-to-b text-transparent from-slate-800 via-slate-800 dark:from-zinc-100 dark:via-zinc-100 bg-clip-text z-0'
-                        : ''
-                    }
-                ">
-                    <Markdown source={commentText} noImages={node.comment_view.comment.removed} class="px-1" />
-                </div>
+                <Card elevation={-1} cardColor={color} class="p-1" >
+                    <div bind:this={commentBodyContainer} transition:slide class="
+                        max-w-full break-words text-sm
+                        {$userSettings.uiState.limitCommentHeight && !commentBodyExpanded && !node.comment_view.comment.distinguished ? 'max-h-[120px] overflow-y-hidden': ''}
+                        "
+                    >
+                        {#if node.comment_view.comment.distinguished}
+                            <Card cardColor='success' class="mx-2 p-1">
+                                <div class="flex flex-row gap-1 items-center w-full">
+                                    
+                                    <div class="w-[42px]">
+                                        <Icon src={Megaphone} width={28} mini />
+                                    </div>
+                                    
+                                    <div class="flex flex-col w-[calc(100%-48px)] gap-0 text-xs font-normal">
+                                        <Markdown source={'**Moderator Message**'} />
+
+                                        <Markdown source={commentText} noImages={node.comment_view.comment.removed} />
+                                    </div>
+                                </div>
+                            </Card>
+                        {:else}
+                            <Markdown source={commentText} noImages={node.comment_view.comment.removed} />
+                        {/if}
+                    </div>
+                </Card>
                 
                 {#if $userSettings.uiState.limitCommentHeight && (commentBodyExpanded || commentBodyContainerDoesScroll || commentBodyContainer?.scrollHeight > commentBodyContainer?.clientHeight)}
                 <Button color="tertiary" size="sm" 
@@ -523,29 +558,31 @@
                     />
                 </div>
                 
-            </div>
-            {#if replying}
-                <div class="max-w-full my-2">
-                    <h1 class="font-bold text-sm mb-2">Reply</h1>
-                    <CommentForm {postId} parentId={node.comment_view.comment.id} bind:imageUploads
-                        locked={node.comment_view.post.locked || !onHomeInstance}
-                        on:comment={(e) => {
-                            node.children = [
-                                {
-                                    children: [],
-                                    comment_view: e.detail.comment_view,
-                                    depth: node.depth + 1,
-                                },
-                                ...node.children,
-                            ]
-                            replying = false
-                        }}
-                    />
+
+                {#if replying}
+                    <div class="max-w-full my-2">
+                        <h1 class="font-bold text-sm mb-2">Reply</h1>
+                        <CommentForm {postId} parentId={node.comment_view.comment.id} bind:imageUploads
+                            locked={node.comment_view.post.locked || !onHomeInstance}
+                            on:comment={(e) => {
+                                node.children = [
+                                    {
+                                        children: [],
+                                        comment_view: e.detail.comment_view,
+                                        depth: node.depth + 1,
+                                    },
+                                    ...node.children,
+                                ]
+                                replying = false
+                            }}
+                        />
+                    </div>
+                {/if}
+                
+                <div class="bg-transparent dark:bg-transparent">
+                    <slot />
                 </div>
-            {/if}
-            <div class="bg-transparent dark:bg-transparent">
-                <slot />
             </div>
         </details>
     </div>
-</Card>
+</div>

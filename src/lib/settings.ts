@@ -140,7 +140,6 @@ interface Settings {
         hybridViewKeepReadCollapsed: boolean                            // Enable to keep read posts collapsed in compact view rather than auto expanding to cards
         scrollPostBodyInFeed: boolean                                   // When expanding a long post body in the feed, limit the div's height and scroll within it. Disable to expand in full
         disableMarkdownEditorKeyboardShortcuts: boolean                 // Disable the keyboard shortcuts in the markdown editor
-        showCommentThreadLines: boolean                                 // Show color-coded vertical bars alongside comments to indicate thread depth.
         limitCommentHeight: boolean                                     // Limit comments in height to 120px and show a "show more" / "collapse" button to expand them.
     }
     highlightCode: boolean                                              // Enable to use highlight.js code highlighting on code blocks
@@ -215,8 +214,7 @@ export const defaultSettings: Settings = {
         hybridViewKeepReadCollapsed:                                    true,
         scrollPostBodyInFeed:                                           true,
         disableMarkdownEditorKeyboardShortcuts:                         false,
-        showCommentThreadLines:                                         true,
-        limitCommentHeight:                                             true
+        limitCommentHeight:                                             false
     },
 
     markReadPosts:      toBool(env.PUBLIC_MARK_READ_POSTS)              ??  false,

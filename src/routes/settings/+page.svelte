@@ -619,10 +619,6 @@
             bind:value={$userSettings.uiState.largeEmojis}
         />
 
-        <SettingToggle title="Show Comment Thread Lines" icon={ArrowLongDown} description="Show colored bars in the comment threads to indicate their depth." 
-            bind:value={$userSettings.uiState.showCommentThreadLines} 
-        />
-
         <SettingToggle title="Limit Comment Height" icon={BarsArrowDown} description="Limit the height of long comments by default and show an expand/collapse button to see the full comment." 
             bind:value={$userSettings.uiState.limitCommentHeight}
         />
