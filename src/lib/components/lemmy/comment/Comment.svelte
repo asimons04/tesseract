@@ -5,6 +5,7 @@
     
     import {
         ArrowUp,
+        BarsArrowDown,
         Bookmark,
         ChatBubbleLeftEllipsis,
         ChevronDown,
@@ -16,6 +17,7 @@
         NoSymbol,
         Pencil,
         Plus,
+        PlusCircle,
         Trash,
     } from 'svelte-hero-icons'
     
@@ -51,6 +53,7 @@
     import { slide }        from 'svelte/transition'
     import { toast }        from '$lib/components/ui/toasts/toasts.js'
     import { userSettings } from '$lib/settings'
+    import { redirect } from '@sveltejs/kit';
     
     
     export let node: CommentNodeI
@@ -77,15 +80,15 @@
     let commentBodyExpanded:boolean = false
     let depth                       = getDepthFromComment(node.comment_view.comment) ?? 0
     let color: 'default' | 'warning' | 'error' | 'success' | 'info' = getCardColor(node)
-    let borderColor = ''
+    let threadLineColor = ''
     let commentBodyContainerDoesScroll = false
+    let commentContainsImage            = false
 
     const dispatcher                = createEventDispatcher<{select: CommentView, unselect: CommentView }>()
     
-    $: node, commentBodyContainerDoesScroll = 
-                commentBodyContainer?.scrollHeight > commentBodyContainer?.clientHeight ||
-                node.comment_view.comment.content?.substring(0,150).includes('![')
-    $: node, borderColor = getThreadBorderColor()
+    $: node, commentText, commentContainsImage = commentText.includes('![')
+    $: node, commentText, commentBodyContainerDoesScroll = (commentBodyContainer?.scrollHeight > commentBodyContainer?.clientHeight) || commentContainsImage
+    $: node, threadLineColor = getThreadLineColor()
     
     interface CommentModlogLookup {
         reason: string | undefined
@@ -123,6 +126,7 @@
                 
                 if (e.detail.remove_content) {
                     node.comment_view.comment.removed = true
+                    color = getCardColor(node)
                 }
             }
             node = node
@@ -144,7 +148,7 @@
             if (node.comment_view.comment.id == e.detail.comment_id) {
                 node.comment_view.comment.distinguished = e.detail.distinguished
                 node = node
-                //color = e.detail.distinguished ? 'success' : getCardColor(node)
+                color = e.detail.distinguished ? 'success' : getCardColor(node)
             }
         },
 
@@ -203,6 +207,8 @@
 
     function getCardColor(node: CommentNodeI): 'default' | 'warning' | 'error' | 'success' | 'info' {
         let color: 'default' | 'warning' | 'error' | 'success' | 'info' = 'default'
+        if (node.comment_view.comment.distinguished) return 'success'
+        if (node.comment_view.comment.removed) return 'error'
         if (jumpToComment) return 'warning'
         if (selected) return 'info'
         return color
@@ -250,23 +256,22 @@
         return text
     }
 
-    function getThreadBorderColor(): string {
-        if (elevation == -1 || (depth == 0 && node.children.length < 1)) return ''
-        const padding = "ml-1 pl-1 md:ml-2 md:pl-2"
+    function getThreadLineColor(): string {
+        if (elevation == -1 || (depth == 0 && node.comment_view.counts.child_count < 1 && node.children.length < 1)) return 'hidden'
+        const baseClasses = "ml-1 md:ml-2 w-[4px] bg-cover bg-center hover:scale-x-150"
         switch((depth % 5)) {
             case 0:
-                return `border-l-2 border-red-500/80 dark:border-red-500/80 ${padding}`
+                return baseClasses + ' bg-red-500/80 dark:bg-red-500/80'
             case 1:
-                return `border-l-2 border-green-500/80 dark:border-green-500/80 ${padding}`
+                return baseClasses + ' bg-green-500/80 dark:bg-green-500/80'
             case 2:
-                return `border-l-2 border-sky-700/80 dark:border-sky-500/80 ${padding}`
-            case 3:
-                return `border-l-2 border-amber-700/80 dark:border-amber-500/80 ${padding}`
+                return baseClasses + ' bg-sky-700/80 dark:bg-sky-500/80'
+            case 3: 
+                return baseClasses + ' bg-amber-500/80 dark:bg-amber-500/80'
             case 4:
-                return `border-l-2 border-orange-700/80 dark:border-orange-500/80 ${padding}`
-            
+                return baseClasses + ' bg-orange-500/80 dark:bg-orange-500/80'
             default:
-                return `border-l-2 border-black/80 dark:border-white/80 ${padding}`
+                return baseClasses + ' bg-black/80 dark:bg-white/80'
         }
     }
 </script>
@@ -338,7 +343,7 @@
             <summary class="
                 flex flex-col md:flex-row flex-wrap w-full cursor-pointer gap-2 group text-xs 
                 hover:bg-slate-300 hover:dark:bg-zinc-800 hover:dark:border-zinc-700
-                hover:rounded-lg overflow-hidden
+                rounded-lg overflow-hidden
                 "
             >
                 <span class:font-bold={op} class="flex flex-row gap-1 items-center w-full">
@@ -376,214 +381,253 @@
                             <Badge icon={Bookmark} color="yellow" rightJustify={false} click={false} label="Saved"/>
                         {/if}
 
+                        <!--
                         {#if !open && node.children.length > 0}
                             <span class="hidden md:flex text-xs opacity-50">+{node.children.length} More</span>
                         {/if}
-
+                        -->
                         <Button color="tertiary" size="sm" icon={open ? Minus : Plus} iconSize={16} on:click={() => open = !open}/>
                     </span>
                 </span>
             </summary>
+            
+            <div class="flex flex-row w-full">
+                <!---Coler-coded thread depth line; clickable to collapse the thread--->
+                <button title="{open ? 'Collapse' : 'Expand'} this Thread" class="{threadLineColor}" on:click={() => open = !open} />
 
-            <div class="flex flex-col gap-1  {borderColor}">
-                
-                <!---Indicator Badges--->
-                <div class="flex flex-row flex-wrap w-full gap-2 px-1 items-center">
+                <div class="flex flex-col gap-1 {elevation != -1 ? 'pl-1 md:pl-2' : ''} w-full ">
+                    <Card elevation={-1} cardColor={color} class="p-2">
+                        
+                        <!---Indicator Badges--->
+                        <div class="flex flex-row flex-wrap w-full gap-2 px-1 items-center">
 
-                    <!--Deleted By Creator-->
-                    {#if node.comment_view.comment.deleted} 
-                        <Badge icon={Trash} color="red" rightJustify={false} click={false} class="my-1" label="Deleted">
-                            Deleted by Creator
-                        </Badge>
-                    {/if}
+                            <!--Deleted By Creator-->
+                            {#if node.comment_view.comment.deleted} 
+                                <Badge icon={Trash} color="red" rightJustify={false} click={false} class="my-1" label="Deleted">
+                                    Deleted by Creator
+                                </Badge>
+                            {/if}
 
-                    <!---Banned from Community--->
-                    {#if node.comment_view.creator_banned_from_community}
-                        <Badge icon={NoSymbol} color="yellow" rightJustify={false} click={onHomeInstance} class="my-1" label="Banned from Community"
-                            on:click={(e) => { 
-                                if (onHomeInstance) {
-                                    e.preventDefault()
-                                    e.stopPropagation()
-                                    goto(`/modlog?other_person_id=${node.comment_view.creator.id}&type=ModBanFromCommunity`)
-                                }
-                            }}
-                        >
-                            Community Banned
-                        </Badge>
-                    {/if}
-
-                    <!---Banned from Instance--->
-                    {#if node.comment_view.creator.banned}
-                        <Badge icon={NoSymbol} color="red" rightJustify={false} click={onHomeInstance} class="my-1" label="Banned from Instance"
-                            on:click={(e) => { 
-                                if (onHomeInstance) {
-                                    e.preventDefault()
-                                    e.stopPropagation()
-                                    goto(`/modlog?other_person_id=${node.comment_view.creator.id}&type=ModBan`)
-                                }
-                            }}
-                        >
-                            Banned
-                        </Badge>
-                    {/if}
-
-                </div>
-                
-                <!---Removal Notice--->
-                {#if node.comment_view.comment.removed}
-                    <Card cardColor='error' class="mx-2 p-1">
-                        <div class="flex flex-row gap-1 items-center w-full">
-                            
-                            <div class="w-[42px]">
-                                <Button color="tertiary" size="square-lg" icon={HandRaised} iconSize={28} 
-                                    loading={modlogLookup.loading}
-                                    disabled={modlogLookup.loading}
-                                    title="Lookup Modlog for Comment"
-                                    on:click={async () => {
-                                        if (!onHomeInstance) {
-                                            toast({
-                                                type: 'warning',
-                                                title: 'Not Supported',
-                                                content: "Resolving modlog entries is only supported when you are viewing an item on your home instance."
-                                            })
-                                            return
+                            <!---Banned from Community--->
+                            {#if node.comment_view.creator_banned_from_community}
+                                <Badge icon={NoSymbol} color="yellow" rightJustify={false} click={onHomeInstance} class="my-1" label="Banned from Community"
+                                    on:click={(e) => { 
+                                        if (onHomeInstance) {
+                                            e.preventDefault()
+                                            e.stopPropagation()
+                                            goto(`/modlog?other_person_id=${node.comment_view.creator.id}&type=ModBanFromCommunity`)
                                         }
-                                        if (!minAPIVersion('0.19.6')) {
-                                            toast({
-                                                type: 'warning',
-                                                title: 'Not Supported',
-                                                content: "You must be on at least API version 0.19.6 to lookup comments in the modlog."
-                                            })
-                                            return
-                                        }
-                                        if (!$userSettings.autoLookupRemovedCommentReasons) {
-                                            commentText = await getCommentText(true)
-                                            modlogLookup = modlogLookup
-                                        }
-                                        else goto(`/modlog?comment_id=${node.comment_view.comment.id}`) 
                                     }}
-                                />
-                            </div>
-                            
-                            <div class="flex flex-col w-[calc(100%-48px)] gap-0 text-xs font-normal">
-                                <Markdown source={'**Removed by Moderator**'} />
+                                >
+                                    Community Banned
+                                </Badge>
+                            {/if}
 
-                                {#if modlogLookup.when}
-                                <span class="flex flex-row items-start gap-1">
-                                    <span class="font-bold">When</span>: <RelativeDate date={modlogLookup.when} />
-                                </span>
-                                {/if}
+                            <!---Banned from Instance--->
+                            {#if node.comment_view.creator.banned}
+                                <Badge icon={NoSymbol} color="red" rightJustify={false} click={onHomeInstance} class="my-1" label="Banned from Instance"
+                                    on:click={(e) => { 
+                                        if (onHomeInstance) {
+                                            e.preventDefault()
+                                            e.stopPropagation()
+                                            goto(`/modlog?other_person_id=${node.comment_view.creator.id}&type=ModBan`)
+                                        }
+                                    }}
+                                >
+                                    Banned
+                                </Badge>
+                            {/if}
 
-                                {#if modlogLookup.moderator}
-                                <span class="flex flex-row items-start gap-1">
-                                    <span class="font-bold">Moderator</span>: <UserLink user={modlogLookup.moderator} avatar={false} avatarSize={20} badges={false}/>
-                                </span>
-                                {/if}
-
-                                {#if modlogLookup.reason}
-                                    <Markdown source={'**Reason**: ' + modlogLookup.reason}/>
-                                {/if}
-                            </div>
                         </div>
-                    </Card>
-                {/if}
+                        
+                        
+                        <!---Removal Notice--->
+                        {#if node.comment_view.comment.removed}
+                            <div class="flex flex-row gap-1 items-start w-full p-1">
+                                <div class="w-[42px]">
+                                    <Button color="tertiary" size="square-lg" icon={HandRaised} iconSize={28} 
+                                        loading={modlogLookup.loading}
+                                        disabled={modlogLookup.loading}
+                                        title="Lookup Modlog for Comment"
+                                        on:click={async () => {
+                                            if (!onHomeInstance) {
+                                                toast({
+                                                    type: 'warning',
+                                                    title: 'Not Supported',
+                                                    content: "Resolving modlog entries is only supported when you are viewing an item on your home instance."
+                                                })
+                                                return
+                                            }
+                                            if (!minAPIVersion('0.19.6')) {
+                                                toast({
+                                                    type: 'warning',
+                                                    title: 'Not Supported',
+                                                    content: "You must be on at least API version 0.19.6 to lookup comments in the modlog."
+                                                })
+                                                return
+                                            }
+                                            if (!$userSettings.autoLookupRemovedCommentReasons) {
+                                                commentText = await getCommentText(true)
+                                                modlogLookup = modlogLookup
+                                            }
+                                            else goto(`/modlog?comment_id=${node.comment_view.comment.id}`) 
+                                        }}
+                                    />
+                                </div>
+                                <div class="flex flex-col w-[calc(100%-48px)] gap-0 text-xs font-normal">
+                                    <Markdown source={'**Removed by Moderator**'} />
 
-                <!---Comment Text Body (Expandable--->
-                <Card elevation={-1} cardColor={color} class="p-1" >
-                    <div bind:this={commentBodyContainer} transition:slide class="
-                        max-w-full break-words text-sm
-                        {   $userSettings.uiState.limitCommentHeight && 
-                            !commentBodyExpanded && 
-                            !node.comment_view.comment.distinguished 
-                                ? 'max-h-[120px] overflow-y-hidden'
-                                : ''
-                        }
-                        "
-                    >
-                        {#if node.comment_view.comment.distinguished}
-                            <Card cardColor='success' class="mx-2 p-1">
-                                <div class="flex flex-row gap-1 items-center w-full">
-                                    
+                                    {#if modlogLookup.when}
+                                    <span class="flex flex-row items-start gap-1">
+                                        <span class="font-bold">When</span>: <RelativeDate date={modlogLookup.when} />
+                                    </span>
+                                    {/if}
+
+                                    {#if modlogLookup.moderator}
+                                    <span class="flex flex-row items-start gap-1">
+                                        <span class="font-bold">Moderator</span>: <UserLink user={modlogLookup.moderator} avatar={false} avatarSize={20} badges={false}/>
+                                    </span>
+                                    {/if}
+
+                                    {#if modlogLookup.reason}
+                                        <Markdown source={'**Reason**: ' + modlogLookup.reason}/>
+                                    {/if}
+                                </div>
+                            </div>
+                        {/if}
+
+
+
+                        <!---Comment Text Body (Expandable)--->
+                        {#if commentText}
+                            <!---Show Distinguished Comments in a Special Way--->
+                            {#if node.comment_view.comment.distinguished}
+                                <div class="flex flex-row gap-1 items-start w-full p-1">
                                     <div class="w-[42px]">
                                         <Icon src={Megaphone} width={28} mini />
                                     </div>
-                                    
-                                    <div class="flex flex-col w-[calc(100%-48px)] gap-0 text-xs font-normal">
-                                        <Markdown source={'**Moderator Message**\n\n' + commentText} noImages={node.comment_view.comment.removed} />
+                                    <div class="flex flex-col w-[calc(100%-48px)] gap-1 text-xs font-normal">
+                                        <Markdown source={'**Message from Moderator**\n\n' + commentText} />
                                     </div>
                                 </div>
-                            </Card>
-                        {:else}
-                            <Markdown source={commentText} noImages={node.comment_view.comment.removed} />
+                            {:else}
+                                <div bind:this={commentBodyContainer} transition:slide class="
+                                    max-w-full break-words text-sm
+                                    {   $userSettings.uiState.limitCommentHeight && 
+                                        !commentBodyExpanded && 
+                                        !jumpToComment 
+                                            ? 'max-h-[120px] overflow-hidden'
+                                            : ''
+                                    }
+                                    "
+                                >
+                                    <Markdown source={commentText} 
+                                        noImages={
+                                            node.comment_view.comment.removed || 
+                                            ($userSettings.uiState.limitCommentHeight && !commentBodyExpanded)
+                                        } 
+                                    />
+                                </div>
+                            {/if}
+
                         {/if}
-                    </div>
-                </Card>
-                
-                {#if $userSettings.uiState.limitCommentHeight && (commentBodyExpanded || commentBodyContainerDoesScroll)}
-                <Button color="tertiary" size="sm" 
-                    class="mx-auto text-xs font-bold !py-0 !px-1 w-full {commentBodyExpanded ? '' : 'mb-[5px]'}"
-                    title="{commentBodyExpanded ? 'Collapse' : 'Expand'}"
-                    on:click={() => {
-                        commentBodyExpanded = !commentBodyExpanded
-                    }}
-                >
-                    <span class="flex flex-row gap -1 text-xs mx-auto opacity-80">
-                        <Icon src={commentBodyExpanded ? ChevronUp : ChevronDown} width={20} mini />
-                        {commentBodyExpanded ? 'Show Less' : 'Show More'}
-                        <Icon src={commentBodyExpanded ? ChevronUp : ChevronDown} width={20} mini />
-                    </span>
-                </Button>
-                {/if}
+                        
+                        <!---Expand/Collapse Button--->
+                        {#if $userSettings.uiState.limitCommentHeight && !jumpToComment && (commentBodyContainerDoesScroll || commentBodyExpanded)}
+                            <Button color="tertiary" size="sm" 
+                                class="mx-auto text-xs font-bold !py-0 !px-1 w-full {commentBodyExpanded ? '' : 'mb-[5px]'}"
+                                title="{commentBodyExpanded ? 'Collapse' : 'Expand'}"
+                                on:click={() => {
+                                    commentBodyExpanded = !commentBodyExpanded
+                                }}
+                            >
+                                <span class="flex flex-row gap -1 text-xs mx-auto opacity-80">
+                                    <Icon src={commentBodyExpanded ? ChevronUp : ChevronDown} width={20} mini />
+                                    {commentBodyExpanded ? 'Show Less' : 'Show More'}
+                                    <Icon src={commentBodyExpanded ? ChevronUp : ChevronDown} width={20} mini />
+                                </span>
+                            </Button>
+                        {/if}
 
-                
-                <div class="flex flex-row gap-2 items-center">
-                    <CommentActions
-                        {actions}
-                        {onHomeInstance}
-                        commentSelected={selected}
-                        commentSelectable={selectable}
-                        bind:comment={node.comment_view}
-                        bind:replying
-                        on:edit={() => (editing = true)}
-                        on:selected={(e) => {
-                            selected = e.detail
-                            if (selected) {
-                                color = 'info'
-                                dispatcher('select', node.comment_view)
-                            }
-                            else {
-                                color = getCardColor(node)
-                                dispatcher('unselect', node.comment_view)
-                            }
-                        }}
-                    />
-                </div>
-                
+                        <!---Comment Actions Bar--->
+                        <div class="flex flex-row gap-2 items-center">
+                            <CommentActions
+                                {actions}
+                                {onHomeInstance}
+                                commentSelected={selected}
+                                commentSelectable={selectable}
+                                bind:comment={node.comment_view}
+                                bind:replying
+                                on:edit={() => (editing = true)}
+                                on:selected={(e) => {
+                                    selected = e.detail
+                                    if (selected) {
+                                        color = 'info'
+                                        dispatcher('select', node.comment_view)
+                                    }
+                                    else {
+                                        color = getCardColor(node)
+                                        dispatcher('unselect', node.comment_view)
+                                    }
+                                }}
+                            />
+                        </div>
+                        
+                        <!---Reply Field--->
+                        {#if replying}
+                            <div class="max-w-full my-2">
+                                <h1 class="font-bold text-sm mb-2">Reply</h1>
+                                <CommentForm {postId} parentId={node.comment_view.comment.id} bind:imageUploads
+                                    locked={node.comment_view.post.locked || !onHomeInstance}
+                                    on:comment={(e) => {
+                                        node.children = [
+                                            {
+                                                children: [],
+                                                comment_view: e.detail.comment_view,
+                                                depth: node.depth + 1,
+                                            },
+                                            ...node.children,
+                                        ]
+                                        replying = false
+                                    }}
+                                />
+                            </div>
+                        {/if}
+                    </Card>
 
-                {#if replying}
-                    <div class="max-w-full my-2">
-                        <h1 class="font-bold text-sm mb-2">Reply</h1>
-                        <CommentForm {postId} parentId={node.comment_view.comment.id} bind:imageUploads
-                            locked={node.comment_view.post.locked || !onHomeInstance}
-                            on:comment={(e) => {
-                                node.children = [
-                                    {
-                                        children: [],
-                                        comment_view: e.detail.comment_view,
-                                        depth: node.depth + 1,
-                                    },
-                                    ...node.children,
-                                ]
-                                replying = false
-                            }}
-                        />
+                    <!---Slot to receive nested Comments component--->
+                    <div class="bg-transparent dark:bg-transparent">
+                        <slot />
                     </div>
-                {/if}
-                
-                <div class="bg-transparent dark:bg-transparent">
-                    <slot />
                 </div>
+
             </div>
         </details>
+        
+        {#if !open}
+            <div class="flex flex-row w-full">
+                <button title="{open ? 'Collapse' : 'Expand'} this Thread" class="{threadLineColor}" on:click={() => open = !open}/>
+                {#if threadLineColor != 'hidden'}
+                    <Button
+                        class="ml-4 mt-4 text-xs"
+                        loading={node.loading}
+                        disabled={node.loading}
+                        size="sm"
+                        color="tertiary-border"
+                        icon={BarsArrowDown}
+                        iconSize={16}
+                        on:click={() => {
+                            open = !open 
+                        }}
+                    >
+                        {#if node.comment_view.counts.child_count > 0}
+                            Show comment plus {node.comment_view.counts.child_count} more in thread
+                        {:else}
+                            Expand comment
+                        {/if}
+                    </Button>
+                {/if}
+            </div>
+        {/if}
     </div>
 </div>
