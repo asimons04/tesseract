@@ -46,8 +46,6 @@
         action:     {set: false}
     }
 
-    let showAbsoluteTime = false
-
     async function setCommunityFilter() {
         // Community Filter
         if (!$page.url.searchParams.get('community')) filter.community.set = false
@@ -167,7 +165,7 @@
                     title="Show Absolute Time"
                     description="Show the absolute time for actions rather than relative."
                     icon={Clock}
-                    bind:value={showAbsoluteTime}
+                    bind:value={$userSettings.modlogUseAbsoluteTime}
                 />
                     
                 <SettingMultiSelect
@@ -338,7 +336,7 @@
                 
                 {#each data.modlog as modlog}
                     {#if modlog.actionName != "Unknown"}  
-                        <ModlogItemTable item={modlog} {showModeratorColumn} {showAbsoluteTime} bind:filter />
+                        <ModlogItemTable item={modlog} {showModeratorColumn} showAbsoluteTime={$userSettings.modlogUseAbsoluteTime} bind:filter />
                     {/if}
                 {/each}
             </div>

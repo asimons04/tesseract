@@ -97,6 +97,7 @@ interface Settings {
     },
     debugInfo: boolean                                                  // Enable to show a 'debug' button on post/comments and other objects for development purposes
     modlogResolveMissingNames: boolean                                  // Resolve missing Person object for "moderatee" on post events in the modlog
+    modlogUseAbsoluteTime: boolean                                      // Show absolute timestamp in modlog versus relative
     embeddedMedia: {
         feed: boolean                                                   // Whether to enable media embeds in the feed
         post: boolean                                                   // Whether to enable media embeds on post pages
@@ -221,6 +222,7 @@ export const defaultSettings: Settings = {
 
     markReadPosts:      toBool(env.PUBLIC_MARK_READ_POSTS)              ??  false,
     autoLookupRemovedCommentReasons:                                    false,    
+
     showCompactPosts:   toBool(env.PUBLIC_SHOW_COMPACT_POSTS)           ??  false,
     
     defaultSort: {
@@ -258,6 +260,7 @@ export const defaultSettings: Settings = {
     },
     experimentalFeatures:                                               false,
     modlogResolveMissingNames:                                          false,
+    modlogUseAbsoluteTime:                                              false,
     embeddedMedia: {
         feed:     toBool(env.PUBLIC_ENABLE_EMBEDDED_MEDIA_FEED)         ??  false,
         post:     toBool(env.PUBLIC_ENABLE_EMBEDDED_MEDIA_POST)         ??  true,
