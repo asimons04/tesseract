@@ -285,6 +285,34 @@
         }
     }
 
+    function getAvatarRingColor() {
+        if (elevation == -1 || (depth == 0 && node.comment_view.counts.child_count < 1 && node.children.length < 1)) return undefined
+        
+        // If conversation line colors are disabled, return black/white 
+        if (!$userSettings.uiState.coloredCommentThreadLines) return 'ring-black/80      dark:ring-white/80'
+
+        switch((depth % 8)) {
+            case 0:
+                return 'ring-red-500/80    dark:ring-red-500/80'
+            case 1:
+                return 'ring-green-500/80  dark:ring-green-500/80'
+            case 2:
+                return 'ring-sky-700/80    dark:ring-sky-500/80'
+            case 3: 
+                return 'ring-amber-500/80  dark:ring-amber-500/80'
+            case 4:
+                return 'ring-orange-500/80 dark:ring-orange-500/80'
+            case 5:
+                return 'ring-indigo-500/80 dark:ring-indigo-500/80'
+            case 6:
+                return 'ring-pink-500/80   dark:ring-pink-500/80'
+            case 7:
+                return 'ring-cyan-500/80   dark:ring-cyan-500/80'
+            default:
+                return 'ring-black/80      dark:ring-white/80'
+        }
+    }
+
     function toggleThread() {
         open = !open
         //if (!open) commentContainer.scrollIntoView(true)
@@ -360,7 +388,7 @@
             "
         >
             <span class:font-bold={op} class="flex flex-row gap-1 items-center w-full">
-                <UserLink avatarSize={20} avatar user={node.comment_view.creator} mod={node.comment_view.creator_is_moderator} admin={node.comment_view.creator_is_admin} community_banned={node.comment_view.creator_banned_from_community}/>
+                <UserLink avatarSize={20} avatar ring ringColor={getAvatarRingColor()} user={node.comment_view.creator} mod={node.comment_view.creator_is_moderator} admin={node.comment_view.creator_is_admin} community_banned={node.comment_view.creator_banned_from_community}/>
 
                 <!---Badges, published/edited date, expand/collapse button--->
                 <span class="flex flex-row items-center gap-2 ml-auto w-full">
@@ -409,8 +437,8 @@
             <!---Coler-coded thread depth line; clickable to collapse the thread--->
             <button title="{open ? 'Collapse' : 'Expand'} this Thread" class="{threadLineColor}" on:click={() => toggleThread()} />
 
-            <div class="flex flex-col gap-1 {elevation != -1 ? 'pl-1 md:pl-2' : ''} w-[calc(100%-8px)] ">
-                <Card elevation={-1} cardColor={color} class="p-2">
+            <div class="flex flex-col gap-1 {threadLineColor != 'hidden' ? 'pl-1 md:pl-2' : ''} w-[calc(100%-8px)] ">
+                <Card elevation={-1} cardColor={color} class={color != 'default' ? 'p-2' : ''}>
                     
                     <!---Indicator Badges--->
                     <div class="flex flex-row flex-wrap w-full gap-2 px-1 items-center">
@@ -510,8 +538,6 @@
                         </div>
                     {/if}
 
-
-
                     <!---Comment Text Body (Expandable)--->
                     {#if commentText}
                         <!---Show Distinguished Comments in a Special Way--->
@@ -586,27 +612,6 @@
                             }}
                         />
                     </div>
-                    
-                    <!---Reply Field--->
-                    {#if false && replying}
-                        <div class="max-w-full my-2">
-                            <h1 class="font-bold text-sm mb-2">Reply</h1>
-                            <CommentForm {postId} parentId={node.comment_view.comment.id} bind:imageUploads
-                                locked={node.comment_view.post.locked || !onHomeInstance}
-                                on:comment={(e) => {
-                                    node.children = [
-                                        {
-                                            children: [],
-                                            comment_view: e.detail.comment_view,
-                                            depth: node.depth + 1,
-                                        },
-                                        ...node.children,
-                                    ]
-                                    replying = false
-                                }}
-                            />
-                        </div>
-                    {/if}
                 </Card>
 
                 <!---Slot to receive nested Comments component--->
@@ -620,24 +625,24 @@
     
     <!---Reply Field--->
     {#if replying}
-    <div class="max-w-full my-2">
-        <h1 class="font-bold text-sm mb-2">Reply</h1>
-        <CommentForm {postId} parentId={node.comment_view.comment.id} bind:imageUploads
-            locked={node.comment_view.post.locked || !onHomeInstance}
-            on:comment={(e) => {
-                node.children = [
-                    {
-                        children: [],
-                        comment_view: e.detail.comment_view,
-                        depth: node.depth + 1,
-                    },
-                    ...node.children,
-                ]
-                replying = false
-            }}
-        />
-    </div>
-{/if}
+        <div class="max-w-full my-2">
+            <h1 class="font-bold text-sm mb-2">Reply</h1>
+            <CommentForm {postId} parentId={node.comment_view.comment.id} bind:imageUploads
+                locked={node.comment_view.post.locked || !onHomeInstance}
+                on:comment={(e) => {
+                    node.children = [
+                        {
+                            children: [],
+                            comment_view: e.detail.comment_view,
+                            depth: node.depth + 1,
+                        },
+                        ...node.children,
+                    ]
+                    replying = false
+                }}
+            />
+        </div>
+    {/if}
     
     {#if !open}
         <div class="flex flex-row w-full">

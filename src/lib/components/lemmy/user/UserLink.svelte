@@ -33,6 +33,7 @@
     export let href:boolean = false                 // Control default behavior of the link. Href=true is a normal link the profile, false will load the profile modal
     export let distinguishAdminsMods:boolean = true // Whether to badge mods/admins 
     export let ring:boolean = false                 // Add a ring effect around the avatar
+    export let ringColor:string|undefined = undefined
     export let community_banned:boolean = false     // Set the banned from community indicator
     export let blocked: boolean = false             // Set the blocked indicator
     export let showNewAccountBadge: boolean = true  // Show the new account badge
@@ -101,7 +102,7 @@
 >
     <span class="flex flex-row w-full gap-1 items-center w-fit">
         {#if avatar}
-            <Avatar url={user.avatar} alt={user.actor_id} width={avatarSize} {ring}/>
+            <Avatar url={user.avatar} alt={user.actor_id} width={avatarSize} {ring} {ringColor}/>
         {/if}
 
         <span class="flex w-full {inline ? 'items-center flex-row' : 'items-start flex-col'}  gap-0" 

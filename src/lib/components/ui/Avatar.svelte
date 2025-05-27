@@ -13,6 +13,7 @@
     export let circle: boolean = true
     export let rounded: boolean = false
     export let ring: boolean = false
+    export let ringColor: string = 'ring-sky-700 dark:ring-sky-700'
 
     export let width: number
     export let fullRes:boolean = false
@@ -23,14 +24,14 @@
     export let fadeIn: boolean = true
 </script>
 
-<div style="width: {width+2}px;">
+<div class="m-[2px]" style="width: {width+2}px;">
     <div class="{circle ? 'rounded-full' : ''} {rounded ? 'rounded-xl' : ''} {background ? 'bg-white/50' : ''} mx-auto w-full">
         {#if url}
             <ZoomableImage url={url} format='webp' title={title} altText={alt} {lazyload} {fadeIn}
                 resolution={fullRes ? undefined : findClosestNumber(sizes, width) } 
                 zoomable={zoomable && fullRes}
                 class="aspect-square object-cover overflow-hidden !w-full
-                    {ring ? 'ring-2 ring-sky-700' : ''} 
+                    {ring ? `ring-2 ${ringColor}` : ''} 
                     {circle ? 'rounded-full' : ''}
                     {rounded ? 'rounded-xl' : ''}
                     {$$props.class}
@@ -40,7 +41,7 @@
             <div class="w-full h-full aspect-square object-cover overflow-hidden 
                     {circle ? 'rounded-full' : ''} 
                     {rounded ? 'rounded-xl' : ''} 
-                    {ring ? 'ring-2 ring-sky-700' : ''}  
+                    {ring ? `ring-2 ${ringColor}` : ''} 
                     {$$props.class}
                 "  
                 style="width: {width+2}px;"
