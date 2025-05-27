@@ -141,6 +141,7 @@ interface Settings {
         scrollPostBodyInFeed: boolean                                   // When expanding a long post body in the feed, limit the div's height and scroll within it. Disable to expand in full
         disableMarkdownEditorKeyboardShortcuts: boolean                 // Disable the keyboard shortcuts in the markdown editor
         limitCommentHeight: boolean                                     // Limit comments in height to 120px and show a "show more" / "collapse" button to expand them.
+        coloredCommentThreadLines: boolean                              // Whether to use the color-coded conversation thread lines or monochrome.
     }
     highlightCode: boolean                                              // Enable to use highlight.js code highlighting on code blocks
     highlightInlineCode: boolean                                        // Enable to use highlight.js code hightlighting on inline code
@@ -214,7 +215,8 @@ export const defaultSettings: Settings = {
         hybridViewKeepReadCollapsed:                                    true,
         scrollPostBodyInFeed:                                           true,
         disableMarkdownEditorKeyboardShortcuts:                         false,
-        limitCommentHeight:                                             false
+        limitCommentHeight:                                             false,
+        coloredCommentThreadLines:                                      true,
     },
 
     markReadPosts:      toBool(env.PUBLIC_MARK_READ_POSTS)              ??  false,

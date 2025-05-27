@@ -619,6 +619,10 @@
             bind:value={$userSettings.uiState.largeEmojis}
         />
 
+        <SettingToggle title="Color Coded Conversation Lines" icon={ArrowLongDown} description="Color-code the conversation lines in comment threads by depth. Disable to use monochrome lines." 
+            bind:value={$userSettings.uiState.coloredCommentThreadLines} 
+        />
+
         <SettingToggle title="Limit Comment Height" icon={BarsArrowDown} description="Limit the height of long comments by default and show an expand/collapse button to see the full comment." 
             bind:value={$userSettings.uiState.limitCommentHeight}
         />

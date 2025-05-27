@@ -4,6 +4,7 @@
     import { buildCommentsTreeAsync } from '$lib/components/lemmy/comment/comments.js'
     import { getClient } from '$lib/lemmy.js'
     import { amMod, isAdmin, ModQueue } from '../moderation/moderation'
+    import { hrColors } from '$lib/ui/colors'
     import { instance } from '$lib/instance'
     import { profile } from '$lib/auth.js'
     import { toast } from '$lib/components/ui/toasts/toasts'
@@ -21,9 +22,11 @@
     import { 
         BarsArrowDown,
         ChatBubbleLeftRight,
+        ChevronDoubleUp,
         ExclamationTriangle,
         ShieldCheck,
     } from 'svelte-hero-icons'
+    
     
     
     
@@ -141,6 +144,44 @@
             {:then comments}
                 {#if comments.length > 0}
                     <Comments post={data.post.post_view.post} bind:modQueue moderators={data.post.moderators} nodes={comments} isParent={true} {onHomeInstance} {jumpTo}/>
+                    
+                    <!---Comment Section Footer--->
+                    <hr class="my-4 {hrColors}" />
+                    <div class="flex flex-row w-full">
+                        
+                        <div class="flex font-bold text-lg items-center w-1/3">
+                            Comments 
+                            <span class="flex text-sm font-normal ml-2 opacity-80">
+                                <FormattedNumber number={data.post.post_view.counts.comments} />
+                            </span>
+                        </div>
+
+                        <!---Multi-Comment Mod Button--->
+                        <div class="flex w-1/3">
+                            {#if isAdmin($profile?.user) || amMod($profile?.user, data.post.post_view.community)}
+                        
+                            <Button size="sm" color="tertiary-border" class="mx-auto" title="Bulk Comment Actions" icon={ShieldCheck} iconSize={16}
+                                on:click={() => {
+                                    if (modQueue.queue.comments.length < 1) toast({
+                                        type: 'warning',
+                                        title: 'No Comments Selected',
+                                        content: 'You must select at least one comment.'
+                                    })
+                                    else bulkActionModal = true
+                                }}
+                            >
+                                Bulk Mod
+                            </Button>
+                            {/if}
+                        </div>
+
+                        
+                        <div class="flex w-1/3">
+                            <Button size="sm" color="tertiary-border" class="ml-auto" icon={ChevronDoubleUp} iconSize={16} on:click={() => commentSectionContainer.scrollIntoView({behavior: 'smooth', block: 'start'}) }>
+                                Scroll to Top
+                            </Button>
+                        </div>
+                    </div>
                 {:else}
                     <!---Hide placeholder if you have the comment form open--->
                     {#if !showCommentForm}

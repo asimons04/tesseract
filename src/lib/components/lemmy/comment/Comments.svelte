@@ -134,7 +134,7 @@
                 {/if}
 
                 {#if node.comment_view.counts.child_count > 0 && node.children.length == 0}
-                    <div class="my-2 w-max h-8 pl-2">
+                    <div class="my-2 w-max h-8 border-l-2 border-slate-200 dark:border-zinc-900 pl-2">
                         <Button
                             loading={node.loading}
                             disabled={node.loading}

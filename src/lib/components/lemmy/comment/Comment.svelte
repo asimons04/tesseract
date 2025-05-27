@@ -258,21 +258,36 @@
 
     function getThreadLineColor(): string {
         if (elevation == -1 || (depth == 0 && node.comment_view.counts.child_count < 1 && node.children.length < 1)) return 'hidden'
-        const baseClasses = "ml-1 md:ml-2 w-[4px] bg-cover bg-center hover:scale-x-150"
-        switch((depth % 5)) {
+        const baseClasses = "ml-1 md:ml-2 w-[4px] bg-cover bg-center hover:scale-x-[1.75]"
+        
+        // If conversation line colors are disabled, return black/white 
+        if (!$userSettings.uiState.coloredCommentThreadLines) return baseClasses + ' bg-black/80      dark:bg-white/80'
+
+        switch((depth % 8)) {
             case 0:
-                return baseClasses + ' bg-red-500/80 dark:bg-red-500/80'
+                return baseClasses + ' bg-red-500/80    dark:bg-red-500/80'
             case 1:
-                return baseClasses + ' bg-green-500/80 dark:bg-green-500/80'
+                return baseClasses + ' bg-green-500/80  dark:bg-green-500/80'
             case 2:
-                return baseClasses + ' bg-sky-700/80 dark:bg-sky-500/80'
+                return baseClasses + ' bg-sky-700/80    dark:bg-sky-500/80'
             case 3: 
-                return baseClasses + ' bg-amber-500/80 dark:bg-amber-500/80'
+                return baseClasses + ' bg-amber-500/80  dark:bg-amber-500/80'
             case 4:
                 return baseClasses + ' bg-orange-500/80 dark:bg-orange-500/80'
+            case 5:
+                return baseClasses + ' bg-indigo-500/80 dark:bg-indigo-500/80'
+            case 6:
+                return baseClasses + ' bg-pink-500/80   dark:bg-pink-500/80'
+            case 7:
+                return baseClasses + ' bg-cyan-500/80   dark:bg-cyan-500/80'
             default:
-                return baseClasses + ' bg-black/80 dark:bg-white/80'
+                return baseClasses + ' bg-black/80      dark:bg-white/80'
         }
+    }
+
+    function toggleThread() {
+        open = !open
+        //if (!open) commentContainer.scrollIntoView(true)
     }
 </script>
 
@@ -338,7 +353,7 @@
 <div class="pl-1" >
 
     <div bind:this={commentContainer} class="{elevation > 0 ? 'pt-2' : ''} {$$props.class}" id="#{node.comment_view.comment.id.toString()}" >
-        <details bind:open class="flex flex-col gap-0">
+        <details bind:open class="flex flex-col gap-1">
             
             <summary class="
                 flex flex-col md:flex-row flex-wrap w-full cursor-pointer gap-2 group text-xs 
@@ -392,8 +407,9 @@
             </summary>
             
             <div class="flex flex-row w-full">
+                
                 <!---Coler-coded thread depth line; clickable to collapse the thread--->
-                <button title="{open ? 'Collapse' : 'Expand'} this Thread" class="{threadLineColor}" on:click={() => open = !open} />
+                <button title="{open ? 'Collapse' : 'Expand'} this Thread" class="{threadLineColor}" on:click={() => toggleThread()} />
 
                 <div class="flex flex-col gap-1 {elevation != -1 ? 'pl-1 md:pl-2' : ''} w-full ">
                     <Card elevation={-1} cardColor={color} class="p-2">
@@ -574,7 +590,7 @@
                         </div>
                         
                         <!---Reply Field--->
-                        {#if replying}
+                        {#if false && replying}
                             <div class="max-w-full my-2">
                                 <h1 class="font-bold text-sm mb-2">Reply</h1>
                                 <CommentForm {postId} parentId={node.comment_view.comment.id} bind:imageUploads
@@ -604,9 +620,30 @@
             </div>
         </details>
         
+        <!---Reply Field--->
+        {#if replying}
+        <div class="max-w-full my-2">
+            <h1 class="font-bold text-sm mb-2">Reply</h1>
+            <CommentForm {postId} parentId={node.comment_view.comment.id} bind:imageUploads
+                locked={node.comment_view.post.locked || !onHomeInstance}
+                on:comment={(e) => {
+                    node.children = [
+                        {
+                            children: [],
+                            comment_view: e.detail.comment_view,
+                            depth: node.depth + 1,
+                        },
+                        ...node.children,
+                    ]
+                    replying = false
+                }}
+            />
+        </div>
+    {/if}
+        
         {#if !open}
             <div class="flex flex-row w-full">
-                <button title="{open ? 'Collapse' : 'Expand'} this Thread" class="{threadLineColor}" on:click={() => open = !open}/>
+                <button title="{open ? 'Collapse' : 'Expand'} this Thread" class="{threadLineColor}" on:click={() => toggleThread()}/>
                 {#if threadLineColor != 'hidden'}
                     <Button
                         class="ml-4 mt-4 text-xs"
