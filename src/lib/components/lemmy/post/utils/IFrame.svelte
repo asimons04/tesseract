@@ -23,10 +23,10 @@
 </style>
 
 <div class="overflow-hidden  relative bg-slate-200 dark:bg-zinc-800 rounded-2xl max-w-full {containerClass}">
-    <div class="ml-auto mr-auto max-w-full">
+    <div class="ml-auto mr-auto max-w-full max-h-[80vh]">
         <div class="flexiframe-container rounded-2xl max-w-screen {maximized ? 'h-[80vh]' : 'max-h-[480px]'} mx-auto">
             <iframe 
-                class="flexiframe p-1 rounded-2xl"
+                class="flexiframe max-h-[80vh] p-1 rounded-2xl"
                 src="{embedURL.href}" 
                 allow="accelerometer; fullscreen; encrypted-media; gyroscope; picture-in-picture" 
                 loading="lazy"
