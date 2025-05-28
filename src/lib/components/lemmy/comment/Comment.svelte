@@ -423,7 +423,7 @@
                 <!---Coler-coded thread depth line; clickable to collapse the thread--->
                 <button title="{open ? 'Collapse' : 'Expand'} this Thread: {commentText}" class="{threadLineColor}" on:click={() => toggleThread()} />
 
-                <div class="flex flex-col gap-1 mt-1 {threadLineColor != 'hidden' ? 'pl-1 md:pl-2' : ''} w-[calc(100%-8px)] ">
+                <div class="flex flex-col gap-1 mt-1 {threadLineColor != 'hidden' ? 'pl-1 md:pl-2' : ''} w-[calc(100%-12px)] ">
                     <Card elevation={-1} cardColor={color} class={color != 'default' ? 'p-2' : ''}>
                         
                         <!---Indicator Badges--->
