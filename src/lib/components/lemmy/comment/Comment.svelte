@@ -41,6 +41,7 @@
     import { slide }        from 'svelte/transition'
     import { toast }        from '$lib/components/ui/toasts/toasts.js'
     import { userSettings } from '$lib/settings'
+    import Avatar from '$lib/components/ui/Avatar.svelte';
     
     export let node: CommentNodeI
     export let postId: number
@@ -244,7 +245,7 @@
 
     function getThreadLineColor(): string {
         if (elevation == -1 || (depth == 0 && node.comment_view.counts.child_count < 1 && node.children.length < 1)) return 'hidden'
-        const baseClasses = "ml-2 w-[4px] bg-cover bg-center hover:scale-x-[1.75]"
+        const baseClasses = "ml-[0.65rem] w-[4px] bg-cover bg-center hover:scale-x-[1.75]"
         //const baseClasses = "ml-1 md:ml-2 w-[4px] bg-cover bg-center hover:scale-x-[1.75]"
         
         // If conversation line colors are disabled, return black/white 
@@ -376,23 +377,24 @@
             "
         >
             <span class:font-bold={op} class="flex flex-row gap-1 items-center w-full">
-                
-                <UserLink avatarSize={20} avatar ring ringColor={getAvatarRingColor()} user={node.comment_view.creator} mod={node.comment_view.creator_is_moderator} admin={node.comment_view.creator_is_admin} community_banned={node.comment_view.creator_banned_from_community}/>
+                <Avatar url={node.comment_view.creator.avatar} alt={node.comment_view.creator.actor_id} width={20} ring ringColor={getAvatarRingColor()}/>
+               
+                <span class="flex w-[calc(100%-150px)]">
+                    <UserLink 
+                        avatar={false}
+                        user={node.comment_view.creator} 
+                        mod={node.comment_view.creator_is_moderator} 
+                        admin={node.comment_view.creator_is_admin} 
+                        community_banned={node.comment_view.creator_banned_from_community}
+                    />
+                </span>
 
                 <!---Badges, published/edited date, expand/collapse button--->
-                <span class="flex flex-row items-center gap-2 ml-auto w-full">
-
+                <span class="flex flex-row items-center gap-2 ml-auto w-full w-[120px]">
                     <span class="ml-auto" />
 
                     {#if op}
                         <Badge color="blue" rightJustify={false} click={false} label="Original Poster">OP</Badge>    
-                    {/if}
-                    
-                    {#if !open}
-                        <span class="flex items-center gap-0.5 mr-1 text-slate-600 dark:text-zinc-400">
-                            <Icon src={ArrowUp} mini size="14" title="Score" />
-                            {node.comment_view.counts.score}
-                        </span>
                     {/if}
 
                     <!---If updated, only show edited time on mobile--->
@@ -423,7 +425,8 @@
                 <!---Coler-coded thread depth line; clickable to collapse the thread--->
                 <button title="{open ? 'Collapse' : 'Expand'} this Thread: {commentText}" class="{threadLineColor}" on:click={() => toggleThread()} />
 
-                <div class="flex flex-col gap-1 mt-1 {threadLineColor != 'hidden' ? 'pl-1 md:pl-2' : ''} w-[calc(100%-12px)] ">
+                <div class="flex flex-col gap-1 mt-1 {threadLineColor != 'hidden' ? 'pl-1 md:pl-2' : ''} w-[calc(100%-14px)] ">
+                    
                     <Card elevation={-1} cardColor={color} class={color != 'default' ? 'p-2' : ''}>
                         
                         <!---Indicator Badges--->
@@ -601,24 +604,24 @@
 
                         <!---Reply Field--->
                         {#if replying}
-                        <div class="max-w-full my-2">
-                            <h1 class="font-bold text-sm mb-2">Reply</h1>
-                            <CommentForm {postId} parentId={node.comment_view.comment.id} bind:imageUploads
-                                locked={node.comment_view.post.locked || !onHomeInstance}
-                                on:comment={(e) => {
-                                    node.children = [
-                                        {
-                                            children: [],
-                                            comment_view: e.detail.comment_view,
-                                            depth: node.depth + 1,
-                                        },
-                                        ...node.children,
-                                    ]
-                                    replying = false
-                                }}
-                            />
-                        </div>
-                    {/if}
+                            <div class="max-w-full my-2">
+                                <h1 class="font-bold text-sm mb-2">Reply</h1>
+                                <CommentForm {postId} parentId={node.comment_view.comment.id} bind:imageUploads
+                                    locked={node.comment_view.post.locked || !onHomeInstance}
+                                    on:comment={(e) => {
+                                        node.children = [
+                                            {
+                                                children: [],
+                                                comment_view: e.detail.comment_view,
+                                                depth: node.depth + 1,
+                                            },
+                                            ...node.children,
+                                        ]
+                                        replying = false
+                                    }}
+                                />
+                            </div>
+                        {/if}
                     </Card>
 
                     <!---Slot to receive nested Comments component--->
@@ -646,12 +649,10 @@
                     color="tertiary-border"
                     icon={BarsArrowDown}
                     iconSize={16}
-                    on:click={() => {
-                        open = !open 
-                    }}
+                    on:click={() => toggleThread() }
                 >
                     {#if node.comment_view.counts.child_count > 0}
-                        Show comment plus {node.comment_view.counts.child_count} more in thread
+                        Expand {node.comment_view.counts.child_count} more in thread
                     {:else}
                         Expand comment
                     {/if}
