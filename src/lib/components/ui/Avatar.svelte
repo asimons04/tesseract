@@ -4,6 +4,7 @@
     import * as initials from '@dicebear/initials'
     import * as adventurer from '@dicebear/adventurer'
     import ZoomableImage from './ZoomableImage.svelte';
+    import { inDarkTheme } from '$lib/ui/colors';
 
     const sizes = [128, 256, 512, 1024]
 
@@ -56,7 +57,7 @@
                     {@html createAvatar(adventurer, {
                             seed: alt,
                             //scale: 125,
-                            backgroundColor: ["ffffff"],
+                            backgroundColor: inDarkTheme() ? ["000000"] : ["ffffff"],
                             flip: true,
                             eyebrows: [
                                 "variant01","variant02","variant03", "variant04","variant05",
