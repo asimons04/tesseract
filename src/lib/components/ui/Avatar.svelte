@@ -24,7 +24,7 @@
     export let fadeIn: boolean = true
 </script>
 
-<div class="{width < 24 ? 'm-[2px]' : ''}" style="width: {width+2}px;">
+<div class="{ring && width < 24 ? 'm-[2px]' : ''}" style="width: {width+2}px;">
     <div class="{circle ? 'rounded-full' : ''} {rounded ? 'rounded-xl' : ''} {background ? 'bg-white/50' : ''} mx-auto w-full">
         {#if url}
             <ZoomableImage url={url} format='webp' title={title} altText={alt} {lazyload} {fadeIn}
