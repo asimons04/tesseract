@@ -43,7 +43,7 @@ export async function load({ params, url }: LoadParams) {
         const max_depth = (parentId && threadDepth)
             ? (threadDepth <= 50) ? threadDepth : 50
             : (post.post_view.counts.comments > 50) 
-                ? 2 
+                ? 5 
                 : 50
 
         const sort = get(userSettings)?.defaultSort?.comments ?? 'Hot'
