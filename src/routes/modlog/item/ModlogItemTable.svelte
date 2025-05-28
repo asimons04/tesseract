@@ -73,13 +73,13 @@
     <div class="flex flex-col gap-1 items-start lg:flex-row lg:gap-4 lg:items-center w-full max-w-full" >
 
         <!---Date/Time--->
-        <div class="flex flex-row gap-2 px-1 text-xs w-full lg:w-[5%]">
+        <div class="flex flex-row gap-2 px-1 text-xs w-full lg:w-[8%]">
             <span class="lg:hidden text-xs font-bold min-w-[10ch]">When:</span>
             <RelativeDate date={item.when} {showAbsoluteTime}/>
         </div>
 
         <!---Community--->
-        <div class="flex flex-row gap-1 px-1 text-xs w-full lg:w-[20%] truncate items-center">
+        <div class="flex flex-row gap-1 px-1 text-xs w-full lg:w-[19%] truncate items-center">
             
             <span class="flex flex-row gap-2 items-center w-full">
                 {#if item.community}        
@@ -105,7 +105,7 @@
         
         <!---Moderator--->
         {#if showModeratorColumn}
-        <div class="flex flex-row gap-1 px-1 text-xs w-full lg:w-[20%] truncate items-center">
+        <div class="flex flex-row gap-1 px-1 text-xs w-full lg:w-[19%] truncate items-center">
             
             <span class="flex flex-row gap-2 items-center w-full">    
                 <span class="lg:hidden text-xs font-bold min-w-[10ch]">Mod:</span>
@@ -134,7 +134,7 @@
         
 
         <!---Moderatee--->
-        <div class="flex flex-row gap-1 px-1 text-xs w-full lg:w-[20%] truncate items-center">
+        <div class="flex flex-row gap-1 px-1 text-xs w-full lg:w-[19%] truncate items-center">
             
             <span class="flex flex-row gap-2 items-center w-full">    
                 <span class="lg:hidden text-xs font-bold min-w-[10ch]">User:</span>

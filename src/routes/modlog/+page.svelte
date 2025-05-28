@@ -325,12 +325,12 @@
                 
                 <!---Table Heading Row--->
                 <Card class="hidden lg:flex flex-row p-1 gap-4 items-start w-full sticky top-[7rem] text-sm font-bold z-10">
-                    <div class="w-[5%] flex justify-start">Time</div>
-                    <div class="w-[20%] flex justify-start">Community</div>
+                    <div class="w-[8%] flex justify-start">Time</div>
+                    <div class="w-[19%] flex justify-start">Community</div>
                     {#if showModeratorColumn}
-                        <div class="w-[20%] flex justify-start">Moderator</div>
+                        <div class="w-[19%] flex justify-start">Moderator</div>
                     {/if}
-                    <div class="w-[20%] flex justify-start">Moderatee</div>
+                    <div class="w-[19%] flex justify-start">Moderatee</div>
                     <div class="{showModeratorColumn ? 'w-[35%]' : 'w-[55%]'} flex justify-start">Details</div>
                 </Card>
                 
