@@ -2,19 +2,25 @@
     import type { Community, Person } from 'lemmy-js-client';
     import type { Tokens } from 'marked'
     
+
     import { createFakePerson, createFakeCommunity } from '$lib/components/lemmy/post/helpers'
+    import { goto } from '$app/navigation'
     import { userProfileModal, communityProfileModal, postViewerModal } from '$lib/components/lemmy/moderation/moderation'
     import { userSettings } from '$lib/settings';
 
-    import Badge from '$lib/components/ui/Badge.svelte';
-    import Link from '$lib/components/input/Link.svelte';
+    import Badge from '$lib/components/ui/Badge.svelte'
+    import Link from '$lib/components/input/Link.svelte'
+    import Markdown from '../Markdown.svelte'
+    
+    import { type CustomMarkdownOptions, photonify } from '../markdown'
     
     import { 
-        type CustomMarkdownOptions,
-        photonify 
-    } from '../markdown';
-    import { ChatBubbleLeftEllipsis, User, UserGroup, Window } from 'svelte-hero-icons';
-    import { goto } from '$app/navigation';
+        ChatBubbleLeftEllipsis, 
+        User, 
+        UserGroup, 
+        Window 
+    } from 'svelte-hero-icons'
+    
     
    
     export let token: Tokens.Link
@@ -25,6 +31,8 @@
     let hashtagRE = /^#[A-Za-z0-9À-ÿ]+/i
     let communityRE = /!(?<community>[a-zA-Z0-9._-]+)@(?<instance>[a-zA-Z0-9._-]+\.[a-zA-Z0-9_-]+)/i
     let userRE = /@(?<user>[a-zA-Z0-9._-]+)@(?<instance>[a-zA-Z0-9._-]+\.[a-zA-Z0-9_-]+)/i
+
+    let imageVideoAudioRE = /!\[.*\]\(http(s)?:\/\/.*.(avif|jpeg|jpg|gif|apng|img|png|svg|bmp|webp|mp3|oga|opus|aac|mp4|webm|mov|m4v|ogv)\)/
 
     $: token, preProcess()
 
@@ -174,15 +182,31 @@
 
 <!---Display a regular link--->
 {:else}
-    <Link highlight 
-        href={token.href} 
-        title={token.title ?? token.href} 
-        preview={
-            !(token.href.startsWith('/')) && 
-            $userSettings.uiState.linkPreviews &&
-            !(options?.custom?.noPreview ?? false)
-        }
-        text={token.text}
-        newtab={true}
-    />
+    <!---If a media item (image/video/audio) is the link "text", render it separately and put the hyperlink URL below it--->
+    {#if token.text.match(imageVideoAudioRE)}
+        <Markdown source={token.text} />
+        <Link highlight 
+            href={token.href} 
+            title={token.title ?? token.href} 
+            preview={
+                !(token.href.startsWith('/')) && 
+                $userSettings.uiState.linkPreviews &&
+                !(options?.custom?.noPreview ?? false)
+            }
+            text={token.href}
+            newtab={true}
+        />
+    {:else}
+        <Link highlight 
+            href={token.href} 
+            title={token.title ?? token.href} 
+            preview={
+                !(token.href.startsWith('/')) && 
+                $userSettings.uiState.linkPreviews &&
+                !(options?.custom?.noPreview ?? false)
+            }
+            text={token.text}
+            newtab={true}
+        />
+    {/if}
 {/if}
