@@ -1,6 +1,6 @@
 <script lang="ts">
     import type { CommunityView } from "lemmy-js-client"
-    import type { HideCommunityEvent, RemoveCommunityEvent } from "$lib/ui/events"
+    import type { BlockCommunityEvent, HideCommunityEvent, RemoveCommunityEvent } from "$lib/ui/events"
 
     import { communityProfileModal } from '../moderation/moderation'
     import { createEventDispatcher } from "svelte"
@@ -25,9 +25,6 @@
         LockClosed,
         Home,
     } from 'svelte-hero-icons'
-    
-    
-    
 
     export let community_view: CommunityView
     export let href: boolean = false            // If true, community link in the card will go to the /c/ page. False, default, will open the community modal.
@@ -35,18 +32,38 @@
     let avatarWidth = 96
     const dispatcher = createEventDispatcher()
 
-    function handleHideCommunity(e:HideCommunityEvent) {
-        if (community_view.community.id == e.detail.community_id) community_view.community.hidden = e.detail.hidden
+    const handlers = {
+        BlockCommunityEvent: function (e:BlockCommunityEvent) {
+            if (community_view.community.id == e.detail.community_id) {
+                community_view.blocked = e.detail.blocked
+                community_view = community_view
+            }
+        },
+
+        HideCommunityEvent: function (e:HideCommunityEvent) {
+            if (community_view.community.id == e.detail.community_id) {
+                community_view.community.hidden = e.detail.hidden
+                community_view = community_view
+            }
+        },
+
+        RemoveCommunityEvent: function (e:RemoveCommunityEvent) {
+            if (community_view.community.id == e.detail.community_id) {
+                community_view.community.removed = e.detail.removed
+                community_view = community_view
+            }
+        },
     }
 
-    function handleRemoveCommunity(e:RemoveCommunityEvent) {
-        if (community_view.community.id == e.detail.community_id) community_view.community.removed = e.detail.removed
-    }
 
 </script>
 
 
-<svelte:window on:hideCommunity={handleHideCommunity} on:removeCommunity={handleRemoveCommunity} />
+<svelte:window 
+    on:blockCommunity   = {handlers.BlockCommunityEvent}
+    on:hideCommunity    = {handlers.HideCommunityEvent} 
+    on:removeCommunity  = {handlers.RemoveCommunityEvent} 
+/>
 
 <Card backgroundImage={($userSettings.uiState.showBannersInCards && community_view.community.banner) ? imageProxyURL(community_view.community.banner, undefined, 'webp') : ''} 
     class="p-0 !items-start"
