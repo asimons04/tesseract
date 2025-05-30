@@ -346,7 +346,7 @@
 
         // Hide comments from users of blocked instances
         if ( $userSettings.hidePosts.hideUsersFromBlockedInstances && userIsInstanceBlocked($profile?.user, node.comment_view.creator.instance_id) ) {
-            hideCommentReason = "Creator is from a blocked instance"
+            hideCommentReason = `Creator is from a blocked instance: ${new URL(node.comment_view.creator.actor_id).hostname}`
             return true
         }
 
