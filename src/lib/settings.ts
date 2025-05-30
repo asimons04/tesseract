@@ -72,7 +72,8 @@ interface Settings {
         newAccountMinAge: number
         MBFCLowCredibility: boolean
         minimizeBotComments: boolean
-        hideUsersFromBlockedInstances: boolean      
+        hideUsersFromBlockedInstances: boolean
+        usersWithNoAvatar: boolean                                      // Hide posts/comments from accounts that can't be bothered to set an avatar picture.
     }
     notifications: {
         enabled: boolean                                                // Technically used to enable/disable notifications, but it's hardcoded to true
@@ -245,6 +246,7 @@ export const defaultSettings: Settings = {
         newAccountMinAge:                                               5,
         minimizeBotComments:                                            false,
         hideUsersFromBlockedInstances:                                  false,
+        usersWithNoAvatar:                                              false,
 
     },
    

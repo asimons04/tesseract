@@ -87,6 +87,7 @@
         WrenchScrewdriver,
         Newspaper,
         ArrowLongDown,
+        User,
     } from 'svelte-hero-icons'
     
     
@@ -392,12 +393,6 @@
             bind:selected={$userSettings.uiState.defaultCommunityDropdownPanel}
         />
         
-        <!---Open in New Tab
-        <SettingToggle icon={ArrowTopRightOnSquare} title="Open Links in New Tab" bind:value={$userSettings.openInNewTab.links}
-            description="Open external links in a new tab."
-        />
-        --->
-
         <!---Use Display Names--->
         <SettingToggle icon={Identification} title="Use Display Names" bind:value={$userSettings.displayNames}
             description="Show user and community display names instead of their actor ID names."
@@ -460,16 +455,6 @@
             description="Disable downvotes and hide downvote counts on posts/comments."
         />
         {/if}
-
-        
-
-        
-
-        
-
-        
-
-        
     </SettingsCollapseSection>
 
 
@@ -814,6 +799,12 @@
                 this will not be applied to communities you are moderating or to any local community if you are an instance admin."
         />
 
+        <!---Hide Posts From Users Without Avatars--->
+        <SettingToggle title="Hide Posts/Comments From Users With Blank Profiles" icon={User} bind:value={$userSettings.hidePosts.usersWithNoAvatar}
+            description="Hide posts and comments from 'blank profile' accounts that lack an avatar and bio (one or the other is required).  Why?  Sometimes it's nice to 
+            tune out the faceless opinions for a while and only interact with people who are more likely to be here for the community."
+        />
+
         <!---Collapse Comments from Bot Accounts by Default--->
         <SettingToggle title="Collapse Bot Comments" icon={FaceFrown} bind:value={$userSettings.hidePosts.minimizeBotComments}
             description="When enabled, comments from accounts marked as bots will start off collapsed in the comment tree."
@@ -839,34 +830,14 @@
         />
 
         <SettingToggle title="Keyword Filtering" icon={FaceFrown} bind:value={$userSettings.hidePosts.keywords}
-            description="Enable hiding posts based on keywords you've configured."
+            description="Enable hiding posts and comments based on keywords you've configured."
         >
             <SettingEditArray bind:list={$userSettings.hidePosts.keywordList} condition={$userSettings.hidePosts.keywords}
                 title="Define Keywords" 
                 textInputPlaceholder="Keyword(s) to filter"
                 description="Enter a keyword you wish you filter. You can specify multiple keywords by separating them with a comma. Post titles,
-                bodies, and embed descriptions will be evaluated for the keywords."
-            >
-                <details open={true}>
-                    <summary class="font-bold cursor-pointer">Special Control Characters</summary>
-                    <ul>
-                        <li class="flex flex-row gap-4 pl-4">
-                            <span class="font-bold text-sm">^</span>
-                            <span class="text-xs font-normal">Content must start with this keyword.</span>
-                        </li>
-                        
-                        <li class="flex flex-row gap-4 pl-4">
-                            <span class="font-bold text-sm">!</span>
-                            <span class="text-xs font-normal">Evaluate the keyword as case-sensitive.</span>
-                        </li>
-
-                        <li class="flex flex-row gap-4 pl-4">
-                            <span class="font-bold text-sm">*</span>
-                            <span class="text-xs font-normal">Disable whole-word matching for the keyword.</span>
-                        </li>
-                    </ul>
-                </details>
-            </SettingEditArray>
+                bodies, and embed descriptions will be evaluated for the keywords as well as any comment text."
+            />
         </SettingToggle>
     </SettingsCollapseSection>
 
