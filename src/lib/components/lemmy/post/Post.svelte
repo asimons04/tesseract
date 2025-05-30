@@ -141,9 +141,8 @@
 
         BlockCommunityEvent: function (e:BlockCommunityEvent) {
             if (post?.community.id == e.detail.community_id) {
-                
-                hidePostReason = e.detail.blocked ? "Community is blocked" : ""
-                postHidden = post.hidden = e.detail.blocked
+                //@ts-ignore
+                postHidden = post.community.blocked = e.detail.blocked
             }
         },
 
@@ -306,13 +305,20 @@
 
         // Creator Blocked
         if (post.creator_blocked) {
-            hidePostReason = 'Creator blocked'
+            hidePostReason = 'Creator is blocked'
             return true
         }
 
         // Community Hidden
         if (post.community.hidden) {
-            hidePostReason = 'Community hidden'
+            hidePostReason = 'Community is hidden'
+            return true
+        }
+
+        // Community Blocked (Tacking on a custom key here)
+        //@ts-ignore
+        if (post.community.blocked) {
+            hidePostReason = 'Community is blocked'
             return true
         }
 
@@ -324,20 +330,20 @@
 
         // Post Deleted
         if ($userSettings.hidePosts.deleted && post.post.deleted) {
-            hidePostReason = 'Post deleted'
+            hidePostReason = 'Post is deleted'
             return true
         }
 
         // Post Removed
         if ($userSettings.hidePosts.removed && post.post.removed) {
-            hidePostReason = "Post removed"
+            hidePostReason = "Post is removed"
             return true
         }
 
         // MBFC Low Credibility
         //@ts-ignore
         if ($userSettings.hidePosts.MBFCLowCredibility && post.mbfc?.credibility == 'Low Credibility') {
-            hidePostReason = "Low-credibility source"
+            hidePostReason = "Post links to low-credibility source"
             return true
         }
 
@@ -349,7 +355,7 @@
 
         // Blocked Instance
         if ($userSettings.hidePosts.hideUsersFromBlockedInstances && userIsInstanceBlocked($profile?.user, post.creator.instance_id)) {
-            hidePostReason = "Creator is from a blocked instance"
+            hidePostReason = `Creator is from a blocked instance: ${new URL(post.creator.actor_id).hostname}`
             return true
         }
 
