@@ -73,6 +73,7 @@ export const isImage = (url: string | undefined) => {
     try {
         if (!url) return false
         const testURL = new URL(unproxyImage(url))
+        if (testURL.hostname == 'img.shields.io') return true
         if (/\.(avif|jpeg|jpg|gif|apng|img|png|svg|bmp|webp)$/i.test(testURL.href)) return true
         if (/\.(avif|jpeg|jpg|gif|apng|img|png|svg|bmp|webp)\??/i.test(testURL.href)) return true
         

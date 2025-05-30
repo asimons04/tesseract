@@ -33,7 +33,7 @@
     let userRE = /@(?<user>[a-zA-Z0-9._-]+)@(?<instance>[a-zA-Z0-9._-]+\.[a-zA-Z0-9_-]+)/i
 
     let imageVideoAudioRE = /!\[.*\]\(http(s)?:\/\/.*.(avif|jpeg|jpg|gif|apng|img|png|svg|bmp|webp|mp3|oga|opus|aac|mp4|webm|mov|m4v|ogv)\)/
-
+    let stupidImgShieldRE = /!\[.*\]\(http(s)?:\/\/(img\.shields\.io).*\)/
     $: token, preProcess()
 
     /** Pre-processes the identified links for special handling.  Note the ordering is important.
@@ -183,7 +183,7 @@
 <!---Display a regular link--->
 {:else}
     <!---If a media item (image/video/audio) is the link "text", render it separately and put the hyperlink URL below it--->
-    {#if token.text.match(imageVideoAudioRE)}
+    {#if imageVideoAudioRE.test(token.text) || stupidImgShieldRE.test(token.text)}
         <Markdown source={token.text} />
         
         <Link highlight 
