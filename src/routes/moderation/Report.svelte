@@ -188,19 +188,21 @@
             
             <!---Item View--->
             <div class="w-full lg:w-2/3">
-                {#if report.type == 'post' && report.post_view}
-                    <Post post={report.post_view} actions={false} expandCompact={false} />
-                {/if}
+                {#key report}
+                    {#if report.type == 'post' && report.post_view}
+                        <Post post={report.post_view} actions={false} expandCompact={false} />
+                    {/if}
 
-                {#if report.type == 'comment' && report.comment_view}
-                    <CommentItem comment={report.comment_view} actions={false} />
-                {/if}
+                    {#if report.type == 'comment' && report.comment_view}
+                        <CommentItem comment={report.comment_view} actions={false} />
+                    {/if}
 
-                {#if report.type == 'private_message' && report.private_message_view}
-                    <Card class="p-2">    
-                        <PrivateMessageItem item={report.private_message_view} /> 
-                    </Card>
-                {/if}
+                    {#if report.type == 'private_message' && report.private_message_view}
+                        <Card class="p-2">    
+                            <PrivateMessageItem item={report.private_message_view} /> 
+                        </Card>
+                    {/if}
+                {/key}
             </div>
 
             <!---Action Buttons--->
