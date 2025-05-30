@@ -3,33 +3,75 @@ All major/minor changes between releases will be documented here.
 
 # 1.4.39
 ## Bugfixes
+
+### Reactivity
+- Fix bug where expanding/collapsing the post image would trigger unwanted reactivity causing the comment section to refresh.
+
+- Comments now respond to the "lockPost" event in order to disable/enable the reply button appropriately.
+
+- If an inbox item is expanded, switching accounts or refreshing the list as a new item arrives would keep the text from the previous comment while updating the heading info correctly.  Caused the wrong comment/reply to be displayed.
+
+### Moderation
+- Don't invalidate/refresh Reports page when resolving a report (not needed).
+
+- When removing a post/comment, if you enabled the option to send a reply message and left it blank, it would throw a toast message informing you as such but not reset the "loading" variable and kept the "submit" button disabled.
+
+- When distinghishing a mod comment, only push top-level comments to the top of the tree.  e.g. if you need to distinguish a comment that is a reply to another comment, that would previously push a copy of that distinguished reply up as a top-level comment.
+
+### Community Settings Section
+- Fixed unhandled error when an admin enters the community settings when there are no moderators.
+
+- Fixed "Local Community" toggle not reflecting API state after reload.
+
+### Misc
 - [Display] Fix truncation in post headings to account for community display names where the community creator thinks "Display Name" and "Community Long Description" are the same picture :sigh:
   - Note:  Backported to 1.4.38
-
-- [Reactivity] If an inbox item is expanded, switching accounts or refreshing the list as a new item arrives would keep the text from the previous comment while updating the heading info correctly.  Caused the wrong comment/reply to be displayed.
-
-- [Reactivity] Fix bug where expanding/collapsing the post image would trigger unwanted reactivity causing the comment section to refresh.
-
-- [Reactivity] Comments now respond to the "lockPost" event in order to disable/enable the reply button appropriately.
-
-- [Comment Section] When distinghishing a mod comment, only push top-level comments to the top of the tree.  e.g. if you need to distinguish a comment that is a reply to another comment, that would previously push a copy of that distinguished reply up as a top-level comment.
-
-- [Community Settings] Unhandled error when an admin enters the community settings when there are no moderators.
-
-- [Community Settings] "Local Community" toggle not reflecting API state after reload.
-
-- [Moderation] Don't invalidate/refresh Reports page when resolving a report (not needed).
 
 - [Annoyance] Svelte was URI-encoding ampersands when rendering links
 
 - [Time Display] The absolute time displayed in the tooltip of the RelativeTime component was not updating correctly when re-rendering due to a reacctive event.
 
+- [Linked Images] If you linked an image in markdown, the image would render but without the link.  Now, the link will be below the image.
+  - e.g. `[![This is a linked image](https://foo.com/image.jpg)](https://example.com/article/page.htm)`
+  - The cause is that zoomable image takes precedence over the hyperlink.
 
 ## Changes
-### Minor
+
+### Filtering
+- Refactored the post and comment filter subsystems.
+
+- Keyword filters now apply to comments
+
+- Filtered posts and comments show with a placeholder rather than being silently discarded as before.
+  - Clicking the "eye" button on the placeholder will show the filtered post or comment
+  - The reason for the item being filtered is indicated in the placeholder.
+  - Filtered comments still allow the replies to be visible while hiding the filtered one (which is why the keyword filters did not apply to comments until now).
+  - Filtered comments will hide the score and creator as well.  Unless manually revealed, the "creator" will be `Tesseract@your-instance.xyz` with the Tesseract logo as the avatar. Revealing the comment will replace that with the actual creator.  This is to both further hide/mask content you don't want to see as well as keep the formatting/rendering consistent.
+  
+- Got rid of the keyword modifiers (starts with, case-insensitive, whole word match).
+
+- New filter option to hide submissions from accounts with blank profiles
+  - A "blank profile" is one that has neither a profile picture or a bio
+  - Why?  Sometimes you might want to filter out the "faceless opinions" for a while and only deal with the people who are more likely to be here for the community. 
 
 
-#### Moderation
+### Comments
+- Added color-coded conversation lines to comment threads.
+  - The conversaton lines are clickable buttons and can be used to collapse/expand threads.
+  - The user avatars in the comment header have ring borders corresponding to the thread color
+  - Avatars are now de-coupled from the user links; clicking them will expand/collapse the thread
+  - Are color-coded by default but can change to monochrome if you prefer.
+  - Setting is in `Settings -> Posts and Comments -> Color Coded Conversation Lines`
+  
+- Tweaked comment renderers / layout
+  - Removed "card" effect 
+  - Distinguished comments now render fancier.
+
+- Comment text height can be limited to 120px and be expanded/collapsed (similar to post bodies in the feed).  
+  - Disabled by default
+  - Can enable via `Settings -> Posts and Comments -> Limit Comment Height`
+
+### Moderation
 - When removing a post/comment and opting to reply with a reason via comment, automatically distinguish the comment.
 
 - In the Community Profile Modal -> Ban/Unban User panel, you can now search for a user as well as enter the actor ID, @user@instance.xyz, or https://lemmyverse.link/u/user@instance.xyz format.
@@ -38,13 +80,15 @@ All major/minor changes between releases will be documented here.
 
 - Added a button on reports that will copy the report text to the clipboard if you want to use it in the removal reason.
 
-#### User and Community Profile Modals
+### User and Community Profile Modals
 - Added button to view user's modlog history in the full modlog (without having to open the embededded, mini-modlog first.
-- Both can be middle-clicked to open in a new tab on desktop
+
+- Both can be middle-clicked to open the full modlog in a new tab on desktop
+
 - Added "View in Full Modlog" button to User `Profile Modal -> User Modlog` panel (Thought I already had this, but it was in the moderation modal)
 
-#### Inline Comment Removal Reasons
-- Clicking the "hand" icon will now load the modlog for the comment even if you have the setting disabled.  If the setting is enabled, then it will take you to the full modlog for the entry.
+### Inline Comment Removal Reasons
+- Clicking the "hand" icon will now load the modlog details for the comment even if you have the setting disabled.  If the setting is enabled, then it will take you to the full modlog for the entry.
 
 - Move comment removal reason box above the comment text. 
 
