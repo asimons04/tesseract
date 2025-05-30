@@ -103,22 +103,50 @@
         }
     }
     
+    function shouldHideComment(node: CommentNodeI): boolean {
+        // Safety checks
+        
+        // Don't hide your own submissions
+        if (node.comment_view.creator.id == $profile?.user?.local_user_view?.person?.id) return false
+
+        // If moderator or instance admin of a local community
+        if (amMod($profile?.user, node.comment_view.community)) return false
+
+        // If jumping to a comment in a thread
+        if (node.comment_view.comment.path.split('.').includes(jumpTo.toString())) return false
+
+        
+        // Hide comments from new accounts
+        if (
+                $userSettings.hidePosts.newAccounts &&  
+                isNewAccount(node.comment_view.creator.published)
+        )
+        return true
+
+        // Hide comments from users without avatars
+        if (
+                $userSettings.hidePosts.usersWithNoAvatar && 
+                !node.comment_view.creator.avatar
+        )
+        return true
+
+        // Hide comments from users of blocked instances
+        if (
+                $userSettings.hidePosts.hideUsersFromBlockedInstances && 
+                userIsInstanceBlocked($profile?.user, node.comment_view.creator.instance_id)
+        )
+        return true
+
+        // If no other checks hit, don't hide the comment
+        return false
+    }
+
 </script>
 
 <div class="flex flex-col {isParent ? `gap-4 divide-y ${dividerColors}` : 'gap-0'}" in:fly={{ opacity: 0, y: -4 }} >
     {#each nodes as node, idx (node.comment_view.comment.id)}
         <!--- Comment filtering  --->
-        {#if    !(
-                    // Optionally hide comments from new accounts (and any replies)
-                    ($userSettings.hidePosts.newAccounts &&  isNewAccount(node.comment_view.creator.published) && node.comment_view.creator.id != $profile?.user?.local_user_view?.person?.id) ||
-                    
-                    // Hide posts from users whose instances you have blocked
-                    ($userSettings.hidePosts.hideUsersFromBlockedInstances && userIsInstanceBlocked($profile?.user, node.comment_view.creator.instance_id))
-                    
-                    // Safety check so moderators will still see the comments as well as admins if the community is local to the instance
-                    && !amMod($profile?.user, node.comment_view.community)
-                )
-        }
+        <!--{#if !shouldHideComment(node)}-->
 
             <Comment postId={post.id} bind:node {jumpTo} {onHomeInstance} {selectable}
                 on:select={(e) => { 
@@ -154,7 +182,7 @@
                     </div>
                 {/if}
             </Comment>
-        {/if}
+        <!--{/if}-->
 
     {/each}
 </div>
