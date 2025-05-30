@@ -574,6 +574,7 @@ export const scrollToTop = async function(element:HTMLElement|undefined|null, sm
     catch {}
 }
 
+
 export const lastSeenPost = {
     getKey: function() {
         const Page = get(page)
@@ -601,6 +602,7 @@ export const lastSeenPost = {
 }
 
 
+
 export async function scrollToLastSeenPost(delay=200) {
     const postID = lastSeenPost.get()
     if (postID) {
@@ -624,105 +626,6 @@ export async function scrollTo(pos:number, delay=100) {
     window.scrollTo(0, pos)
 }
 
-
-
-// Used in post fetch loader to filter posts by keywords
-export const filterKeywords = function (posts:PostView[]):PostView[] {
-    try {
-        let filteredPosts = [] as PostView[];
-        let filterWords = get(UserSettings)?.hidePosts?.keywordList ?? [] as string[];
-
-        // Bypass filtering if keyword filtering is disabled by user
-        if (!get(UserSettings)?.hidePosts?.keywords) return posts;
-
-        // Loop over posts and check for any keywords that should be filtered out
-        for(let i:number=0; i<posts.length; i++) {
-            let post:PostView = posts[i];
-            
-            for (let j:number=0; j<filterWords.length; j++) {
-                let word:string = filterWords[j];
-
-                // Keywords starting with a carat should be evaluated as "startsWith"
-                if (word[0] == '^') {
-                    word = word.substring(1,word.length) + ' ';
-                    if ( 
-                        post?.post?.name?.toLowerCase().startsWith(word.toLowerCase()) || 
-                        post?.post?.body?.toLowerCase().startsWith(word.toLowerCase()) || 
-                        post?.post?.embed_description?.toLowerCase().startsWith(word.toLowerCase())
-                    ) {
-                        
-                        filteredPosts.push(...posts.splice(i, 1));
-                        //posts.splice(i, 1)
-                        i--;
-                        console.log(`Filtering post '${post.post.name}' because it starts with the keyword '${word}'`);
-                        break;
-                    }
-
-                }
-                // Keywords starting with exclamation mark should be evaluated as case-sensitive
-                else if (word[0] == '!') {
-                    word = word.substring(1,word.length) + ' ';
-                    if ( 
-                        post?.post?.name?.includes(word) || 
-                        post?.post?.body?.includes(word) || 
-                        post?.post?.embed_description?.includes(word)
-                    ) {
-                        filteredPosts.push(...posts.splice(i, 1));
-                        //posts.splice(i, 1)
-                        i--;
-                        console.log(`Filtering post '${post.post.name}' because it includes the keyword '${word}'`);
-                        break;
-                    }
-
-                    
-                }
-
-                // If the keyword is contained by any other word
-                else if (word[0] == '*') {
-                    word = word.substring(1,word.length);
-                    if ( 
-                        post?.post?.name?.includes(word) || 
-                        post?.post?.body?.includes(word) || 
-                        post?.post?.embed_description?.includes(word)
-                    ) {
-                        filteredPosts.push(...posts.splice(i, 1));
-                        //posts.splice(i, 1)
-                        i--;
-                        console.log(`Filtering post '${post.post.name}' because it includes the keyword '${word}'`);
-                        break;
-                    }
-
-                    
-                }
-                
-                // Keyword is contained within the post (case-insensitive)
-                else {
-                    word = word + ' ';
-                    if ( 
-                        post?.post?.name?.toLowerCase().includes(word.toLowerCase()) || 
-                        post?.post?.body?.toLowerCase().includes(word.toLowerCase()) || 
-                        post?.post?.embed_description?.toLowerCase().includes(word.toLowerCase())
-                    ) {
-                        filteredPosts.push(...posts.splice(i, 1));
-                        i--;
-                        console.log(`Filtering post '${post.post.name}' because it includes the keyword '${word}'`);
-                        break;
-                    }
-                }
-
-            }
-        }
-        //console.log(filteredPosts);
-        
-        return posts
-    }
-    catch (err) {
-        console.log("filterKeywords():  An error has occurred. Returning unfiltered posts list");
-        console.log(err);
-        return posts
-    }
-
-}
 
 // Used in post fetch loader to detect and "roll up" crossposts
 export const findCrossposts = function (posts:PostView[]):PostView[] {

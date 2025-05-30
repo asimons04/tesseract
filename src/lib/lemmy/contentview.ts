@@ -120,10 +120,10 @@ export async function hide(post:PostView): Promise<boolean> {
             hide: !post.hidden,
             post_ids: [post.post.id]
         })
-        post.hidden = !post.hidden
+        //post.hidden = !post.hidden
         
         dispatchWindowEvent('hidePost', {
-            hide: post.hidden,
+            hide: !post.hidden,
             post_ids: [post.post.id]
         })
         

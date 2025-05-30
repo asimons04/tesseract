@@ -13,6 +13,7 @@
         type EditPostEvent,
         type FeaturePostEvent,
         type HideCommunityEvent,
+        type HidePostEvent,
         type LastClickedPostEvent,
         type LockPostEvent,
         type PurgePostEvent, 
@@ -23,7 +24,7 @@
     } from '$lib/ui/events'
 
     import type { PostView } from 'lemmy-js-client'
-    import { type PostType, type PostDisplayType, postType as getPostType, sleep } from './helpers.js'
+    import { type PostType, type PostDisplayType, postType as getPostType, sleep, isNewAccount } from './helpers.js'
 
     import { fade }                 from 'svelte/transition'
     import { getClient }            from '$lib/lemmy'
@@ -52,6 +53,10 @@
     import VideoPost        from '$lib/components/lemmy/post/renderers/VideoPost.svelte'
     import YouTubePost      from '$lib/components/lemmy/post/renderers/YouTubePost.svelte'
     import VimeoPost        from '$lib/components/lemmy/post/renderers/VimeoPost.svelte'
+    import { userIsInstanceBlocked } from '$lib/lemmy/user.js';
+    import { amMod } from '../moderation/moderation.js';
+    import Button from '$lib/components/input/Button.svelte';
+    import { EyeSlash } from 'svelte-hero-icons';
 
 
     export let post: PostView                                           // The Post to display
@@ -71,7 +76,11 @@
     let inViewport      = false
     let postType        = getPostType(post)
     let lastClickedPost = -1
-
+    let postHidden      = false
+    let overrideHidePost = false
+    let hidePostReason  = ''
+    
+    $:  post.post.removed, post.post.deleted, post.creator_blocked, post.hidden, post.community.hidden, overrideHidePost, postHidden = shouldHidePost()
     $:  post.post.id, onPostChange()
     
     function onPostChange() {
@@ -132,22 +141,23 @@
 
         BlockCommunityEvent: function (e:BlockCommunityEvent) {
             if (post?.community.id == e.detail.community_id) {
-                post.community.hidden = e.detail.blocked
-                post = post
+                
+                hidePostReason = e.detail.blocked ? "Community is blocked" : ""
+                postHidden = post.hidden = e.detail.blocked
             }
         },
 
         BlockInstanceEvent: function (e:BlockInstanceEvent) {
             if (post?.creator.instance_id == e.detail.instance_id || post?.community.instance_id == e.detail.instance_id) {
-                post.creator_blocked = e.detail.blocked
-                post = post
+
+                hidePostReason = e.detail.blocked ? "Creator or community is from a blocked instance" : ""
+                postHidden = e.detail.blocked
             }
         },
 
         BlockUserEvent: function (e:BlockUserEvent) {
             if (post?.creator.id == e.detail.person_id) {
                 post.creator_blocked = e.detail.blocked
-
                 post = post
             }
         },
@@ -180,6 +190,17 @@
             if (post?.community.id == e.detail.community_id) {
                 post.community.hidden = e.detail.hidden
                 post = post
+            }
+        },
+
+        HidePostEvent: function(e:HidePostEvent) {
+            if (e.detail.post_ids.includes(post?.post.id)) {
+                post.hidden = e.detail.hide
+                post = post
+                if (e.detail.hide) {
+                    overrideHidePost = false
+                    postHidden = true
+                }
             }
         },
 
@@ -275,6 +296,93 @@
         lastClickedPost = post.post.id
         dispatchWindowEvent('lastClickedPost', {post_id: post.post.id})
     }
+
+    function shouldHidePost(): boolean {
+        // Safety checks
+        
+        if (displayType == 'post' || inProfile || overrideHidePost) return false
+        if (post.post.creator_id == $profile?.user?.local_user_view.person.id) return false
+        if (amMod($profile?.user, post.community)) return false
+
+        // Creator Blocked
+        if (post.creator_blocked) {
+            hidePostReason = 'Creator blocked'
+            return true
+        }
+
+        // Community Hidden
+        if (post.community.hidden) {
+            hidePostReason = 'Community hidden'
+            return true
+        }
+
+        // Post Hidden
+        if (post.hidden) {
+            hidePostReason = 'Post marked as hidden'
+            return true
+        }
+
+        // Post Deleted
+        if ($userSettings.hidePosts.deleted && post.post.deleted) {
+            hidePostReason = 'Post deleted'
+            return true
+        }
+
+        // Post Removed
+        if ($userSettings.hidePosts.removed && post.post.removed) {
+            hidePostReason = "Post removed"
+            return true
+        }
+
+        // MBFC Low Credibility
+        //@ts-ignore
+        if ($userSettings.hidePosts.MBFCLowCredibility && post.mbfc?.credibility == 'Low Credibility') {
+            hidePostReason = "Low-credibility source"
+            return true
+        }
+
+        // New Account
+        if ($userSettings.hidePosts.newAccounts &&  isNewAccount(post.creator.published) && post.creator.id != $profile?.user?.local_user_view?.person?.id) {
+            hidePostReason = "New account"
+            return true
+        }
+
+        // Blocked Instance
+        if ($userSettings.hidePosts.hideUsersFromBlockedInstances && userIsInstanceBlocked($profile?.user, post.creator.instance_id)) {
+            hidePostReason = "Creator is from a blocked instance"
+            return true
+        }
+
+        // Hide comments from users without avatars
+        if ( $userSettings.hidePosts.usersWithNoAvatar && !post.creator.avatar && !post.creator.bio) {
+            hidePostReason = "Creator has blank profile."
+            return true
+        }
+
+        // Hide posts containing filtered keywords
+        if ($userSettings.hidePosts.keywords) {
+            const keywords = $userSettings.hidePosts.keywordList
+            let keywordsFound: string[] = []
+
+            for (let i:number = 0; i<keywords.length; i++) {
+                let keyword = keywords[i].replace('^', '').replace('*', '').replace('!', '')
+                
+                if  (
+                        post.post.name?.toLowerCase().includes(keyword.toLowerCase()) ||
+                        post.post.body?.toLowerCase().includes(keyword.toLowerCase()) ||
+                        post.post.embed_description?.toLowerCase().includes(keyword.toLowerCase())
+                    ) {
+                        keywordsFound.push(keyword.toLowerCase())
+                }
+            }
+            if (keywordsFound.length > 0) {
+                hidePostReason = `Contains filtered ${keywordsFound.length == 1 ? 'keyword' : 'keywords'}: ${keywordsFound.toString().replaceAll(',',', ')}`
+                return true
+            }
+        }
+        hidePostReason = ''
+        return false
+    }
     
 
     onMount(async () =>  {
@@ -298,6 +406,7 @@
     on:editPost             = {handlers.EditPostEvent}
     on:featurePost          = {handlers.FeaturePostEvent}
     on:hideCommunity        = {handlers.HideCommunityEvent}
+    on:hidePost             = {handlers.HidePostEvent}
     on:lockPost             = {handlers.LockPostEvent}
     on:subscribe            = {handlers.SubscribeEvent}
     on:refreshFeed          = {handlers.RefreshFeed}
@@ -311,7 +420,26 @@
 
 
 
+{#if postHidden}
+    <Card class="flex flex-col px-2 py-1 gap-2 mx-auto opacity-70 w-full
+        {($userSettings.uiState.feedMargins && displayType=='feed' && !inModal) || (displayType=='post' && !inModal && previewing) ? 'max-w-3xl' : '' }
+        "
+    >
+        <div class="flex flex-row gap-1 items-start w-full p-1">
+            <div class="w-[42px]">
+                <Button color="tertiary" size="square-lg" icon={EyeSlash} iconSize={28} 
+                    title="Show Hidden Post"
+                    on:click={async () => { overrideHidePost = true }}
+                />
+            </div>
+            <div class="flex flex-col w-[calc(100%-48px)] gap-0 text-xs font-normal">
+                <span class="font-bold">Post Hidden</span>
+                <span>{hidePostReason}</span>
+            </div>
+        </div>
+    </Card>
 
+{:else}
 <!-- svelte-ignore a11y-no-static-element-interactions -->
 <!-- svelte-ignore a11y-mouse-events-have-key-events -->
 <div class="relative" 
@@ -399,7 +527,4 @@
     </Card>
 
 </div>
-
-
-
-
+{/if}

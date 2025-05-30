@@ -4,19 +4,9 @@
 
 <script lang="ts">
     import type {
-        BanCommunityEvent, 
-        BanUserEvent, 
-        BlockCommunityEvent, 
-        BlockInstanceEvent, 
-        BlockUserEvent, 
         ChangeProfileEvent, 
         ClickIntoPostEvent, 
-        EditPostEvent, 
-        HideCommunityEvent, 
-        HidePostEvent, 
         LastClickedPostEvent, 
-        RemoveCommunityEvent, 
-        RemovePostEvent, 
         SetSortTypeEvent,
     } from "$lib/ui/events"
     
@@ -29,8 +19,8 @@
     } from './helpers'
     
     
-    import { addMBFCResults, filterKeywords, findCrossposts, isNewAccount, sleep } from "../post/helpers"
-    import { amMod, amModOfAny } from '../moderation/moderation'
+    import { addMBFCResults, findCrossposts, sleep } from "../post/helpers"
+    import { amModOfAny } from '../moderation/moderation'
     import { getClient, minAPIVersion } from "$lib/lemmy"
     import {  goto } from '$app/navigation'
     import { instance } from '$lib/instance'
@@ -42,7 +32,6 @@
         sortOptionNames
     } from '$lib/lemmy'
     import { StorageController } from "$lib/storage-controller"
-    import { userIsInstanceBlocked } from '$lib/lemmy/user'
     import { userSettings } from "$lib/settings"
     
     import Button                   from '$lib/components/input/Button.svelte'
@@ -163,7 +152,6 @@
                     community_name: community_name
                 })
                 
-                batch.posts = [...filterKeywords(batch.posts)]
                 batch.posts = [...addMBFCResults(batch.posts)]
 
                 // Omit certain post processors if viewing a community (e.g. don't run xpost detection)
@@ -527,59 +515,6 @@
 
     // Event Handlers
     const handlers = {
-        BanCommunityEvent: function (e:BanCommunityEvent) {
-            for (let i:number=0; i < posts.posts.length; i++) {
-                
-                if (posts.posts[i].creator.id == e.detail.person_id && posts.posts[i].community.id == e.detail.community_id) {
-                    posts.posts[i].creator_banned_from_community = e.detail.banned
-                    if (e.detail.remove_content) posts.posts[i].post.removed = e.detail.remove_content
-                }
-            }
-            posts = posts
-        },
-        
-        BanUserEvent: function (e:BanUserEvent) {
-            for (let i:number=0; i < posts.posts.length; i++) {
-                if (posts.posts[i].creator.id == e.detail.person_id) {
-                    posts.posts[i].creator.banned = e.detail.banned
-                    if (e.detail.remove_content) posts.posts[i].post.removed = e.detail.remove_content
-                }
-            }
-            posts = posts
-        },
-        
-        BlockCommunityEvent(e:BlockCommunityEvent) {
-            for (let i:number=0; i < posts.posts.length; i++) {
-                
-                if (posts.posts[i].community.id == e.detail.community_id) {
-                    // Setting the community to hidden will hide the post; there's no key for `community_blocked`, so set creator_blocked to trigger the post to disappear
-                    posts.posts[i].creator_blocked = e.detail.blocked
-                }
-            }
-            posts = posts
-        },
-
-        BlockInstanceEvent(e:BlockInstanceEvent) {
-            for (let i:number=0; i < posts.posts.length; i++) {
-                
-                if (posts.posts[i].creator.instance_id == e.detail.instance_id || posts.posts[i].community.instance_id == e.detail.instance_id) {
-                    // Setting the creator_blocked will hide the post; there's no key for `instance_blocked`
-                    posts.posts[i].creator_blocked = e.detail.blocked
-                }
-            }
-            posts = posts
-        },
-
-        BlockUserEvent(e:BlockUserEvent) {
-            for (let i:number=0; i < posts.posts.length; i++) {
-                
-                if (posts.posts[i].creator?.id == e.detail.person_id) {
-                    posts.posts[i].creator_blocked = e.detail.blocked
-                }
-            }
-            posts = posts
-        },
-
         ChangeProfileEvent(e:ChangeProfileEvent) {
             if ($userSettings.debugInfo) console.log(moduleName, ": Responding to profile change")
             if ($profile?.instance) controller.instance = $profile.instance
@@ -587,61 +522,10 @@
                 .then(() => controller.load({loadSnapshot: true, append:false}))
         },
 
-        // Note:  Not currently used here due to the binding from the post component which handles this event.
-        EditPostEvent: function (e:EditPostEvent) {
-            for (let i:number = 0; i < posts.posts.length; i++) {
-                if (posts.posts[i].post.id == e.detail.post.post.id) {
-                    posts.posts[i] = {
-                        ...e.detail.post,
-                        //@ts-ignore
-                        cross_posts: posts.posts[i].cross_posts ? [...posts.posts[i].cross_posts] : undefined,
-                        //@ts-ignore
-                        mbfc: posts.posts[i].mbfc ? {...posts.posts[i].mbfc} : undefined
-                    }
-                }
-            }
-            posts = posts
-        },
-
-        HideCommunityEvent(e:HideCommunityEvent) {
-            for (let i:number=0; i < posts.posts.length; i++) {
-                if (posts.posts[i].community.id == e.detail.community_id) {
-                    posts.posts[i].community.hidden = e.detail.hidden
-                }
-            }
-            posts = posts
-        },
-
-        HidePostEvent(e:HidePostEvent) {
-            for (let i:number = 0; i < posts.posts.length; i++) {
-                if (posts.posts[i].post.id in e.detail.post_ids) {
-                    posts.posts[i].hidden = e.detail.hide
-                }
-            }
-            posts = posts
-        },
-        
+       
         LastClickedPostEvent: function (e:LastClickedPostEvent) {
             if ($userSettings.debugInfo) console.log(moduleName, ": Setting 'last_clicked_post' to ", e.detail.post_id)
             controller.last_clicked_post = e.detail.post_id
-        },
-        
-        RemoveCommunityEvent(e:RemoveCommunityEvent) {
-            for (let i:number=0; i < posts.posts.length; i++) {
-                if (posts.posts[i].community.id == e.detail.community_id) {
-                    posts.posts[i].community.removed = e.detail.removed
-                }
-            }
-            posts = posts
-        },
-
-        RemovePostEvent(e:RemovePostEvent) {
-            for (let i:number=0; i < posts.posts.length; i++) {
-                if (posts.posts[i].post.id == e.detail.post_id) {
-                    posts.posts[i].post.removed = e.detail.removed
-                }
-            }
-            posts = posts
         },
 
         RequestSnapshotEvent(e:ClickIntoPostEvent) {
@@ -712,21 +596,9 @@
         }
 </script>
 
-
 <svelte:window 
-    on:banUser          = {handlers.BanUserEvent}
-    on:banCommunity     = {handlers.BanCommunityEvent}
-    on:blockUser        = {handlers.BlockUserEvent} 
-    on:blockCommunity   = {handlers.BlockCommunityEvent} 
-    on:blockInstance    = {handlers.BlockInstanceEvent}
     on:changeProfile    = {handlers.ChangeProfileEvent}
-    
-    on:hideCommunity    = {handlers.HideCommunityEvent}
-    on:hidePost         = {handlers.HidePostEvent}
     on:lastClickedPost  = {handlers.LastClickedPostEvent}
-    on:removeCommunity  = {handlers.RemoveCommunityEvent}
-    on:removePost       = {handlers.RemovePostEvent}
-    
     on:refreshFeed      = {() => {
         if ($userSettings.debugInfo) console.log(moduleName, ": Responding to refresh feed event.")
         controller.refreshing = true
@@ -903,29 +775,7 @@
     {#if posts?.posts?.length > 0 }
 
         {#each posts.posts as post, idx (post.post.id)}
-            {#if 
-                !post.creator_blocked && 
-                //!(post.hidden && $userSettings.hidePosts.hidden )&&
-                !($userSettings.hidePosts.deleted && post.post.deleted) && 
-                !($userSettings.hidePosts.removed && post.post.removed) &&
-                //@ts-ignore
-                !($userSettings.hidePosts.MBFCLowCredibility && post.post.mbfc?.credibility == 'Low Credibility') &&
-                !(
-                    // "or" conditions that should qualify the post to be hidden in the feed unless you're a mod of the community it's posted to
-                    // or a local admin and the community is local
-                    (
-                        // Hide posts from new accounts (if they are not your own posts)
-                        ($userSettings.hidePosts.newAccounts &&  isNewAccount(post.creator.published) && post.creator.id != $profile?.user?.local_user_view?.person?.id) ||
-                        
-                        // Hide posts from users whose instances you have blocked
-                        ($userSettings.hidePosts.hideUsersFromBlockedInstances && userIsInstanceBlocked($profile?.user, post.creator.instance_id))
-                    ) 
-                    // Safety check to ensure moderators and local admins will see the posts for moderation purposes
-                    && (!amMod($profile?.user, post.community))
-                )
-            }
-                <Post bind:post scrollTo={controller.last_clicked_post} inCommunity={(community_id || community_name) ? true : false}  {inModal} {actions} />
-            {/if}
+            <Post bind:post scrollTo={controller.last_clicked_post} inCommunity={(community_id || community_name) ? true : false}  {inModal} {actions} />
         {/each}
     {/if}
 

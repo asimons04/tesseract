@@ -56,7 +56,6 @@
         
         
         // Dispatch window event which will hide the posts via PostFeed component
-        post.creator_blocked = true
         dispatchWindowEvent('blockInstance', { 
             instance_id: instance_id,
             blocked: true
