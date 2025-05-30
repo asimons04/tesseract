@@ -12,7 +12,7 @@
     } from '$lib/components/lemmy/community/helpers'
     
     import { addCommunityToGroup, amMod, isAdmin } from '$lib/components/lemmy/moderation/moderation'
-    import { dispatchWindowEvent } from '$lib/ui/events'
+    import { dispatchWindowEvent, type BlockCommunityEvent, type HideCommunityEvent, type RemoveCommunityEvent } from '$lib/ui/events'
     import { fullCommunityName } from "$lib/util"
     import { getClient } from "$lib/lemmy"
     import { goto, replaceState } from "$app/navigation"
@@ -171,6 +171,8 @@
                 blocked: communityBlocked
             })
 
+            communityDetails.community_view.blocked = communityBlocked
+
             // If community is blocked, remove it from favorites and mark subscribed as false since the API will unsubscribe you as part of the block procedure.
             if (communityBlocked) {
                 subscribed = false
@@ -274,10 +276,39 @@
         modalWidth = defaultWidth
         action = 'none'
     }
-    
+    const handlers = {
+        BlockCommunityEvent: function (e:BlockCommunityEvent) {
+            if (communityDetails.community_view.community.id == e.detail.community_id) {
+                communityDetails.community_view.blocked = e.detail.blocked
+                communityDetails.community_view = communityDetails.community_view
+            }
+        },
+
+        HideCommunityEvent: function (e:HideCommunityEvent) {
+            if (communityDetails.community_view.community.id == e.detail.community_id) {
+                communityDetails.community_view.community.hidden = e.detail.hidden
+                communityDetails.community_view = communityDetails.community_view
+            }
+        },
+
+        RemoveCommunityEvent: function (e:RemoveCommunityEvent) {
+            if (communityDetails.community_view.community.id == e.detail.community_id) {
+                communityDetails.community_view.community.removed = e.detail.removed
+                communityDetails.community_view = communityDetails.community_view
+            }
+        },
+    }
 </script>
 
-<svelte:window on:clickIntoPost={() => open = false } />
+<!--
+    on:blockCommunity   = {handlers.BlockCommunityEvent}
+    on:hideCommunity    = {handlers.HideCommunityEvent} 
+    on:removeCommunity  = {handlers.RemoveCommunityEvent} 
+    --->
+<svelte:window 
+    
+    on:clickIntoPost={() => open = false } 
+/>
 
 <Modal bind:open 
     icon={UserGroup} 
