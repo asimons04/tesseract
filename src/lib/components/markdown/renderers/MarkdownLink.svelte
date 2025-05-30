@@ -185,6 +185,7 @@
     <!---If a media item (image/video/audio) is the link "text", render it separately and put the hyperlink URL below it--->
     {#if token.text.match(imageVideoAudioRE)}
         <Markdown source={token.text} />
+        
         <Link highlight 
             href={token.href} 
             title={token.title ?? token.href} 
