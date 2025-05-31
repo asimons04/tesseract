@@ -81,7 +81,7 @@
 
     // Debounce function
     let debounceTimer: ReturnType<typeof setTimeout>;
-    function debounce(value:string,  timeout=300) {
+    function debounce(value:string,  timeout=0) {
         clearTimeout(debounceTimer);
             debounceTimer = setTimeout( () => {
                 filter_input_text = value.toLowerCase();
