@@ -24,11 +24,13 @@
         Trash,
         LockClosed,
         Home,
+        Funnel,
     } from 'svelte-hero-icons'
 
     export let community_view: CommunityView
     export let href: boolean = false            // If true, community link in the card will go to the /c/ page. False, default, will open the community modal.
-   
+    export let filtered: boolean = false
+
     let avatarWidth = 96
     const dispatcher = createEventDispatcher()
 
@@ -117,6 +119,12 @@
                 {#if community_view.blocked}
                     <Badge color="red" icon={EyeSlash} inline click={false} rightJustify={false}>
                         Blocked
+                    </Badge>
+                {/if}
+
+                {#if filtered}
+                    <Badge color="orange" icon={Funnel} inline click={false} rightJustify={false}>
+                        Filtered
                     </Badge>
                 {/if}
 

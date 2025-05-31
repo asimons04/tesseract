@@ -14,6 +14,7 @@
     import { profile } from '$lib/auth'
     import { slide } from "svelte/transition"
     import { toast } from "$lib/components/ui/toasts/toasts"
+    import { userSettings } from '$lib/settings'
     
     import BanUnbanCommunityForm    from "./components/BanUnbanCommunityForm.svelte"
     import BanUserForm              from "./components/BanUserForm.svelte"
@@ -41,6 +42,7 @@
         ChevronDoubleUp,
         Envelope,
         Fire,
+        Funnel,
         Hashtag,
         Home,
         Icon,
@@ -61,7 +63,7 @@
     export let user:Person | undefined
     export let open: boolean = false
     export let mod: boolean = false
-    export let action: 'none' | 'communityBanning' | 'userDetails' | 'profile' | 'banning' | 'messaging' | 'modlog' | 'submissions' | 'purging'  = 'none'
+    export let action: 'none' | 'communityBanning' | 'userDetails' | 'profile' | 'banning' | 'messaging' | 'modlog' | 'submissions' | 'purging' | 'filtering'  = 'none'
     
     let loading = false
     let personDetails: GetPersonDetailsResponse
@@ -74,7 +76,9 @@
 
     let defaultWidth = 'max-w-xl'
     let modalWidth = defaultWidth
+    let userFiltered = false
 
+    $:  userFiltered = (personDetails?.person_view?.person?.actor_id && $userSettings.hidePosts.userList.includes(personDetails.person_view.person.actor_id)) ? true : false
     $:  if (originalUser != user) {
         originalUser = user
         loadDetails()
@@ -148,6 +152,30 @@
     function returnMainMenu() {
         action = 'none'
         modalWidth = defaultWidth
+    }
+
+    function filter() {
+        if  (!personDetails?.person_view) return
+        
+        //Un-Filter
+        if (userFiltered) {
+            const index = $userSettings.hidePosts.userList.findIndex((e) => e == personDetails.person_view.person.actor_id)
+            if (index >=0 ) $userSettings.hidePosts.userList.splice(index, 1)
+            userFiltered = false
+        }
+        // Add community actor_id to community filter list
+        else {
+            $userSettings.hidePosts.userList.push(personDetails.person_view.person.actor_id)
+            $userSettings.hidePosts.userList.sort()
+            userFiltered = true
+        }
+        
+        $userSettings = $userSettings
+        dispatchWindowEvent('filterUser', {
+            actor_id: personDetails.person_view.person.actor_id,
+            filtered: userFiltered
+        })
+        returnMainMenu()
     }
   
 </script>
@@ -403,12 +431,54 @@
             </ModalPanel>
         {/if}
 
+        <!---Filter User--->
+        {#if action == 'filtering'}
+            <ModalPanel>
+                <ModalPanelHeading title="{userFiltered ? 'Un-Filter' : 'Filter'} User" on:click={() => returnMainMenu()} />
+
+                <ModalScrollArea>
+                    <span class="flex flex-col gap-4 text-sm font-normal">
+                        <span>
+                            Filtering a user is like a soft block.  Unlike blocking, filtering someone will still return their content when fetching,
+                            but Tesseract will minimize them with a placeholder.  If you want to see the filtered content, you can 
+                            click the "show" button in the placeholder to reveal the hidden content.
+                        </span>
+
+                        <span>
+                            <span class="font-bold">Confirm</span>:
+                                
+                            {#if userFiltered}
+                                Are you sure you want to remove
+                                {personDetails.person_view.person.display_name ?? personDetails.person_view.person.name}@{new URL(personDetails.person_view.person.actor_id).hostname}
+                                from your filters?
+                            {:else}
+                                Are you sure you want to add
+                                {personDetails.person_view.person.display_name ?? personDetails.person_view.person.name}@{new URL(personDetails.person_view.person.actor_id).hostname}
+                                to your filter list?
+                            {/if}
+                        </span>
+
+                        <Button icon={Funnel}
+                            color={userFiltered ? 'primary' : 'danger'} 
+                            size="lg" class="w-full flex-shrink-0" 
+                            title="{userFiltered ? 'Un-Filter' : 'Filter'} User"
+                            on:click={filter}
+                        >
+                            {userFiltered ? 'Un-Filter' : 'Filter'} User
+                        </Button>
+                        
+                    </span>
+                </ModalScrollArea>
+            </ModalPanel>
+
+        {/if}
+
         <!---Main Menu--->
         {#if action == 'none'}
             <ModalPanel>
                 <ModalScrollArea card={false}>
                     <!--- User Card and Action Buttons--->
-                    <UserCardSmall person_view={personDetails.person_view} blocked={userBlocked} mod={mod} {mostRecentItem} href 
+                    <UserCardSmall person_view={personDetails.person_view} blocked={userBlocked} mod={mod} filtered={userFiltered} {mostRecentItem} href 
                         on:clickUserLink={() => open = false }
                     />
 
@@ -525,8 +595,9 @@
                             </Button>
                         
                         
-                            <!---Block User--->
+                            <!---Block and Filter User--->
                             {#if $profile?.user && $profile?.user?.local_user_view.person.id != personDetails.person_view.person.id}
+                                <!---Block User--->
                                 <Button color="tertiary-border" class="w-full" icon={NoSymbol} iconSize={20} alignment="left" loading={blocking} disabled={blocking}
                                     on:click={async () => {
                                         if (personDetails?.person_view.person) {
@@ -543,6 +614,19 @@
                                 >
                                     {userBlocked ? 'Unblock' : 'Block'} User
                                 </Button>
+                               
+                            {/if}
+
+                            {#if $profile?.user?.local_user_view.person.id != personDetails.person_view.person.id}
+                            <!---Filter User--->
+                            <Button color="tertiary-border" icon={Funnel} iconSize={20} alignment="left" class="w-full"
+                                title="{userFiltered ? 'Un-Filter' : 'Filter'} User"
+                                on:click={async ()=> {
+                                    action = 'filtering'
+                                }}
+                            >
+                                {userFiltered ? 'Un-Filter' : 'Filter'} User...
+                            </Button>
                             {/if}
                         
                             <!---Ban User From All Communities--->

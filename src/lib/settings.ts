@@ -68,6 +68,8 @@ interface Settings {
         nsfw: boolean
         keywords: boolean
         keywordList: string[]
+        userList: string[]
+        communityList: string[]
         newAccounts: boolean
         newAccountMinAge: number
         MBFCLowCredibility: boolean
@@ -241,6 +243,8 @@ export const defaultSettings: Settings = {
         removed:    toBool(env.PUBLIC_HIDE_REMOVED)                     ??  false,
         keywords:                                                       false,
         keywordList:                                                    [],
+        userList:                                                       [],
+        communityList:                                                  [],
         MBFCLowCredibility:                                             false,
         newAccounts:                                                    false,
         newAccountMinAge:                                               5,

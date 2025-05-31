@@ -1,5 +1,5 @@
 <script lang="ts">
-    import type { BanCommunityEvent, BanUserEvent, DistinguishCommentEvent, EditCommentEvent, LockPostEvent, PurgeCommentEvent, PurgePostEvent, RemoveCommentEvent } from '$lib/ui/events'
+    import type { BanCommunityEvent, BanUserEvent, DistinguishCommentEvent, EditCommentEvent, FilterUserEvent, LockPostEvent, PurgeCommentEvent, PurgePostEvent, RemoveCommentEvent } from '$lib/ui/events'
     import { getDepthFromComment, type CommentNodeI } from './comments'
     import type { CommentView, Person, UploadImageResponse } from 'lemmy-js-client';
     
@@ -150,6 +150,13 @@
                 getCommentText().then((newText) => commentText = newText)
                 color = getCardColor(node)
                 node = node
+            }
+        },
+
+        FilterUserEvent: function (e:FilterUserEvent) {
+            if (node.comment_view.creator.actor_id == e.detail.actor_id) {
+                overrideHideComment = false
+                hideComment = shouldHideComment()
             }
         },
 
@@ -350,6 +357,12 @@
             return true
         }
 
+        // Hide content from users in your filter list
+        if ($userSettings.hidePosts.userList.includes(node.comment_view.creator.actor_id)) {
+            hideCommentReason = `Creator is filtered: ${node.comment_view.creator.actor_id}`
+            return true
+        }
+
         // Hide comments containing filtered keywords
         if ($userSettings.hidePosts.keywords) {
             const keywords = $userSettings.hidePosts.keywordList
@@ -379,6 +392,7 @@
     on:banUser={handlers.BanUserEvent} 
     on:banCommunity={handlers.BanCommunityEvent} 
     on:editComment={handlers.EditCommentEvent}
+    on:filterUser={handlers.FilterUserEvent}
     on:distinguishComment={handlers.DistinguishCommentEvent}
     on:lockPost={handlers.LockPostEvent}
     on:removeComment={handlers.RemoveCommentEvent}

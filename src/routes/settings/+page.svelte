@@ -839,6 +839,28 @@
                 bodies, and embed descriptions will be evaluated for the keywords as well as any comment text."
             />
         </SettingToggle>
+
+        <SettingEditArray filterable icon={User} placeholderIcon={User} 
+            bind:list={$userSettings.hidePosts.userList}
+            title="Filter Users"
+            textInputPlaceholder="https://intance.xyz/u/username"
+            description="Filtered users are like a 'soft block'. Their content will still be returned by the API, but Tesseract wiill hide
+                their submissions and allow you to click-to-view their content on a case-by-case basis.  Comments of filtered users
+                are hidden in the comment section, but the rest of the thread remains intact (unlike 'hard' blocking).
+            "
+            placeholderTitle="No Users" 
+            placeholderText="There are no users in your filter list"
+        />
+
+        <SettingEditArray filterable icon={UserGroup} placeholderIcon={UserGroup}
+            bind:list={$userSettings.hidePosts.communityList}
+            title="Filter Communities"
+            textInputPlaceholder="https://instance.xyz/c/communityName"
+            description="Filtered communities are like a 'soft block'.  Content to them will still be returned by the API, but Tesseract will
+            hide them. You have the option to click-to-view them if you want."
+            placeholderTitle="No Communities" 
+            placeholderText="There are no communities in your filter list"
+        />
     </SettingsCollapseSection>
 
     <!---Import/Export Options--->

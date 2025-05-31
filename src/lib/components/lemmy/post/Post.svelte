@@ -12,6 +12,8 @@
         type BlockUserEvent, 
         type EditPostEvent,
         type FeaturePostEvent,
+        type FilterCommunityEvent,
+        type FilterUserEvent,
         type HideCommunityEvent,
         type HidePostEvent,
         type LastClickedPostEvent,
@@ -26,12 +28,15 @@
     import type { PostView } from 'lemmy-js-client'
     import { type PostType, type PostDisplayType, postType as getPostType, sleep, isNewAccount } from './helpers.js'
 
+    import { amMod }                from '../moderation/moderation.js'
     import { fade }                 from 'svelte/transition'
     import { getClient }            from '$lib/lemmy'
     import { onDestroy, onMount }   from 'svelte'
     import { profile }              from '$lib/auth.js'
+    import { userIsInstanceBlocked } from '$lib/lemmy/user.js'
     import { userSettings }         from '$lib/settings.js'
 
+    import Button           from '$lib/components/input/Button.svelte'
     import Card             from '$lib/components/ui/Card.svelte'
     import PostIsInViewport from './utils/PostIsInViewport.svelte'
     
@@ -53,10 +58,10 @@
     import VideoPost        from '$lib/components/lemmy/post/renderers/VideoPost.svelte'
     import YouTubePost      from '$lib/components/lemmy/post/renderers/YouTubePost.svelte'
     import VimeoPost        from '$lib/components/lemmy/post/renderers/VimeoPost.svelte'
-    import { userIsInstanceBlocked } from '$lib/lemmy/user.js';
-    import { amMod } from '../moderation/moderation.js';
-    import Button from '$lib/components/input/Button.svelte';
-    import { EyeSlash } from 'svelte-hero-icons';
+    
+    
+    
+    import { EyeSlash } from 'svelte-hero-icons'
 
 
     export let post: PostView                                           // The Post to display
@@ -141,7 +146,7 @@
 
         BlockCommunityEvent: function (e:BlockCommunityEvent) {
             if (post?.community.id == e.detail.community_id) {
-                //@ts-ignore
+                //@ts-ignore - "blocked" is not a valid key for Community type; just kind of shoving it here since we only need true and undefined counts as false
                 postHidden = post.community.blocked = e.detail.blocked
             }
         },
@@ -182,6 +187,20 @@
                 if (e.detail.community_id) post.post.featured_community = e.detail.featured
                 else post.post.featured_local = e.detail.featured
                 post = post
+            }
+        },
+
+        FilterCommunityEvent: function (e:FilterCommunityEvent) {
+            if (post?.community.actor_id == e.detail.actor_id) {
+                overrideHidePost = false
+                postHidden = shouldHidePost()
+            }
+        },
+
+        FilterUserEvent: function (e:FilterUserEvent) {
+            if (post?.creator.actor_id == e.detail.actor_id) {
+                overrideHidePost = false
+                postHidden = shouldHidePost()
             }
         },
 
@@ -298,7 +317,6 @@
 
     function shouldHidePost(): boolean {
         // Safety checks
-        
         if (displayType == 'post' || inProfile || overrideHidePost) return false
         if (post.post.creator_id == $profile?.user?.local_user_view.person.id) return false
         if (amMod($profile?.user, post.community)) return false
@@ -317,7 +335,7 @@
 
         // Community Blocked (Tacking on a custom key here)
         //@ts-ignore
-        if (post.community.blocked) {
+        if (!inCommunity && post.community.blocked) {
             hidePostReason = 'Community is blocked'
             return true
         }
@@ -359,9 +377,21 @@
             return true
         }
 
-        // Hide comments from users without avatars
+        // Hide content from users without avatars
         if ( $userSettings.hidePosts.usersWithNoAvatar && !post.creator.avatar && !post.creator.bio) {
             hidePostReason = "Creator has blank profile."
+            return true
+        }
+
+        // Hide content from users in your filter list
+        if ($userSettings.hidePosts.userList.includes(post.creator.actor_id)) {
+            hidePostReason = `Creator is filtered: ${post.creator.actor_id}`
+            return true
+        }
+
+        // Hide content from communities in your filter list
+        if (!inCommunity && $userSettings.hidePosts.communityList.includes(post.community.actor_id)) {
+            hidePostReason = `Community is filtered: ${post.community.actor_id}`
             return true
         }
 
@@ -411,6 +441,8 @@
     on:changeCompactView    = {handlers.CompactViewChange}
     on:editPost             = {handlers.EditPostEvent}
     on:featurePost          = {handlers.FeaturePostEvent}
+    on:filterCommunity      = {handlers.FilterCommunityEvent}
+    on:filterUser           = {handlers.FilterUserEvent}
     on:hideCommunity        = {handlers.HideCommunityEvent}
     on:hidePost             = {handlers.HidePostEvent}
     on:lockPost             = {handlers.LockPostEvent}

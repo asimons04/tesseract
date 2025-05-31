@@ -20,6 +20,8 @@ export type TesseractEvent =
     'editPost'              |
     'expandAll'             |
     'featurePost'           |
+    'filterCommunity'       |
+    'filterUser'            |
     'hideCommunity'         |
     'hidePost'              |
     'lastClickedPost'       |
@@ -150,6 +152,21 @@ export interface FeaturePostEvent extends CustomEvent {
         post_id: number,
         featured: boolean
         community_id?: number
+    }
+}
+
+// Filter a Community
+export interface FilterCommunityEvent extends CustomEvent {
+    detail: {
+        actor_id: string
+        filtered: boolean
+    }
+}
+
+export interface FilterUserEvent extends CustomEvent {
+    detail: {
+        actor_id: string
+        filtered: boolean
     }
 }
 

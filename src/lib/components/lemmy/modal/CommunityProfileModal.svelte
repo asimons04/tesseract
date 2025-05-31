@@ -47,6 +47,7 @@
         Eye,
         EyeSlash,
         Folder,
+        Funnel,
         InformationCircle,
         Newspaper,
         NoSymbol,
@@ -58,6 +59,7 @@
         UserGroup,
         Window as WindowIcon
     } from "svelte-hero-icons";
+    import { userSettings } from "$lib/settings";
     
     
     
@@ -79,6 +81,7 @@
         'browsing'          | 
         'communityDetails'  | 
         'createPost'        | 
+        'filtering'         |
         'hiding'            | 
         'modlog'            |
         'removing'           
@@ -91,7 +94,8 @@
     let modalWidth = defaultWidth
 
     let communityLookupName: string     // Set by loadDetails()
-    
+    let communityFiltered = false
+
     // Reactive hack (rather than just monitoring community directly) since updating the modal store changes the community (though back to its original value)
     // and causes the loader to re-run needlessly.
 
@@ -105,6 +109,8 @@
     $: communityBlocked = ($profile?.user && communityDetails?.community_view?.community) 
             ? communityIsBlocked($profile.user, communityDetails.community_view.community.id) 
             : false
+
+    $:  communityFiltered = (communityDetails?.community_view?.community?.actor_id && $userSettings.hidePosts.communityList.includes(communityDetails.community_view.community.actor_id)) ? true : false
 
 
     onMount(async () => await loadDetails() )
@@ -193,6 +199,30 @@
         blocking = false
     }
 
+    function filter() {
+        if  (!communityDetails?.community_view) return
+        
+        //Un-Filter
+        if (communityFiltered) {
+            const index = $userSettings.hidePosts.communityList.findIndex((e) => e == communityDetails.community_view.community.actor_id)
+            if (index >=0 ) $userSettings.hidePosts.communityList.splice(index, 1)
+            communityFiltered = false
+        }
+        // Add community actor_id to community filter list
+        else {
+            $userSettings.hidePosts.communityList.push(communityDetails.community_view.community.actor_id)
+            $userSettings.hidePosts.communityList.sort()
+            communityFiltered = true
+        }
+        
+        $userSettings = $userSettings
+        dispatchWindowEvent('filterCommunity', {
+            actor_id: communityDetails.community_view.community.actor_id,
+            filtered: communityFiltered
+        })
+        returnMainMenu()
+    }
+
     let remove = {
         removing: false,
         reason: undefined,
@@ -276,39 +306,10 @@
         modalWidth = defaultWidth
         action = 'none'
     }
-    const handlers = {
-        BlockCommunityEvent: function (e:BlockCommunityEvent) {
-            if (communityDetails.community_view.community.id == e.detail.community_id) {
-                communityDetails.community_view.blocked = e.detail.blocked
-                communityDetails.community_view = communityDetails.community_view
-            }
-        },
 
-        HideCommunityEvent: function (e:HideCommunityEvent) {
-            if (communityDetails.community_view.community.id == e.detail.community_id) {
-                communityDetails.community_view.community.hidden = e.detail.hidden
-                communityDetails.community_view = communityDetails.community_view
-            }
-        },
-
-        RemoveCommunityEvent: function (e:RemoveCommunityEvent) {
-            if (communityDetails.community_view.community.id == e.detail.community_id) {
-                communityDetails.community_view.community.removed = e.detail.removed
-                communityDetails.community_view = communityDetails.community_view
-            }
-        },
-    }
 </script>
 
-<!--
-    on:blockCommunity   = {handlers.BlockCommunityEvent}
-    on:hideCommunity    = {handlers.HideCommunityEvent} 
-    on:removeCommunity  = {handlers.RemoveCommunityEvent} 
-    --->
-<svelte:window 
-    
-    on:clickIntoPost={() => open = false } 
-/>
+<svelte:window on:clickIntoPost={() => open = false }  />
 
 <Modal bind:open 
     icon={UserGroup} 
@@ -424,6 +425,47 @@
 
                 </ModalScrollArea>
             </ModalPanel>
+        {/if}
+
+        {#if action == 'filtering'}
+            <ModalPanel>
+                <ModalPanelHeading title="{communityFiltered ? 'Un-Filter' : 'Filter'} Community" on:click={() => returnMainMenu()} />
+
+                <ModalScrollArea>
+                    <span class="flex flex-col gap-4 text-sm font-normal">
+                        <span>
+                            Filtering a community is like a soft block.  Unlike blocking, filtering a community will still return posts when fetching,
+                            but Tesseract will minimize them in the feed with a placeholder.  If you want to see the filtered content, you can 
+                            click the "show" button in the placeholder to reveal the hidden content.
+                        </span>
+
+                        <span>
+                            <span class="font-bold">Confirm</span>:
+                                
+                            {#if communityFiltered}
+                                Are you sure you want to remove
+                                {communityDetails.community_view.community.title ?? communityDetails.community_view.community.name}@{new URL(communityDetails.community_view.community.actor_id).hostname}
+                                from your filters?
+                            {:else}
+                                Are you sure you want to add
+                                {communityDetails.community_view.community.title ?? communityDetails.community_view.community.name}@{new URL(communityDetails.community_view.community.actor_id).hostname}
+                                to your filter list?
+                            {/if}
+                        </span>
+
+                        <Button icon={Funnel}
+                            color={communityFiltered ? 'primary' : 'danger'} 
+                            size="lg" class="w-full flex-shrink-0" 
+                            title="{communityFiltered ? 'Un-Filter' : 'Filter'} Community"
+                            on:click={filter}
+                        >
+                            {communityFiltered ? 'Un-Filter' : 'Filter'} Community
+                        </Button>
+                        
+                    </span>
+                </ModalScrollArea>
+            </ModalPanel>
+
         {/if}
 
         {#if action == 'browsing'}
@@ -582,7 +624,7 @@
             <ModalPanel>
                 <ModalScrollArea card={false}>
                     <!---Community Card--->
-                    <CommunityCardSmall bind:community_view={communityDetails.community_view} href on:communityLinkClick={() => open = false } />
+                    <CommunityCardSmall bind:community_view={communityDetails.community_view} filtered={communityFiltered} href on:communityLinkClick={() => open = false } />
 
                     <span class="mt-2" />
 
@@ -703,34 +745,45 @@
                             >
                                 {communityBlocked ? 'Unblock' : 'Block'} Community...
                             </Button>
+                        {/if}
 
-                            <!---Admin-Only Options--->
-                            {#if isAdmin($profile.user) }
-                                <!---Remove Community--->
-                                <Button color="tertiary-border" icon={Trash} iconSize={20} alignment="left" class="w-full" loading={remove.removing} 
-                                    title="{communityDetails.community_view.community.removed ? 'Restore' : 'Remove'} Community"
-                                    on:click={()=> {
-                                        modalWidth="max-w-2xl"
-                                        action='removing'
-                                    }}
-                                >
-                                    {communityDetails.community_view.community.removed ? 'Restore' : 'Remove'} Community...
-                                </Button>
+                        <!---Filter Community--->
+                        <Button color="tertiary-border" icon={Funnel} iconSize={20} alignment="left" class="w-full"
+                            title="{communityFiltered ? 'Un-Filter' : 'Filter'} Community"
+                            on:click={async ()=> {
+                                action = 'filtering'
+                            }}
+                        >
+                            {communityFiltered ? 'Un-Filter' : 'Filter'} Community...
+                        </Button>
 
-                                <!---Hide Community--->
-                                <Button color="tertiary-border" icon={EyeSlash} iconSize={20} alignment="left" class="w-full" loading={hide.hiding} 
-                                    title="{communityDetails.community_view.community.hidden ? 'Restore' : 'Hide'} Community"
-                                    on:click={() => {
-                                        modalWidth="max-w-2xl"
-                                        action="hiding"
-                                    }}
-                                >
-                                    {communityDetails.community_view.community.hidden ? 'Un-Hide' : 'Hide'} Community...
-                                </Button>
+                        <!---Admin-Only Options--->
+                        {#if isAdmin($profile?.user) }
+                            <!---Remove Community--->
+                            <Button color="tertiary-border" icon={Trash} iconSize={20} alignment="left" class="w-full" loading={remove.removing} 
+                                title="{communityDetails.community_view.community.removed ? 'Restore' : 'Remove'} Community"
+                                on:click={()=> {
+                                    modalWidth="max-w-2xl"
+                                    action='removing'
+                                }}
+                            >
+                                {communityDetails.community_view.community.removed ? 'Restore' : 'Remove'} Community...
+                            </Button>
 
-                            {/if}
+                            <!---Hide Community--->
+                            <Button color="tertiary-border" icon={EyeSlash} iconSize={20} alignment="left" class="w-full" loading={hide.hiding} 
+                                title="{communityDetails.community_view.community.hidden ? 'Restore' : 'Hide'} Community"
+                                on:click={() => {
+                                    modalWidth="max-w-2xl"
+                                    action="hiding"
+                                }}
+                            >
+                                {communityDetails.community_view.community.hidden ? 'Un-Hide' : 'Hide'} Community...
+                            </Button>
 
                         {/if}
+
+                        
                     </div>
                 </ModalScrollArea>
             </ModalPanel>

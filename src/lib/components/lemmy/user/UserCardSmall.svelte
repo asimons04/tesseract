@@ -23,6 +23,7 @@
         ShieldExclamation,
         EyeSlash,
         NoSymbol,
+        Funnel,
     } from 'svelte-hero-icons'
 
     export let person_view: PersonView | undefined = undefined
@@ -31,6 +32,7 @@
     export let blocked: boolean = false
     export let mostRecentItem: string|undefined = undefined
     export let href: boolean = false            // If true, user link in the card will go to the /u/ page. False, default, will open the modal.
+    export let filtered: boolean = false
 
     let avatarWidth = 96
     const dispatcher = createEventDispatcher()
@@ -111,6 +113,12 @@
                 {#if blocked}
                     <Badge color="red" icon={EyeSlash} inline click={false} rightJustify={false}>
                         Blocked
+                    </Badge>
+                {/if}
+
+                {#if filtered}
+                    <Badge color="orange" icon={Funnel} inline click={false} rightJustify={false}>
+                        Filtered
                     </Badge>
                 {/if}
 
