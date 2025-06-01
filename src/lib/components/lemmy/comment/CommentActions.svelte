@@ -61,7 +61,7 @@
 </script>
 
       
-<div class="flex {$userSettings.uiState.reverseActionBar ? 'flex-row-reverse' : 'flex-row'} gap-2 items-center mt-1 h-8 w-full mr-1">
+<div class="flex {$userSettings.uiState.reverseActionBar ? 'flex-row-reverse' : 'flex-row'} gap-1 items-center h-8 w-full mr-1">
     <!---Comment Vote Buttons--->
     <CommentVote bind:comment {onHomeInstance}/>
     
@@ -89,7 +89,7 @@
                 <Button 
                     color="{commentSelected ? 'info' : 'tertiary'}" size="square-md" 
                     title="{commentSelected ? 'Un-Select' : 'Select'}" 
-                    icon={Check} iconSize={14}
+                    icon={Check} iconSize={16}
                     on:click={(e) => { 
                         commentSelected = !commentSelected
                         dispatcher('selected', commentSelected) 
@@ -97,7 +97,7 @@
                 />
             {/if}
 
-            <Button color="tertiary" size="square-md" title="Moderation" icon={ShieldCheck} iconSize={14} disabled={comment.banned_from_community} on:click={() => postModerationModal(comment) } />    
+            <Button color="tertiary" size="square-md" title="Moderation" icon={ShieldCheck} iconSize={16} disabled={comment.banned_from_community} on:click={() => postModerationModal(comment) } />    
         {/if}
 
         <!---Save Post Button/Indicator--->
