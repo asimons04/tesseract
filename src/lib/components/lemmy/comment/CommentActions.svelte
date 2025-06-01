@@ -32,13 +32,12 @@
         BugAnt,
         ChatBubbleOvalLeft,
         Check,
-        EllipsisHorizontal,
+        EllipsisVertical,
         Eye,
         Flag,
         GlobeAlt,
         Home,
         Icon,
-        MagnifyingGlass,
         NoSymbol,
         PencilSquare,
         Server,
@@ -56,6 +55,8 @@
     export let commentSelectable = false
 
     const dispatcher = createEventDispatcher<{ edit: CommentView, selected: boolean }>()
+
+    let savingComment = false
 
 </script>
 
@@ -82,6 +83,7 @@
 
         <!--- Comment Moderation Menu--->
         {#if onHomeInstance && $profile?.user && (amMod($profile?.user, comment.community) || isAdmin($profile.user))}
+            
             <!---Button to Select a Comment for Multi-Mod Actions--->
             {#if commentSelectable}
                 <Button 
@@ -97,6 +99,25 @@
 
             <Button color="tertiary" size="square-md" title="Moderation" icon={ShieldCheck} iconSize={14} disabled={comment.banned_from_community} on:click={() => postModerationModal(comment) } />    
         {/if}
+
+        <!---Save Post Button/Indicator--->
+        <span class="hidden md:flex">
+            <Button 
+                size="square-md" 
+                disabled={!onHomeInstance || !$profile?.user || comment.comment.removed || comment.comment.deleted }
+                title="{comment.saved ? 'Un-Save' : 'Save'}" 
+                icon={Bookmark} 
+                iconSize={16} 
+                color='tertiary'
+                class="{comment.saved ? '!text-amber-500' : ''}"
+                loading={savingComment}
+                on:click={async () => {
+                    savingComment = true
+                    comment.saved = await save(comment, !comment.saved)
+                    savingComment = false
+                }}
+            />
+        </span>
   
         <!---Comment Action Menu --->
         <Menu  alignment="{$userSettings.uiState.reverseActionBar ? 'top-left' :  'top-right'}">
@@ -108,7 +129,7 @@
                 size="square-md"
                 let:toggleOpen
             >
-                <Icon src={EllipsisHorizontal} width={16} height={16} mini slot="icon" />
+                <Icon src={EllipsisVertical} width={16} height={16} mini slot="icon" />
             </Button>
             
             <li class="flex flex-row items-center text-xs font-bold opacity-100 text-left mx-4 my-1 py-1 min-w-48">
@@ -176,7 +197,7 @@
             {#if onHomeInstance && $profile?.jwt}
             
                 <!--- Save Comment--->
-                <MenuButton color="warning"
+                <MenuButton class="flex md:hidden" color="warning"
                     on:click={async () => {
                         if ($profile?.jwt) {
                             comment.saved = await save(comment, !comment.saved)

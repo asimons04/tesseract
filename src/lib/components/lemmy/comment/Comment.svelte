@@ -507,10 +507,6 @@
                         </span>
                     {/if}
 
-                    {#if node.comment_view.saved}
-                        <Badge icon={Bookmark} color="yellow" rightJustify={false} click={false} label="Saved"/>
-                    {/if}
-
                     <Icon src={open ? Minus : Plus} width={16} mini/>
                 </span>
             </span>
