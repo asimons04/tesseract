@@ -271,7 +271,7 @@
                             </div>
                             
                             {#key item}
-                                <Comment elevation={-1} postId={item.post.id} onHomeInstance={true} node={{ children: [], comment_view: item, depth: 1 }} replying={false} class="!p-0" />
+                                <Comment standalone postId={item.post.id} onHomeInstance={true} node={{ children: [], comment_view: item, depth: 1 }} replying={false} class="!p-0" />
                             {/key}
                         {/if}
 
