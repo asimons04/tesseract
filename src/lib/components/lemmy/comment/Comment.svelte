@@ -52,7 +52,7 @@
     export let actions: boolean     = true
     export let open                 = true
     export let replying             = false
-    export let elevation: -1|0|1|2  = 1 //getCardElevation(node)
+    export let standalone: boolean  = false
     export let jumpTo:number        = -1
     export let onHomeInstance       = false
     export let selectable           = false
@@ -255,7 +255,7 @@
     }
 
     function getThreadLineColor(): string {
-        if (elevation == -1 || (depth == 0 && node.comment_view.counts.child_count < 1 && node.children.length < 1)) return 'hidden'
+        if (standalone || (depth == 0 && node.comment_view.counts.child_count < 1 && node.children.length < 1)) return 'hidden'
         const baseClasses = "ml-[0.65rem] w-[4px] bg-cover bg-center hover:scale-x-[1.75]"
         //const baseClasses = "ml-1 md:ml-2 w-[4px] bg-cover bg-center hover:scale-x-[1.75]"
         
@@ -285,7 +285,7 @@
     }
 
     function getAvatarRingColor() {
-        if (elevation == -1 || (depth == 0 && node.comment_view.counts.child_count < 1 && node.children.length < 1)) return undefined
+        if (standalone || (depth == 0 && node.comment_view.counts.child_count < 1 && node.children.length < 1)) return undefined
         
         // If conversation line colors are disabled, return black/white 
         if (!$userSettings.uiState.coloredCommentThreadLines) return 'ring-black/80      dark:ring-white/80'
@@ -326,8 +326,7 @@
         // Safety checks
         if (overrideHideComment) return false
         
-        // Currently, elevation=-1 is used to denote a standalone comment (e.g. in CommentItem). This should probably be a more specific prop
-        if (elevation == -1) return false
+        if (standalone) return false
 
         // Don't hide your own submissions
         if (node.comment_view.creator.id == $profile?.user?.local_user_view?.person?.id) return false
@@ -447,7 +446,7 @@
     </Modal>
 {/if}
 
-<div bind:this={commentContainer} class="{elevation != -1 ? 'pt-2' : ''} {$$props.class}" id="#{node.comment_view.comment.id.toString()}" >
+<div bind:this={commentContainer} class="{standalone ? '' : 'pt-2'} {$$props.class}" id="#{node.comment_view.comment.id.toString()}" >
     <div class="flex flex-col gap-0">
         
         
@@ -538,25 +537,6 @@
                                 </div>
                             </div>
                         </Card>    
-                    <!---
-                        <span class="text-xs font-normal">
-                            Comment hidden due to filter preferences: {hideCommentReason}
-                        </span>
-
-                        <Button
-                            class="text-xs !w-fit"
-                            size="sm"
-                            color="tertiary-border"
-                            icon={EyeSlash}
-                            iconSize={16}
-                            on:click={() => {
-                                overrideHideComment = true
-                                //hideComment = shouldHideComment()
-                            }}
-                            >
-                                Show hidden comment
-                        </Button>
-                    --->
                     
                     <!---Show Actual Comment--->
                     {:else}
@@ -603,8 +583,7 @@
                                 {/if}
 
                             </div>
-                            
-                            
+
                             <!---Removal Notice--->
                             {#if node.comment_view.comment.removed}
                                 <div class="flex flex-row gap-1 items-start w-full p-1">

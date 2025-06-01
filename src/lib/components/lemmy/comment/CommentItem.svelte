@@ -157,7 +157,7 @@
         </div>
        
         <div class="list-none">
-            <Comment elevation={-1} postId={comment.post.id} replying={false} {actions} {collapseBadges} {onHomeInstance} node={{ children: [], comment_view: comment, depth: 1 }} />
+            <Comment standalone postId={comment.post.id} replying={false} {actions} {collapseBadges} {onHomeInstance} node={{ children: [], comment_view: comment, depth: 1 }} />
         </div>
     </Card>
 </div>
