@@ -122,6 +122,8 @@
                         Add
                     </Button>
                 </form>
+
+                <slot name="below"/>
             </div>
 
             <div class="flex flex-col w-full gap-2 lg:w-1/2">
