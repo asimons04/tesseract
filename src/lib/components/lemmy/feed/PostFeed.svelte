@@ -648,7 +648,7 @@
             </span>
         {/if}
         
-        <!---Refresh Feed--->
+        <!---Refresh Feed
         <span class="flex flex-col h-full gap-1">
             <Button color="tertiary-border" title="Refresh" size="lg" class="h-[40px] mt-auto font-bold" icon={ArrowPath} iconSize={16} 
                 loading={controller.busy} disabled={controller.busy}
@@ -661,9 +661,9 @@
                 <span class="hidden lg:flex">Refresh</span>
             </Button>
         </span>
-        
+        --->
         <!---Sort Direction--->
-        <span class="flex flex-col gap-1">
+        <span class="flex flex-col ml-auto gap-1">
             <span class="font-bold text-sm opacity-80">Sort Direction</span>
             <SelectMenu alwaysShowSelectedLabel
                 rightJustify

@@ -414,7 +414,7 @@
                 />
             </span>
 
-            <!---Refresh--->
+            <!---Refresh
             <Button color="tertiary-border" title="Refresh" side="lg" class="h-[40px] mt-auto font-bold" icon={ArrowPath} iconSize={16} 
                 loading={loading} disabled={loading}
                 on:click={() => {
@@ -424,9 +424,10 @@
             >
                 Refresh
             </Button>
+            --->
             
             <!---Sort--->
-            <span class="flex flex-col gap-1">
+            <span class="flex flex-col ml-auto gap-1">
                 <span class="font-bold text-sm opacity-80">Sort Direction</span>
                 <SelectMenu 
                     title="Sort"
