@@ -126,7 +126,7 @@
         <div class="flex flex-col xl:flex-row-reverse ml-auto gap-1 w-[150px] xl:w-[300px]">
             
             <!---Post Action Buttons Top Row--->
-            <div class="flex flex-row items-start gap-2 ml-auto">
+            <div class="flex flex-row items-start gap-1 ml-auto">
                 <!--Expand/Collapse Post--->
                 <Button  color="tertiary" size="square-md" title="{compact ? 'Expand to Card View' : 'Collapse to Compact View'}" 
                     icon={compact ? ArrowsPointingOut : ArrowsPointingIn}
@@ -150,7 +150,7 @@
             </div>
 
             <!---Post Action Buttons Bottom Row--->
-            <div class="flex flex-row items-start gap-2 ml-auto">
+            <div class="flex flex-row items-start gap-1 ml-auto">
                 {#if actions}
                     <!---Report Post--->
                     <Button  
