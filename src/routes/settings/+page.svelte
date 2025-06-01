@@ -794,13 +794,12 @@
         />
 
         <!---Hide Posts From New Accounts--->
-        <SettingToggle title="Hide Posts/Comments From New Accounts" icon={Cake} bind:value={$userSettings.hidePosts.newAccounts}
-            description="Hide posts and comments from accounts that are considered new. You can set the minimum age for new accounts below.  Note that
-                this will not be applied to communities you are moderating or to any local community if you are an instance admin."
+        <SettingToggle title="Hide Content From New Accounts" icon={Cake} bind:value={$userSettings.hidePosts.newAccounts}
+            description="Hide posts and comments from accounts that are considered new (based upon the New Account Age configured)."
         />
 
         <!---Hide Posts From Users Without Avatars--->
-        <SettingToggle title="Hide Posts/Comments From Users With Blank Profiles" icon={User} bind:value={$userSettings.hidePosts.usersWithNoAvatar}
+        <SettingToggle title="Hide Content From Users With Blank Profiles" icon={User} bind:value={$userSettings.hidePosts.usersWithNoAvatar}
             description="Hide posts and comments from 'blank profile' accounts that lack an avatar and bio (one or the other is required).  Why?  Sometimes it's nice to 
             tune out the faceless opinions for a while and only interact with people who are more likely to be here for the community."
         />
@@ -850,7 +849,17 @@
             "
             placeholderTitle="No Users" 
             placeholderText="There are no users in your filter list"
-        />
+        >
+            <span class="flex flex-col gap-2 text-xs font-normal text-left p-2" slot="below">
+                <span>
+                    The preferred method to add/remove users to the filter is to click the usernames
+                    elsewhere in the application and use the "Filter User..." button in the user profile modals.
+                </span>
+                <span>
+                    If you want to add a community manually, it must be in the actor ID format:  https://example.com/u/name
+                </span>
+            </span>
+        </SettingEditArray>
 
         <SettingEditArray filterable icon={UserGroup} placeholderIcon={UserGroup}
             bind:list={$userSettings.hidePosts.communityList}
@@ -860,7 +869,18 @@
             hide them. You have the option to click-to-view them if you want."
             placeholderTitle="No Communities" 
             placeholderText="There are no communities in your filter list"
-        />
+        >
+            <span class="flex flex-col gap-2 text-xs font-normal text-left p-2" slot="below">
+                <span>
+                    The preferred method to add/remove communities to the filter is to click the community names
+                    elsewhere in the application and use the "Filter Community..." button in the community modals.
+                </span>
+                <span>
+                    If you want to add a community manually, it must be in the actor ID format:  https://example.com/c/name
+                </span>
+            </span>
+    
+        </SettingEditArray>
     </SettingsCollapseSection>
 
     <!---Import/Export Options--->
