@@ -4,58 +4,100 @@ All major/minor changes between releases will be documented here.
 # 1.4.39
 ## Bugfixes
 
-### Reactivity
 - Fix bug where expanding/collapsing the post image would trigger unwanted reactivity causing the comment section to refresh.
-
 - Comments now respond to the "lockPost" event in order to disable/enable the reply button appropriately.
-
 - If an inbox item is expanded, switching accounts or refreshing the list as a new item arrives would keep the text from the previous comment while updating the heading info correctly.  Caused the wrong comment/reply to be displayed.
-
-### Moderation
+- Same as above but for moderation reports
 - Don't invalidate/refresh Reports page when resolving a report (not needed).
-
 - When removing a post/comment, if you enabled the option to send a reply message and left it blank, it would throw a toast message informing you as such but not reset the "loading" variable and kept the "submit" button disabled.
-
 - When distinghishing a mod comment, only push top-level comments to the top of the tree.  e.g. if you need to distinguish a comment that is a reply to another comment, that would previously push a copy of that distinguished reply up as a top-level comment.
-
-### Community Settings Section
 - Fixed unhandled error when an admin enters the community settings when there are no moderators.
-
 - Fixed "Local Community" toggle not reflecting API state after reload.
-
-### Misc
-- [Display] Fix truncation in post headings to account for community display names where the community creator thinks "Display Name" and "Community Long Description" are the same picture :sigh:
+- Fix truncation in post headings to account for community display names where the community creator thinks "Display Name" and "Community Long Description" are the same picture :sigh:
   - Note:  Backported to 1.4.38
-
-- [Annoyance] Svelte was URI-encoding ampersands when rendering links
-
-- [Time Display] The absolute time displayed in the tooltip of the RelativeTime component was not updating correctly when re-rendering due to a reacctive event.
-
-- [Linked Images] If you linked an image in markdown, the image would render but without the link.  Now, the link will be below the image.
+- Svelte was URI-encoding ampersands when rendering links
+- The absolute time displayed in the tooltip of the RelativeTime component was not updating correctly when re-rendering due to a reacctive event.
+- If you linked an image in markdown, the image would render but without the link.  Now, the link will be below the image.
   - e.g. `[![This is a linked image](https://foo.com/image.jpg)](https://example.com/article/page.htm)`
   - The cause is that zoomable image takes precedence over the hyperlink.
+  - Known "bug":  Badges (e.g. img.shields.io are still kind of ugly and don't really fit the model.  Working on some exceptions for things like those, but that didn't make it into this release. 
 
 ## Changes
 
-### Filtering
-- Refactored the post and comment filter subsystems.
+### Filtering Revamp
+The filtering subsystem has been refactored and enhanced.  Prior to this release, anything that was filtered was simply discarded before being rendered.  
 
-- Keyword filters now apply to comments
+Now, filtered objects will show a placeholder that indicates which filter was triggered (or which keywords triggered the filter).  Clicking the "eye" button on the placeholder will show the hidden content.  
 
-- Filtered posts and comments show with a placeholder rather than being silently discarded as before.
-  - Clicking the "eye" button on the placeholder will show the filtered post or comment
-  - The reason for the item being filtered is indicated in the placeholder.
-  - Filtered comments still allow the replies to be visible while hiding the filtered one (which is why the keyword filters did not apply to comments until now).
-  - Filtered comments will hide the score and creator as well.  Unless manually revealed, the "creator" will be `Tesseract@your-instance.xyz` with the Tesseract logo as the avatar. Revealing the comment will replace that with the actual creator.  This is to both further hide/mask content you don't want to see as well as keep the formatting/rendering consistent.
-  
-- Got rid of the keyword modifiers (starts with, case-insensitive, whole word match).
+This is the case for both posts and comments that are hidden by your filter preferences.
 
-- New filter option to hide submissions from accounts with blank profiles
-  - A "blank profile" is one that has neither a profile picture or a bio
-  - Why?  Sometimes you might want to filter out the "faceless opinions" for a while and only deal with the people who are more likely to be here for the community. 
+#### Notes on Filtering
+There are a few safety checks in place that will disable the filters under certain conditions.  The first two are to prevent moderation blind spots, and the rest are just sanity checks/compromises to keep from over-complicating things.
+
+1) If you are a moderator, the filters will not apply to content posted to any community you moderate. This includes viewing reports.
+1) If you are an instance admin, the filters will not apply to content posted to any local communities.
+1) The filters will not apply when viewing your own content anywhere in the app.
+1) Filters are not applied when viewing someone's profile.
+1) If you have a community filtered, going to its `/c/` page or browsing it in a modal will show the community's content, though any other filters are still applied (keywords, user filters, etc).  Reason being, you *went* to the commmunity, so the content shouldn't be filtered out by default.
+
+Finally, filters are global and apply to all accounts in use in the app.  You cannot have different filters on one account than on another.   I may change my mind at some point, but it made much more sense to have one set than one set per profile.  It also eliminates the need to have extra management tools to copy them or sync them between profiles and other things like that. 
 
 
-### Comments
+
+### Keyword Filters Now Apply to Comments
+Keyword filters now apply to comments!  I had always meant to apply them there, but until the work done to the comment section in this release, I didn't have a way to apply them that wouldn't nuke the rest of the thread.  Now, just the offending comments will be hidden with the rest of the chain remaining intact.
+
+Filtered comments will hide the score and creator as well.  Unless manually revealed, the "creator" will be `Tesseract@your-instance.xyz` with the Tesseract logo as the avatar. Revealing the comment will replace that with the actual creator.  This is to both further hide/mask content you don't want to see as well as keep the formatting/rendering consistent.
+
+### Additional Filtering Options
+There are a few new filters available as of this release:
+
+#### Hide Content from Blank Profiles
+A "blank profile" is one that lacks both a bio and an avatar.  Why?   Sometimes you might want to filter out "faceless opinions" for a while and/or only deal with the people who are more likely to be here for the community rather than anonymous opinion shouting.
+
+#### Filter Users (Soft Blocking)
+You can now filter users rather than blocking them.  This is especially helpful for those who moderate large communities.  Think of filtering out a user like a "soft block".
+
+Why would you want to filter a user rather than block them?
+
+Lemmy's blocking has a couple of glaring issues:
+
+1) Content from blocked accounts does not show up in communities you moderate.  This leaves a huge blind spot when you don't want to see content from certain users but it is not warranted to ban them from your communities.  
+
+2) When you block a user, not only are their comments not visible in the comment section, you will not see any replies to them, either.  Depending on who you block, this could cause you to miss out on quite a bit of discussion.  
+
+If you filter those users instead, both of those are addressed:
+
+1) Filters are automatically disabled on communities you moderate, so you will still see content from the filtered users there but you won't anywhere else.
+
+2) Only the filtered user's comment will be masked; all the replies will be visible.
+
+**How to Use**: 
+
+To filter (or un-filter) a user, click their username to bring up the User Profile Modal.  From there, use the "Filter User..." (or Un-Filter User...) button in the modal.  When a user is filtered, all of their content in the current area will collapse to a placeholder (or un-collapse if you're un-filtering them).
+
+You can also manage the filtered users direclty from `Settings->Filters->User Filters`.  Be aware that is pretty low-level, and you're basically editing a list of actor IDs.  It's best to only use that to remove items, though you can add them there as well.   It will also accept a comma-delimited list of actor IDs, so you can add them in bulk:
+
+e.g.
+
+```
+https://instance.xyz/u/jerk1, https://instance.xyz/u/jerk2, https://other-instance.abc/u/AnotherJerk
+```
+
+Again, the users you enter directly *must* be in the actor ID format as that is what's compared when running the filters.  An incorrectly formatted entry will not break anything, but it won't work, either.
+
+#### Filter Communities (Soft Block Communities)
+Similar to users, you can also filter/soft block communities.  
+
+Why would you want to do this instead of block the community?
+
+Think of it like a soft unsubscribe.  Need a break from a community but don't want to unsubscribe completely?  Filter it!  You'll see a placeholder stub in the feed for it, and you can reveal if you want to.  Otherwise, it's out of sight, out of mind.  When you're ready to get back into the community, just un-filter it.
+
+
+
+
+
+### Comment Section
 - Added color-coded conversation lines to comment threads.
   - The conversaton lines are clickable buttons and can be used to collapse/expand threads.
   - The user avatars in the comment header have ring borders corresponding to the thread color
@@ -86,6 +128,8 @@ All major/minor changes between releases will be documented here.
 - Both can be middle-clicked to open the full modlog in a new tab on desktop
 
 - Added "View in Full Modlog" button to User `Profile Modal -> User Modlog` panel (Thought I already had this, but it was in the moderation modal)
+
+- Added button to filter (or un-filter) users or communities.
 
 ### Inline Comment Removal Reasons
 - Clicking the "hand" icon will now load the modlog details for the comment even if you have the setting disabled.  If the setting is enabled, then it will take you to the full modlog for the entry.
