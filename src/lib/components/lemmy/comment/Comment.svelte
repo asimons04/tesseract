@@ -213,7 +213,9 @@
     }
 
     async function getCommentText(forceModlogLookup:boolean = false) {
-        let text = node.comment_view.comment.content
+        let text = node?.comment_view?.comment?.content
+            ? node.comment_view.comment.content
+            : ''
 
         // If the content is removed, try to append the removal reason.  If current account is a mod, append the original content from the modlog lookup
         if (onHomeInstance && node.comment_view.comment.removed && ($userSettings.autoLookupRemovedCommentReasons || forceModlogLookup) && minAPIVersion('0.19.6')) {
