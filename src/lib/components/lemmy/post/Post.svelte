@@ -318,9 +318,31 @@
     function shouldHidePost(): boolean {
         // Safety checks
         if (displayType == 'post' || inProfile || overrideHidePost) return false
+        
+        // Needs to be before the user is creator check since you can only see your own deleted items.
+        if (post.post.deleted && $userSettings.hidePosts.deleted) {
+            hidePostReason = 'Post is deleted'
+            return true
+        }
+
+        // If user is creator, always show the item
         if (post.post.creator_id == $profile?.user?.local_user_view.person.id) return false
+        
+        // If mod of community or community is local and user is admin, always show the post
         if (amMod($profile?.user, post.community)) return false
 
+        // Creator is a bot
+        if ($userSettings.hidePosts.botAccounts && post.creator.bot_account) {
+            hidePostReason = "Creator is a bot"
+            return true
+        }
+
+        // Post is NSFW
+        if ($userSettings.hidePosts.nsfw && post.post.nsfw) {
+            hidePostReason = "Post is marked NSFW"
+            return true
+        }
+        
         // Creator Blocked
         if (post.creator_blocked) {
             hidePostReason = 'Creator is blocked'
