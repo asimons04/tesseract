@@ -30,6 +30,7 @@
     import Markdown         from '$lib/components/markdown/Markdown.svelte'
     import MarkdownEditor   from '$lib/components/markdown/MarkdownEditor.svelte'
     import Modal            from '$lib/components/ui/modal/Modal.svelte'
+    import PostIsInViewport from '../post/utils/PostIsInViewport.svelte'
     import RelativeDate     from '$lib/components/util/RelativeDate.svelte'
     import UserLink         from '$lib/components/lemmy/user/UserLink.svelte'
 
@@ -63,6 +64,7 @@
     let jumpToComment               = false
     let commentContainer: HTMLDivElement
     let commentBodyContainer: HTMLDivElement
+    let commentAnchor: HTMLDivElement
     let op                          = (node.comment_view.post.creator_id == node.comment_view.creator.id)
     let commentText                 = node.comment_view.comment.content
     let admin                       = isAdmin($profile?.user)
@@ -72,10 +74,15 @@
     let depth                       = getDepthFromComment(node.comment_view.comment) ?? 0
     let color: 'default' | 'warning' | 'error' | 'success' | 'info' = getCardColor(node)
     let threadLineColor = ''
-    let commentBodyContainerDoesScroll = false
+    let commentBodyContainerDoesScroll  = false
     let commentContainsImage            = false
-
-    const dispatcher                = createEventDispatcher<{select: CommentView, unselect: CommentView }>()
+    
+    let inViewport                      = false
+    let hideComment                     = false
+    let hideCommentReason               = ''
+    let overrideHideComment             = false
+    
+    const dispatcher                    = createEventDispatcher<{select: CommentView, unselect: CommentView }>()
     
     $: node, commentText, commentContainsImage = commentText.includes('![')
     $: node, commentText, commentBodyContainerDoesScroll = (commentBodyContainer?.scrollHeight > commentBodyContainer?.clientHeight) || commentContainsImage
@@ -203,14 +210,7 @@
             $profile?.user?.local_user_view.person.id != node.comment_view.creator.id
     ) ? false : open
 
-    function getCardColor(node: CommentNodeI): 'default' | 'warning' | 'error' | 'success' | 'info' {
-        let color: 'default' | 'warning' | 'error' | 'success' | 'info' = 'default'
-        if (node.comment_view.comment.distinguished) return 'success'
-        if (node.comment_view.comment.removed) return 'error'
-        if (jumpToComment) return 'warning'
-        if (selected) return 'info'
-        return color
-    }
+    
 
     async function getCommentText(forceModlogLookup:boolean = false) {
         let text = node?.comment_view?.comment?.content
@@ -256,6 +256,15 @@
         return text
     }
 
+    function getCardColor(node: CommentNodeI): 'default' | 'warning' | 'error' | 'success' | 'info' {
+        let color: 'default' | 'warning' | 'error' | 'success' | 'info' = 'default'
+        if (node.comment_view.comment.distinguished) return 'success'
+        if (node.comment_view.comment.removed) return 'error'
+        if (jumpToComment) return 'warning'
+        if (selected) return 'info'
+        return color
+    }
+    
     function getThreadLineColor(): string {
         if (standalone || (depth == 0 && node.comment_view.counts.child_count < 1 && node.children.length < 1)) return 'hidden'
         const baseClasses = "ml-[0.65rem] w-[4px] bg-cover bg-center hover:scale-x-[1.75]"
@@ -316,11 +325,12 @@
 
     function toggleThread() {
         open = !open
+        if (!inViewport && !open) {
+            sleep(250).then(() => commentAnchor.scrollIntoView({behavior:'smooth', block: 'center'}))
+        }
     }
     
-    let hideComment = false
-    let hideCommentReason = ''
-    let overrideHideComment = false
+    
     
     $:  node, $userSettings, $profile?.user, overrideHideComment, hideComment = shouldHideComment()
     
@@ -447,6 +457,13 @@
         </MarkdownEditor>
     </Modal>
 {/if}
+
+<PostIsInViewport bind:postContainer={commentAnchor} threshold={.9} delay={0} on:inViewport={(e) => {
+        inViewport = e.detail
+    }}
+/>
+
+<div bind:this={commentAnchor} class="h-0 w-0"/>
 
 <div bind:this={commentContainer} class="{standalone ? '' : 'pt-2'} {$$props.class}" id="#{node.comment_view.comment.id.toString()}" >
     <div class="flex flex-col gap-0">
