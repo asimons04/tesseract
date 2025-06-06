@@ -66,6 +66,7 @@ interface Settings {
         hidden: boolean
         read: boolean
         nsfw: boolean
+        botAccounts: boolean
         keywords: boolean
         keywordList: string[]
         userList: string[]
@@ -241,6 +242,7 @@ export const defaultSettings: Settings = {
         nsfw:                                                           false,
         deleted:    toBool(env.PUBLIC_HIDE_DELETED)                     ??  true,
         removed:    toBool(env.PUBLIC_HIDE_REMOVED)                     ??  false,
+        botAccounts:                                                    false,
         keywords:                                                       false,
         keywordList:                                                    [],
         userList:                                                       [],

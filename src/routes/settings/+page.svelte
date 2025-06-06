@@ -798,6 +798,16 @@
             description="Hide posts and comments from accounts that are considered new (based upon the New Account Age configured)."
         />
 
+        <!---Hide Content From Bot Accounts--->
+        <SettingToggle title="Hide Content From Bot Accounts" icon={Cake} bind:value={$userSettings.hidePosts.botAccounts}
+            description="Hide posts and comments from accounts that are marked as bots."
+        />
+
+         <!---Hide NSFW Posts--->
+         <SettingToggle title="Hide Posts Marked NSFW" icon={Cake} bind:value={$userSettings.hidePosts.nsfw}
+         description="Hide posts that are flagged NSFW. This works alongside the blur NSFW option."
+     />
+
         <!---Hide Posts From Users Without Avatars--->
         <SettingToggle title="Hide Content From Users With Blank Profiles" icon={User} bind:value={$userSettings.hidePosts.usersWithNoAvatar}
             description="Hide posts and comments from 'blank profile' accounts that lack an avatar and bio (one or the other is required).  Why?  Sometimes it's nice to 
