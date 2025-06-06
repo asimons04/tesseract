@@ -103,86 +103,44 @@
         }
     }
     
-    function shouldHideComment(node: CommentNodeI): boolean {
-        // Safety checks
-        
-        // Don't hide your own submissions
-        if (node.comment_view.creator.id == $profile?.user?.local_user_view?.person?.id) return false
-
-        // If moderator or instance admin of a local community
-        if (amMod($profile?.user, node.comment_view.community)) return false
-
-        // If jumping to a comment in a thread
-        if (node.comment_view.comment.path.split('.').includes(jumpTo.toString())) return false
-
-        
-        // Hide comments from new accounts
-        if (
-                $userSettings.hidePosts.newAccounts &&  
-                isNewAccount(node.comment_view.creator.published)
-        )
-        return true
-
-        // Hide comments from users without avatars
-        if (
-                $userSettings.hidePosts.usersWithNoAvatar && 
-                !node.comment_view.creator.avatar
-        )
-        return true
-
-        // Hide comments from users of blocked instances
-        if (
-                $userSettings.hidePosts.hideUsersFromBlockedInstances && 
-                userIsInstanceBlocked($profile?.user, node.comment_view.creator.instance_id)
-        )
-        return true
-
-        // If no other checks hit, don't hide the comment
-        return false
-    }
-
 </script>
 
-<div class="flex flex-col {isParent ? `gap-4 divide-y ${dividerColors}` : 'gap-0'}" in:fly={{ opacity: 0, y: -4 }} >
+<div class="flex flex-col {isParent ? `gap-2 divide-y ${dividerColors}` : 'gap-0'}" in:fly={{ opacity: 0, y: -4 }} >
     {#each nodes as node, idx (node.comment_view.comment.id)}
-        <!--- Comment filtering  --->
-        <!--{#if !shouldHideComment(node)}-->
+        <Comment postId={post.id} bind:node {jumpTo} {onHomeInstance} {selectable}
+            on:select={(e) => { 
+                modQueue.add(e.detail)
+            }}
+            on:unselect={(e) => { 
+                modQueue.delete(e.detail);
+            }}
+        >
+            
+            {#if node.children?.length > 0}
+                <svelte:self {post} bind:nodes={node.children} bind:modQueue moderators={moderators} isParent={false}  {jumpTo} {onHomeInstance}/>
+            {/if}
 
-            <Comment postId={post.id} bind:node {jumpTo} {onHomeInstance} {selectable}
-                on:select={(e) => { 
-                    modQueue.add(e.detail)
-                }}
-                on:unselect={(e) => { 
-                    modQueue.delete(e.detail);
-                }}
-            >
-                
-                {#if node.children?.length > 0}
-                    <svelte:self {post} bind:nodes={node.children} bind:modQueue moderators={moderators} isParent={false}  {jumpTo} {onHomeInstance}/>
-                {/if}
-
-                {#if node.comment_view.counts.child_count > 0 && node.children.length == 0}
-                    <div class="my-2 w-max h-8 border-l-2 border-slate-200 dark:border-zinc-900 pl-2">
-                        <Button
-                            loading={node.loading}
-                            disabled={node.loading}
-                            size="sm"
-                            color="tertiary-border"
-                            icon={ChevronDown}
-                            iconSize={16}
-                            on:click={() => {
-                                node.loading = true
-                                fetchChildren(node).then(() => (node.loading = false))
-                            }}
-                        >
-                            <span class="text-xs">
-                                Load {node.comment_view.counts.child_count} more
-                            </span>
-                        </Button>
-                    </div>
-                {/if}
-            </Comment>
-        <!--{/if}-->
+            {#if node.comment_view.counts.child_count > 0 && node.children.length == 0}
+                <div class="my-2 w-max h-8 border-l-2 border-slate-200 dark:border-zinc-900 pl-2">
+                    <Button
+                        loading={node.loading}
+                        disabled={node.loading}
+                        size="sm"
+                        color="tertiary-border"
+                        icon={ChevronDown}
+                        iconSize={16}
+                        on:click={() => {
+                            node.loading = true
+                            fetchChildren(node).then(() => (node.loading = false))
+                        }}
+                    >
+                        <span class="text-xs">
+                            Load {node.comment_view.counts.child_count} more
+                        </span>
+                    </Button>
+                </div>
+            {/if}
+        </Comment>
 
     {/each}
 </div>
