@@ -357,6 +357,7 @@ export const buildYouTubeEmbedLink = (postURL:string, displayType: 'post'|'feed'
     // Append the video ID to the embed URL
     embedURL.pathname = `/embed/${videoID}`
 
+    embedURL.searchParams.set('feature', 'oembed')
 
     // Enable autoplay videos in post if setting is enabled
     if (displayType ==  'post' && (autoplay ?? userSettings.embeddedMedia.autoplay)) {
@@ -376,7 +377,7 @@ export const buildYouTubeEmbedLink = (postURL:string, displayType: 'post'|'feed'
     // Start time: Can be either t (legacy) or start
     let startTime = new URL(postURL).searchParams.get('t') ?? new URL(postURL).searchParams.get('start');
     if (startTime) {
-        embedURL.searchParams.set('t', startTime);
+        embedURL.searchParams.set('start', startTime);
     }
 
     // End time: 
