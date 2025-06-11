@@ -85,6 +85,7 @@
             if (!$userSettings.openInNewTab.posts) { 
                 e.preventDefault()
                 e.stopPropagation()
+                dispatchWindowEvent('requestSnapshot')
                 goto(postURL)
                 dispatchWindowEvent('clickIntoPost', {post_id: postID})
                 return

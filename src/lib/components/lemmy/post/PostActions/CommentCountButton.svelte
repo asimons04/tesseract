@@ -64,6 +64,7 @@
             e.preventDefault()
             e.stopPropagation()
             dispatchWindowEvent('clickIntoPost', {post_id: postID})
+            dispatchWindowEvent('requestSnapshot')
             goto(postURL)
         }
     }}
