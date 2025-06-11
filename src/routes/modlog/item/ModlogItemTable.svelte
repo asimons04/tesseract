@@ -188,7 +188,7 @@
                     <span class="flex flex-row gap-2 items-start w-full">    
                         <span class="text-xs font-bold min-w-[10ch]">Expires:</span>
                         <span class="flex flex-nowrap gap-1">
-                            {new Date(item.expires).toLocaleDateString()}
+                            {new Date(item.expires).toLocaleString()}
                         </span>
                     </span>
                 {/if}
