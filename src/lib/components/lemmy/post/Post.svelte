@@ -423,16 +423,17 @@
             let keywordsFound: string[] = []
 
             for (let i:number = 0; i<keywords.length; i++) {
-                let keyword = keywords[i].replace('^', '').replace('*', '').replace('!', '')
+                // The modifiers have been deprecated, so if any are still present in keyword lists, ignore them.
+                const keyword = keywords[i].replace('^', '').replace('*', '').replace('!', '').toLowerCase()
                 
-                if  (
-                        post.post.name?.toLowerCase().includes(keyword.toLowerCase()) ||
-                        post.post.body?.toLowerCase().includes(keyword.toLowerCase()) ||
-                        post.post.embed_description?.toLowerCase().includes(keyword.toLowerCase())
-                    ) {
-                        keywordsFound.push(keyword.toLowerCase())
-                }
+                // Concatentate the post title, body, embed description, and alt text to perform a single comparison
+                const compareText = (
+                    post.post.name + ' ' + (post.post.body ?? ' ') +  (post.post.embed_description ?? ' ') + (post.post.alt_text ?? ' ')
+                ).toLowerCase().trim()
+                
+                if (compareText.includes(keyword)) keywordsFound.push(keyword)
             }
+
             if (keywordsFound.length > 0) {
                 hidePostReason = `Contains filtered ${keywordsFound.length == 1 ? 'keyword' : 'keywords'}: ${keywordsFound.toString().replaceAll(',',', ')}`
                 return true
