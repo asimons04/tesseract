@@ -31,11 +31,14 @@
         Rss,
     } from 'svelte-hero-icons'
     import CommunityCreatePostButton from './CommunityCreatePostButton.svelte';
+    import { userSettings } from '$lib/settings';
     
 
     export let community_view: CommunityView 
     export let moderators: Array<CommunityModeratorView> = []
 
+    let communityFiltered = false
+    $:  communityFiltered = $userSettings.hidePosts.communityList.includes(community_view.community.actor_id)
 </script>
 
 {#if community_view}
@@ -43,7 +46,7 @@
     <StickyCard class="{$$props.class}" >
         
         
-        <CommunityCardSmall community_view={community_view} />
+        <CommunityCardSmall community_view={community_view} filtered={communityFiltered} />
             
         <!--- Convenience button to create post --->
         <div class="w-full mt-2 flex flex-row gap-2 hidden xl:flex">
