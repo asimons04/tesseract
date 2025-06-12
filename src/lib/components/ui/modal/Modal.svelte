@@ -87,7 +87,7 @@
             <div class="flex my-auto dark:!bg-zinc-950 rounded-xl w-full min-w-[min(100%,450px)] {width} {height} box-border mx-auto ">
 
                 <div bind:this={modalElement} tabindex="-1" role="dialog"
-                    class="flex flex-col gap-4 p-3 rounded-xl overflow-none 
+                    class="flex flex-col gap-4 p-1 rounded-xl overflow-none 
                         {height} w-full    
                         bg-white dark:bg-zinc-950 
                         border border-slate-200 dark:border-zinc-800 
