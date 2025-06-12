@@ -7,6 +7,7 @@
 
     import Button from '$lib/components/input/Button.svelte'
     import Card from '../Card.svelte'
+    import { imageProxyURL } from '$lib/image-proxy';
     
     export let action: string | undefined = undefined
     export let open = false
@@ -95,13 +96,13 @@
                     "
                 >
                     <!---Modal Dialog Title Bar--->
-                    <div class="flex flex-row gap-2 items-center max-w-full">
+                    <div class="flex flex-row gap-2 p-1 items-center max-w-full">
                         {#if iconImage}
-                            <span class="hidden md:block w-[32px]">    
-                                <img src={iconImage} class="rounded-full h-[28px] w-[28px]" alt="Community Icon" />
+                            <span class="hidden md:block min-w-[32px]">    
+                                <img src={imageProxyURL(iconImage)} class="rounded-full h-[28px] w-[28px]" alt="Icon" />
                             </span>
                         {:else if icon} 
-                            <span class="hidden md:block w-[32px]">
+                            <span class="hidden md:block min-w-[32px]">
                                 <Icon src={icon} mini width={28}/>
                             </span>
                         {/if}
