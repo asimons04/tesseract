@@ -283,11 +283,13 @@
                 let now = Math.round(new Date().getTime() /1000)
 
                 // Check age of snapshot; discard if older than 30 minutes (currently hardcoded)
+                /*
                 if (now - pageSnapshot.last_refreshed > (snapshotValidity * 60)) {
                     if ($userSettings.debugInfo) console.log(moduleName, ": Snapshot is expired. Removing.")
                     this.storage.remove(this.storageKey)
                     return false
                 }
+                */
                 
 
                 this.last_refreshed = pageSnapshot.last_refreshed
