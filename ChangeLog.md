@@ -1,6 +1,27 @@
 # Changelog for 1.4.x Series (Intrepid)
 All major/minor changes between releases will be documented here.  
 
+# 1.4.40
+## Bugfixes
+- Don't add comment text to conversation line button tooltip if comment is hidden.
+- Check if comment_view.comment.content is undefined before setting the text to it.  Only shows up in console log as an error, so it's non-breaking but still annoying
+- Remove gap in post heading button bar where the "Moderation" button would be if the user is not a mod
+- Fixed "Hide Deleted Posts" filter.  It's a holdover from the 0.18.x days and recently, you can only see your own deleted posts. The filter was hitting the safety check to not hide your own content before this rule fired, so there's now an exception above the "post is from self" check.
+- Inspect alt text for keywords in post filtering
+- Fix feed not returning to correct post when return back from clicking into it (if open in modal/new tab is not enabled)
+- Community icon in post view modal no longer scrunches with long post titles
+- Post view modal was not wrapping the community icon with the proxy URL
+
+## Changes
+- When collapsing a comment thread, if the top portion of the thread that's being collapsed is outside the viewport, scroll it into view. If that part of the thread is already in the viwport, don't scroll and leave it where it is.
+
+### Filtering
+- Refactored post keyword filtering to be a bit more efficient
+- Add ability to filter NSFW posts (works in addition to NSFW blur)
+- Add ability to filter posts from bot accounts (without blocking them entirely)
+- Add time to expiry date when showing temp bans in modlog
+- Reduce padding in modal contents
+
 # 1.4.39
 ## Bugfixes
 
