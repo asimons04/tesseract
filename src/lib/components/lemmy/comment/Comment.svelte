@@ -204,7 +204,7 @@
 
     // Render comment collapsed if bot account, on /post page, and user has enabled the collapse bot comment option
     open = (
-            $page.url.pathname.startsWith('/post') &&
+            !standalone && 
             node.comment_view.creator.bot_account && 
             $userSettings.hidePosts.minimizeBotComments &&
             $profile?.user?.local_user_view.person.id != node.comment_view.creator.id
@@ -359,6 +359,12 @@
         // Hide comments from users without avatars
         if ( $userSettings.hidePosts.usersWithNoAvatar && !node.comment_view.creator.avatar && !node.comment_view.creator.bio) {
             hideCommentReason = "Creator has blank profile."
+            return true
+        }
+
+        // Creator is a bot
+        if ($userSettings.hidePosts.botAccounts && node.comment_view.creator.bot_account) {
+            hideCommentReason = "Creator is a bot"
             return true
         }
 
