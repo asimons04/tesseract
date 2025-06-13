@@ -99,7 +99,7 @@
                     <div class="flex flex-row gap-2 p-1 items-center max-w-full">
                         {#if iconImage}
                             <span class="hidden md:block min-w-[32px]">    
-                                <img src={imageProxyURL(iconImage)} class="rounded-full h-[28px] w-[28px]" alt="Icon" />
+                                <img src={imageProxyURL(iconImage)} class="rounded-full h-[28px] w-[28px] ring-2 ring-sky-700 dark:ring-sky-700" alt="" />
                             </span>
                         {:else if icon} 
                             <span class="hidden md:block min-w-[32px]">
