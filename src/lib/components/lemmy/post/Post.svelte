@@ -338,7 +338,7 @@
         }
 
         // Post is NSFW
-        if ($userSettings.hidePosts.nsfw && post.post.nsfw) {
+        if ($userSettings.hidePosts.filterNSFW && post.post.nsfw) {
             hidePostReason = "Post is marked NSFW"
             return true
         }
