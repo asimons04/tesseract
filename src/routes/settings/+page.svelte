@@ -798,15 +798,12 @@
             description="Hide posts and comments from accounts that are considered new (based upon the New Account Age configured)."
         />
 
-        <!---Hide Content From Bot Accounts--->
-        <SettingToggle title="Hide Content From Bot Accounts" icon={Cake} bind:value={$userSettings.hidePosts.botAccounts}
-            description="Hide posts and comments from accounts that are marked as bots."
-        />
+        
 
          <!---Hide NSFW Posts--->
-         <SettingToggle title="Hide Posts Marked NSFW" icon={Cake} bind:value={$userSettings.hidePosts.nsfw}
-         description="Hide posts that are flagged NSFW. This works alongside the blur NSFW option."
-     />
+         <SettingToggle title="Hide Posts Marked NSFW" icon={EyeSlash} bind:value={$userSettings.hidePosts.filterNSFW}
+            description="Filter posts that are flagged NSFW. This works alongside the blur NSFW option."
+        />
 
         <!---Hide Posts From Users Without Avatars--->
         <SettingToggle title="Hide Content From Users With Blank Profiles" icon={User} bind:value={$userSettings.hidePosts.usersWithNoAvatar}
@@ -814,9 +811,20 @@
             tune out the faceless opinions for a while and only interact with people who are more likely to be here for the community."
         />
 
+        <!---Hide Content From Bot Accounts--->
+        <SettingToggle title="Hide Content From Bot Accounts" icon={FaceFrown} bind:value={$userSettings.hidePosts.botAccounts}
+            description="Hide posts and comments from accounts that are marked as bots."
+            on:change={(e) => {
+                if (e.detail)   $userSettings.hidePosts.minimizeBotComments = false
+            }}
+        />
+
         <!---Collapse Comments from Bot Accounts by Default--->
         <SettingToggle title="Collapse Bot Comments" icon={FaceFrown} bind:value={$userSettings.hidePosts.minimizeBotComments}
             description="When enabled, comments from accounts marked as bots will start off collapsed in the comment tree."
+            on:change={(e) => {
+                if (e.detail)   $userSettings.hidePosts.botAccounts = false
+            }}
         />
 
         <!---Hide Posts from Users of Blocked Instances--->
