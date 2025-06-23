@@ -86,7 +86,7 @@
             
             // If email verification is enabled, a JWT will not be returned.
             if (res.verify_email_sent) { 
-                goto('/')
+                goto(`/login/${instance}`)
                 return 
             }
 

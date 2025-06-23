@@ -19,6 +19,7 @@ All major/minor changes between releases will be documented here.
 - Refactored post keyword filtering to be a bit more efficient
 - Add ability to filter NSFW posts (works in addition to NSFW blur)
 - Add ability to filter posts from bot accounts (without blocking them entirely)
+  - This is mutually exclusive with the "Collapse Bot Comments" filter option. They *can* both work at the same time, but it's a lot of redundant clicking to reveal the content or even see who it is.
 - Add time to expiry date when showing temp bans in modlog
 - Reduce padding in modal contents
 
