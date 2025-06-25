@@ -88,7 +88,7 @@
             <div class="flex my-auto dark:!bg-zinc-950 rounded-xl w-full min-w-[min(100%,450px)] {width} {height} box-border mx-auto ">
 
                 <div bind:this={modalElement} tabindex="-1" role="dialog"
-                    class="flex flex-col gap-4 p-1 pb-2 rounded-xl overflow-none 
+                    class="flex flex-col gap-4 p-1 md:p-2 lg:p-3 pb-2 rounded-xl overflow-none 
                         {height} w-full    
                         bg-white dark:bg-zinc-950 
                         border border-slate-200 dark:border-zinc-800 
@@ -96,7 +96,7 @@
                     "
                 >
                     <!---Modal Dialog Title Bar--->
-                    <div class="flex flex-row gap-2 p-1 items-center max-w-full">
+                    <div class="flex flex-row gap-2 items-center max-w-full">
                         {#if iconImage}
                             <span class="hidden md:block min-w-[32px]">    
                                 <img src={imageProxyURL(iconImage)} class="rounded-full h-[28px] w-[28px] ring-2 ring-sky-700 dark:ring-sky-700" alt="" />
