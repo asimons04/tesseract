@@ -672,7 +672,7 @@
                                         <div class="w-[42px]">
                                             <Icon src={Megaphone} width={28} mini />
                                         </div>
-                                        <div class="flex flex-col w-[calc(100%-48px)] gap-1 text-xs font-normal">
+                                        <div class="flex flex-col w-[calc(100%-48px)] gap-1 text-sm font-normal">
                                             <Markdown source={'**Message from Moderator**\n\n' + commentText} />
                                         </div>
                                     </div>
