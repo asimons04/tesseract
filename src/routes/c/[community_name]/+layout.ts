@@ -2,17 +2,16 @@ import { get } from 'svelte/store'
 import { getClient } from '$lib/lemmy.js'
 import { goto } from '$app/navigation'
 import { profile } from '$lib/auth.js'
-import { toast } from '$lib/components/ui/toasts/toasts.js'
+import { removeToast, toast } from '$lib/components/ui/toasts/toasts.js'
 
+let resolvingToastID: undefined | number = undefined
 
 export async function load(req: any) {
     try {
-        let getCommunityResponse = await getClient().getCommunity({
-            name: req.params.community_name,
-        })
-
         return {
-            community: getCommunityResponse,
+            community: await getClient().getCommunity({
+                name: req.params.community_name,
+            })
         }
     }
     
@@ -27,7 +26,7 @@ export async function load(req: any) {
             return
 
         }
-        toast({
+        resolvingToastID = toast({
             content: `This community is not known to your instance. Fetching community from its home instance. This may take a moment...`,
             type: 'success',
             title: "Please Wait",
@@ -35,14 +34,20 @@ export async function load(req: any) {
             duration: 15000
         })
 
-        await getClient().resolveObject({
-            q: '!' + req.params.community_name,
-        })
-       
-        return {
-            community: await getClient().getCommunity({
-                name: req.params.community_name,
-            }),
+        try {
+            await getClient().resolveObject({
+                q: '!' + req.params.community_name,
+            })
+            if (resolvingToastID) removeToast(resolvingToastID)
+            return {
+                community: await getClient().getCommunity({
+                    name: req.params.community_name,
+                }),
+            }
+        }
+        catch {
+            if (resolvingToastID) removeToast(resolvingToastID)
+            return { community: undefined }
         }
     }
 }

@@ -3,7 +3,7 @@
     
     import { parseSortType, type FeedController } from '$lib/components/lemmy/feed/helpers.js'
     import { communityProfileModal } from '$lib/components/lemmy/moderation/moderation'
-    import { page } from '$app/stores';
+    import { page } from '$app/stores'
 
     import Button                       from '$lib/components/input/Button.svelte'
     import CommunityCard                from '$lib/components/lemmy/community/CommunityCard.svelte'
@@ -11,12 +11,13 @@
     import CommunityCreatePostButton    from '$lib/components/lemmy/community/CommunityCreatePostButton.svelte'
     import CommunitySubscribeButton     from '$lib/components/lemmy/community/CommunitySubscribeButton.svelte'
     import MainContentArea              from '$lib/components/ui/containers/MainContentArea.svelte'
+    import Placeholder                  from '$lib/components/ui/Placeholder.svelte'
     import PostFeed                     from '$lib/components/lemmy/feed/PostFeed.svelte'
     import SiteSearch                   from '$lib/components/ui/subnavbar/SiteSearch.svelte'
     import SubNavbar                    from '$lib/components/ui/subnavbar/SubNavbar.svelte'
     
     
-    import { EllipsisVertical } from 'svelte-hero-icons'
+    import { EllipsisVertical, UserGroup } from 'svelte-hero-icons'
     
         
     export let data
@@ -90,10 +91,16 @@
                     </div>
                 </div>
             </PostFeed>
-            
+
         </div>
         
         <CommunityCard community_view={data.community.community_view} moderators={data.community.moderators} slot="right-panel" />
         
+    </MainContentArea>
+{:else}
+    <MainContentArea>
+        <div class="flex w-full" style="height: calc(100vh - 8.2rem);">
+            <Placeholder icon={UserGroup} class="mx-auto" title="Community Not Found" description="The community does not seem to exist" />
+        </div>
     </MainContentArea>
 {/if}
