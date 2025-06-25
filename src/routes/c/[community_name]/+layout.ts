@@ -24,7 +24,6 @@ export async function load(req: any) {
                 content: `You must be logged in to resolve communities not currently known to this instance.`,
                 type: 'warning',
             })
-            goto('/communities');
             return
 
         }
