@@ -15,13 +15,17 @@ All major/minor changes between releases will be documented here.
 ## Changes
 - When collapsing a comment thread, if the top portion of the thread that's being collapsed is outside the viewport, scroll it into view. If that part of the thread is already in the viwport, don't scroll and leave it where it is.
 
+## Private Instance Support
+If "Private Instance" is enabled, all API-based routes will only show a banner informing the user that the instance is private. This has links to both login and signup pages.
+
+
 ### Filtering
 - Refactored post keyword filtering to be a bit more efficient
 - Add ability to filter NSFW posts (works in addition to NSFW blur)
 - Add ability to filter posts from bot accounts (without blocking them entirely)
   - This is mutually exclusive with the "Collapse Bot Comments" filter option. They *can* both work at the same time, but it's a lot of redundant clicking to reveal the content or even see who it is.
 - Add time to expiry date when showing temp bans in modlog
-- Reduce padding in modal contents
+- Reduce padding in modal contents on smaller viewport screens
 
 # 1.4.39
 ## Bugfixes
