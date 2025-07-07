@@ -1,6 +1,11 @@
 # Changelog for 1.4.x Series (Intrepid)
 All major/minor changes between releases will be documented here.  
 
+# 1.4.41
+## Bugfixes
+- [Bug 56](https://github.com/asimons04/tesseract/issues/56): Inserting uploaded image submits post
+
+
 # 1.4.40
 ## Bugfixes
 - Don't add comment text to conversation line button tooltip if comment is hidden.

@@ -43,12 +43,17 @@
 
 {#if uploadResponse}
 <div class="relative flex flex-row gap-0 items-center">
-    <button on:click={() => {
-        if (uploadResponse?.url) {
-            navigator.clipboard.writeText(uploadResponse.url)
-            dispatcher('insert', uploadResponse)
+    <button on:click={(
+        //@ts-ignore
+        e ) => {
+            e.preventDefault()
+            e.stopPropagation()
+            if (uploadResponse?.url) {
+                navigator.clipboard.writeText(uploadResponse.url)
+                dispatcher('insert', uploadResponse)
+            }
         }
-    }}>
+    }>
         <Avatar url={uploadResponse.url} width={previewSize} circle={false}/>
     </button>
     
