@@ -268,17 +268,19 @@
 
         try {
             addingAdmin = true
-            const r = await addAdmin(`${newAdmin}@${$instance}`, true, $profile.jwt)
+            const r = await addAdmin(`${newAdmin}@${$instance}`)
         
             if (!r) {
                 toast({
                     content: `Unable to add ${newAdmin} as an administrator.`,
                     type: 'error',
+                    title: 'Error'
                 })
                 return;
             }
                 
             toast({
+                title: 'Success',
                 content: 'Successfully added that admin.',
                 type: 'success',
             })
@@ -293,6 +295,7 @@
                     content: `Unable to add ${newAdmin} as an administrator.`,
                     type: 'error',
             })
+            addingAdmin = false
         }
 
     }
