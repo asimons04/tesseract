@@ -44,7 +44,7 @@ export const addSubscription = async (community: Community, subscribe: boolean =
     }
 }
 
-export const addAdmin = async (handle: string, added: boolean, jwt: string) =>
+export const addAdmin = async (handle: string) =>
     trycatch(async () => {
             const user = await getClient().resolveObject({
             q: handle,
