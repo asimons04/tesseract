@@ -17,9 +17,12 @@
     XCircle,
   } from 'svelte-hero-icons'
   import type { ActionName } from './+page.js'
+    import type { Community } from 'lemmy-js-client';
 
   export let action: ActionName
   export let expires: string|undefined = undefined
+  export let community: Community | undefined = undefined
+  
 
   $: actionData = getAction(action, expires)
 
@@ -96,7 +99,7 @@
                 return {
                     icon: UserPlus,
                     class: 'text-green-600 dark:text-green-400',
-                    text: 'Add Mod',
+                    text: `Add ${community ? 'Mod' : 'Admin'}`,
                 }
             }
       
@@ -104,7 +107,7 @@
                 return {
                     icon: UserMinus,
                     class: 'text-red-600 dark:text-red-400',
-                    text: 'Removed Mod',
+                    text: `Removed ${community ? 'Mod' : 'Admin'}`,
                 }
             }
       

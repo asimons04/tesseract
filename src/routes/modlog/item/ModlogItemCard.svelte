@@ -28,7 +28,7 @@
     {#if item.actionName}
         <SectionTitle class="mt-2">Action</SectionTitle>
         <span class="">
-            <ModlogAction action={item.actionName} expires={item.expires ?? undefined}/>
+            <ModlogAction action={item.actionName} expires={item.expires ?? undefined} community={item.community} />
             {#if item.expires}
                 <span class="text-xs flex items-center gap-1">
                     Expires on {new Date(item.expires).toLocaleDateString()}
