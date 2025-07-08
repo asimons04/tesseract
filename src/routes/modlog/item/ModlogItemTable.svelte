@@ -180,7 +180,7 @@
                         <Icon src={selectedType == item.type ? MinusCircle : PlusCircle} mini width={24} />
                     </button>
 
-                    <ModlogAction action={item.actionName} expires={item.expires} community={item.community}/>
+                    <ModlogAction action={item.actionName} expires={item.expires} />
                 </span>
                 
                 <!---Expiration--->

@@ -29,6 +29,8 @@ import { userSettings } from '$lib/settings'
 
 
 export type ActionName =
+    | 'adminAdd'
+    | 'adminRemove'
     | 'ban'
     | 'banCommunity'
     | 'unban'
@@ -296,7 +298,7 @@ export const _toModLog = (item: ModAction): ModLog => {
     } 
     else if ('mod_add' in item) {
         return {
-            actionName: item.mod_add.removed ? 'modRemove' : 'modAdd',
+            actionName: item.mod_add.removed ? 'adminRemove' : 'adminAdd',
             timestamp: timestamp(item.mod_add.when_),
             when: item.mod_add.when_,
             moderator: item.moderator,

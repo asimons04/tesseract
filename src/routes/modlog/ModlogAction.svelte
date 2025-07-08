@@ -21,7 +21,6 @@
 
   export let action: ActionName
   export let expires: string|undefined = undefined
-  export let community: Community | undefined = undefined
   
 
   $: actionData = getAction(action, expires)
@@ -29,6 +28,22 @@
     const getAction = ( action: ActionName, expires:string|undefined=undefined): { icon: IconSource; text: string; class: string } => {
         let qualifier = "Permanent ";
         switch (action) {
+            case 'adminAdd': {
+                return {
+                    icon: UserPlus,
+                    class: 'text-green-600 dark:text-green-400',
+                    text: 'Add Admin',
+                }
+            }
+
+            case 'adminRemove': {
+                return {
+                    icon: UserPlus,
+                    class: 'text-red-600 dark:text-red-400',
+                    text: 'Removed Admin',
+                }
+            }
+            
             case 'ban': {
                 if (expires) { qualifier = "Temporary " }
                     
@@ -99,7 +114,7 @@
                 return {
                     icon: UserPlus,
                     class: 'text-green-600 dark:text-green-400',
-                    text: `Add ${community ? 'Mod' : 'Admin'}`,
+                    text: 'Add Moderator',
                 }
             }
       
@@ -107,7 +122,7 @@
                 return {
                     icon: UserMinus,
                     class: 'text-red-600 dark:text-red-400',
-                    text: `Removed ${community ? 'Mod' : 'Admin'}`,
+                    text: 'Removed Moderator',
                 }
             }
       

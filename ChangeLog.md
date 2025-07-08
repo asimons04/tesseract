@@ -5,9 +5,8 @@ All major/minor changes between releases will be documented here.
 ## Bugfixes
 - [Bug 56](https://github.com/asimons04/tesseract/issues/56): Inserting uploaded image submits post
 - [Bug 55](https://github.com/asimons04/tesseract/issues/55): Button stays disabled after failing to add an admin
-
-## Changes
-- Modlog now attempts to show when an admin is added/removed. The API returns admin changes as "modAdd" or "modRemove" so attempt to differentiate between those in the action name based upon the presence of a community key (mod) or lack of one (admin).
+- Modlog: Action type did not differentiate adding/removing mods versus adding/removing admins.
+- Modlog: Made modlog action option names more descriptive
 
 # 1.4.40
 ## Bugfixes
