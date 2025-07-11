@@ -1,4 +1,16 @@
 # Tesseract
+
+This project has been discontinued and the repo archived.  I am done with Lemmy, the Fediverse as a whole, and have no desire to continue developing for the platform or (*especially*) the demographic thereof.
+
+The hosted instance will remain online until the 07/31/2025 when I shut down my own instance.
+
+Thank you for your support, but this is the end of the road.
+
+Peace,
+
+Pat.
+
+
 # About
 Tesseract is a Sublinks/Lemmy client designed for media-rich feeds and content.  
 
