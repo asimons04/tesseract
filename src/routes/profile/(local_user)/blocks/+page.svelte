@@ -70,6 +70,18 @@
         await refreshProfile()
         blocking = true
     }
+
+    function sortUsers(a:PersonBlockView, b:PersonBlockView) {
+        return  ((a.target.display_name?.toLowerCase() ?? a.target.name.toLowerCase()) < (b.target.display_name?.toLowerCase() ?? b.target.name.toLowerCase())) ? -1 : 1
+    }
+
+    function sortCommunities(a:CommunityBlockView, b:CommunityBlockView) {
+        return  ((a.community.title?.toLowerCase() ?? a.community.name.toLowerCase()) < (b.community.title?.toLowerCase() ?? b.community.name.toLowerCase())) ? -1 : 1
+    }
+
+    function sortInstances(a:InstanceBlockView, b:InstanceBlockView) {
+        return  ((a.site?.name.toLowerCase() ?? a.instance.domain.toLowerCase()) < (b.site?.name.toLowerCase() ?? b.instance.domain.toLowerCase())) ? -1 : 1
+    }
 </script>
 
 <svelte:head>
@@ -88,7 +100,7 @@
             
             {#if $profile.user.person_blocks.length > 0}
                 <EditableList let:action on:action={(i) => unblockUser(i.detail)}>
-                    {#each $profile.user.person_blocks as block (block.target.id)}
+                    {#each $profile.user.person_blocks.sort(sortUsers) as block (block.target.id)}
 
                         <div class="flex flex-row gap-4 items-center py-4 px-2 justify-between" animate:flip={{ duration: 250 }} out:slide|local={{ axis: 'y' }} >
                             <UserLink user={block.target} avatar badges />
@@ -107,7 +119,7 @@
         <CollapseButton title="Communities" icon={UserGroup}  heading={true} innerClass="max-h-[50vh] overflow-y-auto">
             {#if $profile.user.community_blocks.length > 0}
                 <EditableList let:action on:action={(i) => unblockCommunity(i.detail)}>
-                    {#each $profile.user.community_blocks as block (block.community.id)}
+                    {#each $profile.user.community_blocks.sort(sortCommunities) as block (block.community.id)}
                         <div class="flex flex-row gap-4 items-center py-4 px-2 justify-between" animate:flip={{ duration: 250 }} out:slide|local={{ axis: 'y' }} >
                             <CommunityLink community={block.community} avatar />
                             <Button size="square-md" loading={blocking} icon={Trash} iconSize={16} on:click={() => action(block)} />
@@ -126,7 +138,7 @@
         <CollapseButton title="Instances" icon={Server}  heading={true} innerClass="max-h-[50vh] overflow-y-auto">
             {#if $profile.user.instance_blocks.length > 0}
                 <EditableList let:action on:action={(i) => unblockInstance(i.detail)}>
-                    {#each $profile.user.instance_blocks as block (block.instance.id)}
+                    {#each $profile.user.instance_blocks.sort(sortInstances) as block (block.instance.id)}
                         
                         <div class="flex flex-row gap-4 items-center py-4 px-2 justify-between" animate:flip={{ duration: 250 }} out:slide|local={{ axis: 'y' }} >
                             {#if block.site}
