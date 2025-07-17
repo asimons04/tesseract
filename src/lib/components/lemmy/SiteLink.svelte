@@ -15,7 +15,7 @@
 
 <div class="items-center flex flex-row gap-2 text-sm">
     {#if avatar}
-        <Avatar url={site.icon} alt="Site icon for {site.name}"  width={avatarSize} />
+        <Avatar url={site.icon} alt="Site icon for {site.name}"  width={avatarSize} ring />
     {/if}
     
     <span class="flex flex-col gap-1 ">
