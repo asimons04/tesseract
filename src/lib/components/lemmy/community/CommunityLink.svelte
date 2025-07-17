@@ -24,6 +24,7 @@
     export let noClick:boolean = false
     export let maxNameLength: number = 30
     export let inline: boolean = true
+    export let ring: boolean = false
     
     const dispatcher = createEventDispatcher()
 
@@ -52,7 +53,7 @@
     on:click={loadCommunityProfileModal}
 >
     {#if avatar}
-        <Avatar url={community.icon} alt={community.name} width={avatarSize} title={community.title ?? community.name} community={true} background={avatarBackground}/>
+        <Avatar url={community.icon} alt={community.name} {ring} width={avatarSize} title={community.title ?? community.name} community={true} background={avatarBackground} />
     {/if}
 
     {#if name}
