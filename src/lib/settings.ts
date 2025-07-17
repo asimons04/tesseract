@@ -78,6 +78,9 @@ interface Settings {
         minimizeBotComments: boolean
         hideUsersFromBlockedInstances: boolean
         usersWithNoAvatar: boolean                                      // Hide posts/comments from accounts that can't be bothered to set an avatar picture.
+        enabled: boolean                                                // Global toggle to enable/disable filtering
+        allowReveal: boolean                                            // Show a stub allowing you to reveal the filtered posts. Disable to completely hide filtered posts
+        allowRevealComments: boolean                                    // Show a stub allowing you to reveal the filtered comments. Disble to completely hide filtered comments and their replies.
     }
     notifications: {
         enabled: boolean                                                // Technically used to enable/disable notifications, but it's hardcoded to true
@@ -238,6 +241,7 @@ export const defaultSettings: Settings = {
     markReadOnScroll:                                                   false,
     feedSnapshotValidity:                                               15,
     hidePosts: {
+        enabled:                                                        true,
         hidden:                                                         true,
         read:                                                           false,
         nsfw:                                                           false,
@@ -255,6 +259,9 @@ export const defaultSettings: Settings = {
         minimizeBotComments:                                            false,
         hideUsersFromBlockedInstances:                                  false,
         usersWithNoAvatar:                                              false,
+        allowReveal:                                                    true,
+        allowRevealComments:                                            true,
+        
 
     },
    

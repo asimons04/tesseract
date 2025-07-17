@@ -88,6 +88,7 @@
         Newspaper,
         ArrowLongDown,
         User,
+        Eye,
     } from 'svelte-hero-icons'
     
     
@@ -781,6 +782,21 @@
 
     <!---Filtering Options--->
     <SettingsCollapseSection bind:expanded={open.filters} icon={Funnel} title="Filtering">
+        <!---Global Enable/Disable--->
+        <SettingToggle title="Enable Filtering" icon={Funnel} bind:value={$userSettings.hidePosts.enabled}
+            description="Enable or disable filtering. You can still manage the filter lists, but they will not be applied unlesss this setting is enabled."
+        />
+
+        <!---Allow Revealing Filtered Posts--->
+        <SettingToggle title="Allow Revealing Posts" icon={Eye} bind:value={$userSettings.hidePosts.allowReveal}
+            description="Allow filtered posts to be revealed. When enabled, you can reveal filtered posts to view them. Disable this to hide filtered posts completely."
+        />
+
+        <!---Allow Revealing Filtered Comments--->
+        <SettingToggle title="Allow Revealing Comments" icon={Eye} bind:value={$userSettings.hidePosts.allowRevealComments}
+            description="Allow filtered comments to be revealed. When enabled, you can reveal filtered comments to view them. Disable this to hide filtered comments (and their replies) completely."
+        />
+
         <!--- Hide Low Credibility Posts --->
         <SettingToggle title="Hide Low Credibility Posts" icon={ExclamationTriangle} bind:value={$userSettings.hidePosts.MBFCLowCredibility}
             description="Hide posts that link to low credibility sources as reported by Media Bias Fact Check."
@@ -874,7 +890,7 @@
                     elsewhere in the application and use the "Filter User..." button in the user profile modals.
                 </span>
                 <span>
-                    If you want to add a community manually, it must be in the actor ID format:  https://example.com/u/name
+                    If you want to add a user manually, it must be in the actor ID format:  https://example.com/u/name
                 </span>
             </span>
         </SettingEditArray>

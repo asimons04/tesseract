@@ -316,6 +316,9 @@
     }
 
     function shouldHidePost(): boolean {
+        // If filtering disabled, show post
+        if (!$userSettings.hidePosts.enabled) return false
+        
         // Safety checks
         if (displayType == 'post' || inProfile || overrideHidePost) return false
         
@@ -481,7 +484,7 @@
 
 
 
-{#if postHidden}
+{#if postHidden && $userSettings.hidePosts.allowReveal}
     <Card class="flex flex-col px-2 py-1 gap-2 mx-auto opacity-70 w-full
         {($userSettings.uiState.feedMargins && displayType=='feed' && !inModal) || (displayType=='post' && !inModal && previewing) ? 'max-w-3xl' : '' }
         "
@@ -499,6 +502,11 @@
             </div>
         </div>
     </Card>
+
+<!---If allow reveal disabled, don't render anything--->
+{:else if postHidden && !$userSettings.hidePosts.allowReveal}
+    <!--Filtered Post--->
+
 
 {:else}
 <!-- svelte-ignore a11y-no-static-element-interactions -->
