@@ -33,15 +33,7 @@
         >
             <Icon mini width={24} src={darkTheme ? Sun : Moon} />
         </button>
-        
-        <Link href="https://dubvee.org/c/tesseract" newtab={true} title="Lemmy">
-            <Logo url="/img/lemmy.svg" rounded={false} width={24}/>
-        </Link>
-        
-        <Link href="https://matrix.to/#/#tesseract:ptznetwork.org" newtab={true} title="Matrix">
-            <Logo url="/img/matrix.svg" rounded={false} width={24}/>
-        </Link>
-        
+               
         <Link href="https://github.com/asimons04/Tesseract/" newtab={true} title="Github">
             <Logo url="/img/github.svg" width={24} />
         </Link>
