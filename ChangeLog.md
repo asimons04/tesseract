@@ -1,6 +1,21 @@
 # Changelog for 1.4.x Series (Intrepid)
 All major/minor changes between releases will be documented here.  
 
+# 1.4.42
+
+## Block Management
+Blocked users, communities, and instances are now alphabetized
+
+
+## Filtering
+- Can now quick enable/disable all client-side filtering via `Settings->Filtering->Enable Filtering`. Defaults to on but with no filters set, it doesn't do anything.
+
+- Can now opt to completely hide posts that are filtered rather than showing a stub.  The setting is under `Settings->Filtering->Allow Revealng Posts` and defaults to "on"
+
+- Can now opt to completely hide comments that are filtered rather than showing a stub (this includes any/all replies to those comments).  The setting is under `Settings->Filtering->Allow Revealng Comments` and defaults to "on"
+
+
+
 # 1.4.41
 ## Bugfixes
 - [Bug 56](https://github.com/asimons04/tesseract/issues/56): Inserting uploaded image submits post
