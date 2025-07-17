@@ -115,7 +115,7 @@
                     }}
                 >
                     
-                    <TextInput bind:value={input_text}  type="text" class="w-full" placeholder={textInputPlaceholder}/>
+                    <TextInput bind:value={input_text}  type="text" class="w-full" placeholder={textInputPlaceholder} autocomplete="new-password"/>
                     
                     <Button color="primary" class="h-8" submit>
                         <Icon src={PlusCircle} mini width={18}/>
@@ -132,7 +132,7 @@
                     {#if filterable}
                         <!---Filter input--->
                         <div class="flex flex-row gap-2 px-4 w-full items-center">
-                            <TextInput type="text" class="w-full" placeholder="Filter entries"
+                            <TextInput type="text" class="w-full" placeholder="Filter entries" autocomplete="new-password"
                                 bind:value={filter_input_text} 
                                 on:keyup={(e) => { 
                                     debounce(e.detail.srcElement.value);
