@@ -38,50 +38,75 @@
     async function unblockUser(item: PersonBlockView) {
         if (!$profile?.jwt) return
         
-        blocking = true
-        await getClient().blockPerson({
-            block: false,
-            person_id: item.target.id,
-        })
-        await refreshProfile()
-        blocking = false
+        try {
+            blocking = true
+            await getClient().blockPerson({
+                block: false,
+                person_id: item.target.id,
+            })
+            await refreshProfile()
+            blocking = false
+        }
+        catch {
+            blocking = false
+        }
     }
     
     async function unblockInstance(item: InstanceBlockView) {
         if (!$profile?.jwt) return
-        
-        blocking = true
-        await getClient().blockInstance({
-            instance_id: item.instance.id,
-            block: false
-        })
-        await refreshProfile()
-        blocking = false
+        try { 
+            blocking = true
+            await getClient().blockInstance({
+                instance_id: item.instance.id,
+                block: false
+            })
+            await refreshProfile()
+            blocking = false
+        }
+        catch {
+            blocking = false
+        }
     }
 
     async function unblockCommunity(item: CommunityBlockView) {
         if (!$profile?.jwt) return
-        
-        blocking = true
-        await getClient().blockCommunity({
-            block: false,
-            community_id: item.community.id,
-        })
-        await refreshProfile()
-        blocking = true
+        try {
+            blocking = true
+            await getClient().blockCommunity({
+                block: false,
+                community_id: item.community.id,
+            })
+            await refreshProfile()
+            blocking = false
+        }
+        catch {
+            blocking = false
+        }
     }
 
     function sortUsers(a:PersonBlockView, b:PersonBlockView) {
-        return  ((a.target.display_name?.toLowerCase() ?? a.target.name.toLowerCase()) < (b.target.display_name?.toLowerCase() ?? b.target.name.toLowerCase())) ? -1 : 1
+        const aInstance = new URL(a.target.actor_id).hostname
+        const bInstance = new URL(b.target.actor_id).hostname
+        const aName = (a.target.display_name?.toLowerCase() ?? a.target.name.toLowerCase()) + `@${aInstance}`
+        const bName = (b.target.display_name?.toLowerCase() ?? b.target.name.toLowerCase()) + `@${bInstance}`
+
+        return  aName == bName ? 0 : aName < bName ? -1 : 1
     }
 
     function sortCommunities(a:CommunityBlockView, b:CommunityBlockView) {
-        return  ((a.community.title?.toLowerCase() ?? a.community.name.toLowerCase()) < (b.community.title?.toLowerCase() ?? b.community.name.toLowerCase())) ? -1 : 1
+        const aInstance = new URL(a.community.actor_id).hostname
+        const bInstance = new URL(b.community.actor_id).hostname
+        const aName = (a.community.title?.toLowerCase() ?? a.community.name.toLowerCase()) + `@${aInstance}`
+        const bName = (b.community.title?.toLowerCase() ?? b.community.name.toLowerCase()) + `@${bInstance}`
+
+        return  aName == bName ? 0 : aName < bName ? -1 : 1
     }
 
     function sortInstances(a:InstanceBlockView, b:InstanceBlockView) {
         return  ((a.site?.name.toLowerCase() ?? a.instance.domain.toLowerCase()) < (b.site?.name.toLowerCase() ?? b.instance.domain.toLowerCase())) ? -1 : 1
     }
+
+    
 </script>
 
 <svelte:head>
@@ -103,7 +128,7 @@
                     {#each $profile.user.person_blocks.sort(sortUsers) as block (block.target.id)}
 
                         <div class="flex flex-row gap-4 items-center py-4 px-2 justify-between" animate:flip={{ duration: 250 }} out:slide|local={{ axis: 'y' }} >
-                            <UserLink user={block.target} avatar badges />
+                            <UserLink user={block.target} avatar badges ring/>
                             <Button size="square-md" loading={blocking} icon={Trash} iconSize={16} on:click={() => action(block)} />
                         </div>
                     {/each}
@@ -121,7 +146,7 @@
                 <EditableList let:action on:action={(i) => unblockCommunity(i.detail)}>
                     {#each $profile.user.community_blocks.sort(sortCommunities) as block (block.community.id)}
                         <div class="flex flex-row gap-4 items-center py-4 px-2 justify-between" animate:flip={{ duration: 250 }} out:slide|local={{ axis: 'y' }} >
-                            <CommunityLink community={block.community} avatar />
+                            <CommunityLink community={block.community} avatar ring />
                             <Button size="square-md" loading={blocking} icon={Trash} iconSize={16} on:click={() => action(block)} />
                         </div>
                     {/each}
