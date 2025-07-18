@@ -65,7 +65,7 @@
     <div class="flex flex-row gap-1 w-full">
 
         <!---Community Name, User Name, Avatar, etc--->
-        <div class="flex flex-col gap-1 w-[calc(100%-150px)] xl:w-[calc(100%-300px)]">
+        <div class="flex flex-col gap-1 w-[calc(100%-150px)] lg:w-[calc(100%-300px)]">
 
             <span class="flex flex-row gap-2 text-sm items-start">
                 
@@ -123,10 +123,10 @@
         </div>
 
         <!--Post Action Buttons--->
-        <div class="flex flex-col xl:flex-row-reverse ml-auto gap-1 w-[150px] xl:w-[300px]">
+        <div class="flex flex-col lg:flex-row-reverse ml-auto gap-1 w-[150px] lg:w-[300px]">
             
             <!---Post Action Buttons Top Row--->
-            <div class="flex flex-row items-start gap-1 ml-auto xl:ml-0">
+            <div class="flex flex-row items-start gap-1 ml-auto lg:ml-0">
                 <!--Expand/Collapse Post--->
                 <Button  color="tertiary" size="square-md" title="{compact ? 'Expand to Card View' : 'Collapse to Compact View'}" 
                     icon={compact ? ArrowsPointingOut : ArrowsPointingIn}
