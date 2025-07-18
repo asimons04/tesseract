@@ -92,10 +92,11 @@
 
             </div>
 
-            <!---12ft.io--->
+            <!---12ft.io
             <MenuButton color="info" link href="https://12ft.io/proxy?q={removeURLParams(url)}" newtab={true} title="12ft IO">
                 12ft.io
             </MenuButton>
+            --->
 
             <!---RemovePaywall.com--->
             <MenuButton color="info" link href="https://www.removepaywall.com/search?url={removeURLParams(url)}" newtab={true} title="Remove Paywalls" containerClass="w-[calc(100%-48px)]">
