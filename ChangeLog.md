@@ -8,11 +8,47 @@ Blocked users, communities, and instances are now alphabetized
 
 
 ## Filtering
-- Can now quick enable/disable all client-side filtering via `Settings->Filtering->Enable Filtering`. Defaults to on but with no filters set, it doesn't do anything.
 
-- Can now opt to completely hide posts that are filtered rather than showing a stub.  The setting is under `Settings->Filtering->Allow Revealng Posts` and defaults to "on"
+### Global Toggle
+ Can now quick enable/disable all client-side filtering via `Settings->Filtering->Enable Filtering`. Defaults to on but with no filters set, it doesn't do anything.
 
-- Can now opt to completely hide comments that are filtered rather than showing a stub (this includes any/all replies to those comments).  The setting is under `Settings->Filtering->Allow Revealng Comments` and defaults to "on"
+ To Do:  Add some quick access toggles in various places
+ - Quick Settings Modal
+ - Top of feed
+ - Top of comment section
+
+ To do: Ensure relevant components watch this setting variable and trigger a re-run of the `shouldHide` function.
+
+### The Filtering Placeholder is Now Toggleable
+Previously, when a post/comment is caught by your filters, a stub placeholder will be shown instead.  Clicking the button on this placeholder will allow you to view the content.
+
+If you've got an extensive set of filters, especially if they're for power-users or hot-button/overexposed topics, then this can make things feel a bit cluttered.
+
+To rememdy this, there are two new options in the `Settings -> Filtering` section:
+
+#### Allow Revealing Posts
+When enabled (default), posts in the feed that match the filter will show a stub indicating why the post was filtered. You can click the "eye" button to show the post.
+
+When disabled, posts in the feed that match the filter will not be shown at all.  There will be no indication the post(s) were filtered, and it will be as if those posts don't exist.
+
+**Note**:  It is best to use this with infinite scroll rather than manual pagination.  Depending on the number of posts that are filtered on each page, you may have a very short list of posts.
+
+#### Allow Revealing Comments
+When enabled (default), comments in the comment section that match the filter will show a stub indicating why it was filtered.  You can click the "eye" button to show the comment.
+
+Additionally, this does not hide any replies to the filtered comment; those are all visible unless they hit on another filter themselves.
+
+When disabled, comments that match the filter will not be shown at all nor will any replies to that comment.  This is similar to blocking a user.
+
+#### Note About 'Hide Content From Users of Blocked Instances'
+For those unaware, blocking an instance is more accurately "block all communities on this instance" - you will still see posts/comments from users of the blocked instance elsewhere.
+
+Enabling this option will filter users that belong to any instance you've blocked, and the behavior matches that of any other filter.
+
+Thus, if you disable both "Allow Reveal Posts" and "Allow Reveal Comments" with "Hide Content From Blocked Users" enabled, then you are effectively soft-defederating from any blocked instances. You will not see any content whatsoever from them or posted/commented by users of that instance.  This includes any replies to comments of users from there (this matches how real defederation works).
+
+The only thing the filters do not account for is the comment counts. The comment count may say 50, but you may only see 0, 1, 20, or all 50. The number of filtered comments does not reflect in the count shown.
+
 
 
 
