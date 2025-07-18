@@ -797,6 +797,14 @@
             description="Allow filtered comments to be revealed. When enabled, you can reveal filtered comments to view them. Disable this to hide filtered comments (and their replies) completely."
         />
 
+        <!---Hide Posts from Users of Blocked Instances--->
+        <SettingToggle title="Hide Users From Blocked Instances" icon={EyeSlash} bind:value={$userSettings.hidePosts.hideUsersFromBlockedInstances}
+            description="When enabled, posts and comments from users of an instance you have blocked will be hidden. Server-side, when you block an
+                instance, only communities there are blocked. Users from there can still post to other communities, and you will
+                still see them in the comments.  This will hide them from view, though they will still count toward
+                comment counts."
+        />
+
         <!--- Hide Low Credibility Posts --->
         <SettingToggle title="Hide Low Credibility Posts" icon={ExclamationTriangle} bind:value={$userSettings.hidePosts.MBFCLowCredibility}
             description="Hide posts that link to low credibility sources as reported by Media Bias Fact Check."
@@ -843,13 +851,7 @@
             }}
         />
 
-        <!---Hide Posts from Users of Blocked Instances--->
-        <SettingToggle title="Hide Users From Blocked Instances" icon={EyeSlash} bind:value={$userSettings.hidePosts.hideUsersFromBlockedInstances}
-            description="When enabled, posts and comments from users of an instance you have blocked will be hidden. Server-side, when you block an
-                instance, only communities there are blocked. Users from there can still post to other communities, and you will
-                still see them in the comments.  This will hide them from view, though they will still count toward
-                comment counts."
-        />
+        
 
         
         
@@ -873,13 +875,20 @@
             />
         </SettingToggle>
 
+        <!---Filter Users--->
         <SettingEditArray filterable icon={User} placeholderIcon={User} 
             bind:list={$userSettings.hidePosts.userList}
             title="Filter Users"
             textInputPlaceholder="https://intance.xyz/u/username"
-            description="Filtered users are like a 'soft block'. Their content will still be returned by the API, but Tesseract wiill hide
-                their submissions and allow you to click-to-view their content on a case-by-case basis.  Comments of filtered users
-                are hidden in the comment section, but the rest of the thread remains intact (unlike 'hard' blocking).
+            description="Filtered users are like a 'soft block'. Their content will still be returned by the API, but Tesseract will hide their posts 
+                {$userSettings.hidePosts.allowReveal
+                    ? 'and allow you to click-to-view their content on a case-by-case basis.'
+                    : 'completely.'
+                }
+                {$userSettings.hidePosts.allowRevealComments 
+                    ? 'Comments of filtered users are hidden in the comment section, but the rest of the thread remains intact (unlike \'hard\' blocking)'
+                    : 'Comments of filtered users as well as their replies are completely hidden similar to hard blocking'
+                }.
             "
             placeholderTitle="No Users" 
             placeholderText="There are no users in your filter list"
@@ -895,6 +904,7 @@
             </span>
         </SettingEditArray>
 
+        <!---Filter Communities--->
         <SettingEditArray filterable icon={UserGroup} placeholderIcon={UserGroup}
             bind:list={$userSettings.hidePosts.communityList}
             title="Filter Communities"
