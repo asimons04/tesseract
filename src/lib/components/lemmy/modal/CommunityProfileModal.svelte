@@ -642,17 +642,19 @@
                             >
                                 Go to Community
                             </Button> 
-
-                            <!--- Community Details/Info--->
-                            <Button color="tertiary-border" icon={InformationCircle} iconSize={20} alignment="left" class="w-full"
-                                on:click={()=> {
-                                    action='communityDetails'
-                                    modalWidth='max-w-4xl'
-                                }}
-                            >
-                                Community Details...
-                            </Button>
-
+                        {/if}
+                        
+                        <!--- Community Details/Info--->
+                        <Button color="tertiary-border" icon={InformationCircle} iconSize={20} alignment="left" class="w-full"
+                            on:click={()=> {
+                                action='communityDetails'
+                                modalWidth='max-w-4xl'
+                            }}
+                        >
+                            Community Details...
+                        </Button>
+                        
+                        {#if !communityBlocked}
                             
                             <!---Browse Community's Posts in the  Modal--->
                             <Button color="tertiary-border" icon={WindowIcon} iconSize={20} alignment="left" class="w-full"
