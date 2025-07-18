@@ -72,9 +72,15 @@ interface Settings {
         keywordList: string[]
         userList: string[]
         communityList: string[]
-        newAccounts: boolean
-        newAccountMinAge: number
-        MBFCLowCredibility: boolean
+        domainList: string[]                                            // List of domains that should be filtered if used as the post URL
+        hideFacebook: boolean                                           // Hide posts that link to any known Facebook domains
+        hideReddit: boolean                                             // Hide posts that link to any known Reddit domains
+        hideTwitter: boolean                                            // Hide posts that link to any known Twitter domains
+        hideLinkShorteners: boolean                                     // Hide posts that use any link shortener
+        hideBlogspam: boolean                                           // Hide posts that link to *.blogspot.com
+        newAccounts: boolean                                            // Hide posts/comments from accounts considered new
+        newAccountMinAge: number                                        // Number of days an account is considered new
+        MBFCLowCredibility: boolean                                     // Hide 
         minimizeBotComments: boolean
         hideUsersFromBlockedInstances: boolean
         usersWithNoAvatar: boolean                                      // Hide posts/comments from accounts that can't be bothered to set an avatar picture.
@@ -253,9 +259,15 @@ export const defaultSettings: Settings = {
         keywordList:                                                    [],
         userList:                                                       [],
         communityList:                                                  [],
+        domainList:                                                     [],
+        hideFacebook:                                                   false,
+        hideReddit:                                                     false,
+        hideTwitter:                                                    false,
+        hideLinkShorteners:                                             false,
+        hideBlogspam:                                                   true,
         MBFCLowCredibility:                                             false,
         newAccounts:                                                    false,
-        newAccountMinAge:                                               5,
+        newAccountMinAge:                                               7,
         minimizeBotComments:                                            false,
         hideUsersFromBlockedInstances:                                  false,
         usersWithNoAvatar:                                              false,
