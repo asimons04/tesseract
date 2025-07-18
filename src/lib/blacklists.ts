@@ -7,10 +7,13 @@ export interface URLValidateResponse {
     reason: string
 }
 
+export type AccessDeniedReason = 'extremism' | 'private_instance' | 'luigi' | 'none'
+
 // Fake news sites that MBFC doesn't have on file
 const FAKE_NEWS = [
     'cctv.com',
     'infoterkiniviral.com',
+    'gazeon.site',
     'kaggle.com',
     'news.cctv.com',
     'tass.com',
@@ -131,6 +134,78 @@ export const THROWAWAY_EMAIL_DOMAINS = [
     'ytnhy.com',
     'zudpck.com',
     'zvvzuv.com'
+]
+
+// A logged-in user subscribed to any of these communities will be barred from using the app until they subsubscribe.
+export const EXTREMIST_COMMUNITIES = [
+    'https://lemmy.world/c/luigimangione',
+    'https://lemmy.ml/c/luigimangione',
+    'https://sh.itjust.works/c/cybersecurity',
+    'https://awful.systems/c/sneerclub'
+]
+
+
+export const SHADOWBAN_USERS = [
+    'https://lemmy.world/u/Guns0rWeD13',
+    'https://lemmy.today/u/Rivalarrival',
+    'https://lemmy.world/u/CorruptCheesecake',
+    'https://feddit.nl/u/Asafum',
+    'https://thebrainbin.org/u/sunzu2',
+    'https://lemmy.world/u/TheDemonBuer',
+    'https://lemmy.world/u/sloppysol',
+    'https://feddit.nl/u/Honytawk',
+    'https://lemmy.dbzer0.com/u/Daft_ish',
+    'https://lemmy.world/u/lmdnw',
+    'https://lemmy.world/u/MushuChupacabra',
+    'https://lemmy.ca/u/humanspiral',
+    'https://sopuli.xyz/u/supersquirrel',
+    'https://lemmy.world/u/Lost_My_Mind',
+    'https://lemmy.ca/u/Rusty',
+    'https://lemmy.dbzer0.com/u/misteloct',
+    'https://lemmy.ca/u/Coolbeanschilly',
+    'https://lemmy.world/u/Angry_Autist',
+    'https://sh.itjust.works/u/Tb0n3',
+    'https://lemmy.zip/u/cheers_queers',
+    'https://lemmy.blahaj.zone/u/frezik',
+    'https://sh.itjust.works/u/ayyy',
+    'https://programming.dev/u/Senal',
+    'https://lemmy.world/u/thatradomguy',
+    'https://lemmy.dbzer0.com/u/redsand',
+    'https://feddit.nl/u/Slovene',
+    'https://sh.itjust.works/u/neidu3',
+    ['https://lemmy.world/u/GnillikSeibab', 'https://lemmy.world/comment/18077219'],
+    ['https://lemmy.world/u/Goodmorningsunshine', 'https://lemmy.world/comment/18069872'],
+    'https://lemmy.world/u/FelixCress',
+    ['https://lemmy.world/u/DioramaOfShit', 'https://lemmy.world/comment/18058201'],
+    ['https://lemmy.world/u/Strider', 'https://lemmy.world/comment/18054754'],
+    ['https://lemmy.world/u/WhatAmLemmy', 'https://lemmy.world/comment/18048952'],
+    ['https://lemmy.world/u/WanderWisley', 'https://lemmy.world/comment/18044613'],
+    ['https://lemmy.blahaj.zone/u/AlecSadler', 'https://lemmy.blahaj.zone/comment/15182239'],
+    'https://sh.itjust.works/u/AlecSadler',
+    'https://programming.dev/u/AlecSadler',
+    'https://lemmy.tf/u/AlecSadler',
+    'https://lemmy.ml/u/AlecSadler',
+    'https://lemmy.world/u/AlecSadler'
+
+
+
+]
+
+// Users of these instances are barred from using the application
+export const EMBARGOED_INSTANCES = [
+    'chapo.chat',
+    'feddit.rocks',
+    'hexbear.net',
+    'hexbear.com',
+    'hilariouschaos.com',
+    'lemmy.doesnotexist.club',
+    'lemmy.ml',
+    'lemmygrad.ml',
+    'lemmyusa.com',
+    'r.nf',
+    'realbitcoin.cash',
+    'redlemmy.com',
+    'welppp.com'
 ]
 /** Returns true if the provided email address belongs to a known throwaway email provider
  * @param email 

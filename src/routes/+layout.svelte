@@ -1,6 +1,11 @@
 <script lang="ts">
     import '../style/app.css'
     
+    import { 
+        type AccessDeniedReason, 
+        EXTREMIST_COMMUNITIES,
+    } from '$lib/blacklists'
+
     import { navigating } from '$app/stores'
     import nProgress from 'nprogress'
     import 'nprogress/nprogress.css'
@@ -12,6 +17,7 @@
     
     // @ts-ignore
     import { pwaInfo } from 'virtual:pwa-info'
+    import { profile } from '$lib/auth';
     import PwaReload from '$lib/PwaReload.svelte'
     import { userSettings } from '$lib/settings.js'
 
@@ -21,11 +27,11 @@
     import Sidebar          from '$lib/components/ui/sidebar/Sidebar.svelte'
     import SystemTimer      from '$lib/components/ui/SystemTimer.svelte';
     import ToastContainer   from '$lib/components/ui/toasts/ToastContainer.svelte'
-    import { profile } from '$lib/auth';
-    import Placeholder from '$lib/components/ui/Placeholder.svelte';
-    import { ExclamationTriangle } from 'svelte-hero-icons';
-    import PrivateInstanceWarningBanner from '$lib/components/lemmy/PrivateInstanceWarningBanner.svelte';
     
+    
+    import ExtremismWarningBanner       from '$lib/components/lemmy/banners/ExtremismWarningBanner.svelte'
+    import PrivateInstanceWarningBanner from '$lib/components/lemmy/banners/PrivateInstanceWarningBanner.svelte'
+
     nProgress.configure({
         minimum: 0.4,
         trickleSpeed: 200,
@@ -47,8 +53,28 @@
     $: webManifest = pwaInfo ? pwaInfo.webManifest.linkTag : ''
   
     
+    let accessDenied: boolean = false
+    let accessDeniedReason: AccessDeniedReason = 'none'
+     
+
+
+    $:  $site, $profile, checkAccess()
     
-    
+    function checkAccess() {
+        if ($site?.site_view.local_site.private_instance && !$profile?.user) {
+            accessDenied = true
+            accessDeniedReason = 'private_instance'
+        }
+        else if ($profile?.user?.follows && $profile.user.follows.find((c) => { return EXTREMIST_COMMUNITIES.includes(c.community.actor_id) }) )  {
+            accessDenied = true
+            accessDeniedReason = 'extremism'
+        }
+        else {
+            accessDenied = false
+            accessDeniedReason = 'none'
+        }
+    }
+
     // Clear the loading animation when loaded.
     onMount(() => {
         const element = document.getElementById('loader-animation')
@@ -75,7 +101,7 @@
         <Sidebar />
         <main class="p-2 min-w-0 w-full flex flex-col flex-[3] gap-2 sm:rounded-tl-lg border-slate-200 dark:border-zinc-900 sm:border-l border-t">
             <!---If private instance mode is enabled, user is not logged in, and page has API-restricted content, show a warning banner--->
-            {#if  $site?.site_view.local_site.private_instance && !$profile?.user && 
+            {#if  accessDenied && accessDeniedReason == 'private_instance' && 
                 !(
                     $page.url.pathname.startsWith('/about') ||
                     $page.url.pathname.startsWith('/accounts') ||
@@ -89,7 +115,9 @@
                 )
             }
                 <PrivateInstanceWarningBanner/>
-            {:else}    
+            {:else if accessDenied && accessDeniedReason == 'extremism'}   
+                <ExtremismWarningBanner />
+            {:else} 
                 <slot />
             {/if}
         </main>

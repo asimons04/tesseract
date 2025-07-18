@@ -28,7 +28,7 @@
     import type { PostView } from 'lemmy-js-client'
     import { type PostType, type PostDisplayType, postType as getPostType, sleep, isNewAccount } from './helpers.js'
 
-    import { amMod }                from '../moderation/moderation.js'
+    import { amMod, isAdmin }                from '../moderation/moderation.js'
     import { fade }                 from 'svelte/transition'
     import { getClient }            from '$lib/lemmy'
     import { onDestroy, onMount }   from 'svelte'
@@ -62,6 +62,7 @@
     
     
     import { EyeSlash } from 'svelte-hero-icons'
+    import { EXTREMIST_COMMUNITIES } from '$lib/blacklists.js';
 
 
     export let post: PostView                                           // The Post to display
@@ -84,8 +85,9 @@
     let postHidden      = false
     let overrideHidePost = false
     let hidePostReason  = ''
-    
-    $:  post.post.removed, post.post.deleted, post.creator_blocked, post.hidden, post.community.hidden, overrideHidePost, postHidden = shouldHidePost()
+    let hidePostAlways = false
+
+    $:  post.post.removed, post.post.deleted, post.creator_blocked, post.hidden, post.community.hidden, overrideHidePost, $profile, postHidden = shouldHidePost()
     $:  post.post.id, onPostChange()
     
     function onPostChange() {
@@ -315,7 +317,22 @@
         dispatchWindowEvent('lastClickedPost', {post_id: post.post.id})
     }
 
+    function isExtremistCommunity(actor_id:string): boolean {
+        return EXTREMIST_COMMUNITIES.includes(actor_id)
+    }
+
     function shouldHidePost(): boolean {
+        const isExtremist = isExtremistCommunity(post.community.actor_id)
+        const ownPost = (post.post.creator_id == $profile?.user?.local_user_view.person.id)
+        const amModOrAdmin = amMod($profile?.user, post.community) || isAdmin($profile?.user)
+        
+        // Only show extremist community content to mods, admins, and self
+        if (isExtremist && !(amModOrAdmin || ownPost)) {
+            hidePostReason = "Community advocates extremism"
+            hidePostAlways = true
+            return true
+        }
+
         // If filtering disabled, show post
         if (!$userSettings.hidePosts.enabled) return false
         
@@ -329,10 +346,10 @@
         }
 
         // If user is creator, always show the item
-        if (post.post.creator_id == $profile?.user?.local_user_view.person.id) return false
+        if (ownPost) return false
         
         // If mod of community or community is local and user is admin, always show the post
-        if (amMod($profile?.user, post.community)) return false
+        if (amModOrAdmin) return false
 
         // Creator is a bot
         if ($userSettings.hidePosts.botAccounts && post.creator.bot_account) {
@@ -484,7 +501,7 @@
 
 
 
-{#if postHidden && $userSettings.hidePosts.allowReveal}
+{#if postHidden && !hidePostAlways && $userSettings.hidePosts.allowReveal}
     <Card class="flex flex-col px-2 py-1 gap-2 mx-auto opacity-70 w-full
         {($userSettings.uiState.feedMargins && displayType=='feed' && !inModal) || (displayType=='post' && !inModal && previewing) ? 'max-w-3xl' : '' }
         "
@@ -504,7 +521,7 @@
     </Card>
 
 <!---If allow reveal disabled, don't render anything--->
-{:else if postHidden && !$userSettings.hidePosts.allowReveal}
+{:else if postHidden && (!$userSettings.hidePosts.allowReveal || hidePostAlways)}
     <!--Filtered Post--->
 
 
