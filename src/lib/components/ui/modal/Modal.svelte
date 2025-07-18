@@ -19,6 +19,7 @@
     export let width:string = 'min-w-[50%]'
     export let maximized:boolean = false
     export let allowMaximize:boolean = false
+    export let noClose: boolean = false
     export let card:boolean = true
     export let capitalizeTitle: boolean = false
 
@@ -125,7 +126,9 @@
                             {/if}
                             
                             <!---Close Button--->
-                            <Button title="Close" size="md" rounded="lg" color="tertiary"  icon={XMark} iconSize={16} on:click={(e) => { close() }} />
+                            {#if !noClose}
+                                <Button title="Close" size="md" rounded="lg" color="tertiary"  icon={XMark} iconSize={16} on:click={(e) => { close() }} />
+                            {/if}
                         </span>
                     </div>
                     
