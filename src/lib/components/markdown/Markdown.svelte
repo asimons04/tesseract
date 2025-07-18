@@ -91,7 +91,7 @@
         let inImage = true
         
         // Fix stupid ampersand encodings
-        let temp = text.replaceAll('&amp;', '&') + '\n'
+        let temp = text.replaceAll('&amp;', '&').replaceAll('&nbsp;', '') + '\n'
         if ($userSettings.uiState.filterAnnoyingCCLicense) temp = filterAnnoyingCCLicenseOnComments(temp)
 
         // Break the text into lines and parse each line individually
