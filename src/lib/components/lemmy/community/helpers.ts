@@ -47,7 +47,7 @@ export const communityIsBlocked = (me: PersonData, communityID: number) =>
 
 
 // Subscribe and un-subscribe to a community; returns the subscribed state
-export const subscribe = async function(community:Community, subscribed:boolean):Promise<boolean> {
+export const subscribe = async function(community:Community, subscribed:boolean, showToast:boolean=true):Promise<boolean> {
     const userProfile = get(profile)
     if (!userProfile?.jwt) return subscribed
    
@@ -63,7 +63,7 @@ export const subscribe = async function(community:Community, subscribed:boolean)
             subscribed: subscribed
         })
 
-        toast({
+        if (showToast) toast({
             title: "Success",
             content: `Successfully ${subscribed ? 'subscribed to' : 'unsubscribed from'} ${followResponse.community_view.community.title ?? followResponse.community_view.community.name}`,
             type: "success",
