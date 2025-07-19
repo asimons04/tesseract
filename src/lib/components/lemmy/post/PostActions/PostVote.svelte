@@ -28,7 +28,10 @@
     export let post:    PostView
     export let small: boolean = false
     export let onHomeInstance: boolean = false
-
+    
+    let upvoting = false
+    let downvoting = false
+    
     const voteColor = (vote: number) => {
         if (vote == 1) return '!text-blue-500 dark:!text-blue-400 font-bold'
         if (vote == -1) return '!text-red-500 font-bold'
@@ -37,7 +40,6 @@
 
     async function vote(vote:number): Promise<PostAggregates> {
         if (!$profile?.jwt) return post.counts
-        
         try {
             if (!post.read) {
                 getClient().markPostAsRead({
@@ -68,29 +70,30 @@
 
 <div class="flex flex-row border border-slate-300 dark:border-zinc-700 items-center text-sm gap-0 rounded-lg">
     <Button
-        disabled={!$profile?.user || !onHomeInstance || post.banned_from_community}
+        disabled={!$profile?.user || !onHomeInstance || post.banned_from_community || upvoting || downvoting}
+        loading={upvoting}
         aria-label="Upvote"
         class="{post.my_vote == 1 ? voteColor(post.my_vote) : ''}"
         
         color="tertiary"
         alignment="center"
         size="sm"
-        on:click={async () => {
-            vote(post.my_vote == 1 ? 0 : 1)
-            //post.counts = await vote(post.my_vote == 1 ? 0 : 1)
-            //post.my_vote = post.my_vote == 1 ? 0 : 1
+        on:click={async () => { 
+            upvoting = true
+            await vote(post.my_vote == 1 ? 0 : 1) 
+            upvoting = false
         }}
-
-
     >
-        {#if $site?.site_view?.local_site?.enable_downvotes && !$userSettings.uiState.disableDownvotes}
-            <UpvoteIcon width={small ? 16 : 18} filled={post.my_vote == 1}/>
-        {:else}
-            <Icon src={Heart} width={small ? 16 : 18} mini />
-        {/if}
+        {#if !upvoting}
+            {#if $site?.site_view?.local_site?.enable_downvotes && !$userSettings.uiState.disableDownvotes}
+                <UpvoteIcon width={small ? 16 : 18} filled={post.my_vote == 1}/>
+            {:else}
+                <Icon src={Heart} width={small ? 16 : 18} mini />
+            {/if}
 
-        {#if $userSettings.uiState.showScores}
-            <FormattedNumber number={post.counts.upvotes} />
+            {#if $userSettings.uiState.showScores}
+                <FormattedNumber number={post.counts.upvotes} />
+            {/if}
         {/if}
     </Button>
     
@@ -98,22 +101,25 @@
     <!---Hide downvote buttons if site config has globally disabled downvotes--->
     {#if $site?.site_view?.local_site?.enable_downvotes && !$userSettings.uiState.disableDownvotes}
         <Button
-            disabled={!$profile?.user || !onHomeInstance || post.banned_from_community}
+            disabled={!$profile?.user || !onHomeInstance || post.banned_from_community || upvoting || downvoting}
+            loading={downvoting}
             aria-label="Downvote"
             class="{post.my_vote == -1 ? voteColor(post.my_vote) : ''}"
             size="sm"
             color="tertiary"
-            on:click={async () => {
-                vote(post.my_vote == -1 ? 0 : -1)
-                //post.counts = await vote(post.my_vote == -1 ? 0 : -1)
-                //post.my_vote = post.my_vote == -1 ? 0 : -1
+            on:click={async () => { 
+                downvoting = true
+                await vote(post.my_vote == -1 ? 0 : -1) 
+                downvoting = false
             }}
 
         >
-            <UpvoteIcon width={small ? 16 : 18} filled={post.my_vote == -1} downvote/>
+            {#if !downvoting}
+                <UpvoteIcon width={small ? 16 : 18} filled={post.my_vote == -1} downvote/>
 
-            {#if $userSettings.uiState.showScores}
-                <FormattedNumber number={post.counts.downvotes} />
+                {#if $userSettings.uiState.showScores}
+                    <FormattedNumber number={post.counts.downvotes} />
+                {/if}
             {/if}
         </Button>
     {/if}
