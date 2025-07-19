@@ -16,11 +16,13 @@
     import { fullCommunityName } from "$lib/util"
     import { getClient } from "$lib/lemmy"
     import { goto, replaceState } from "$app/navigation"
+    import { instance } from "$lib/instance"
     import { onMount } from "svelte";
     import { page } from "$app/stores"
     import { profile } from '$lib/auth'
     import { toast } from "$lib/components/ui/toasts/toasts"
-
+    import { userSettings } from "$lib/settings"
+    
     import BanUnbanCommunityForm    from "./components/BanUnbanCommunityForm.svelte"
     import Button                   from "$lib/components/input/Button.svelte"
     import CommunityCardSmall       from "$lib/components/lemmy/community/CommunityCardSmall.svelte"
@@ -28,6 +30,8 @@
     import EmbeddableModlog         from "$lib/components/lemmy/modal/components/EmbeddableModlog.svelte"
     import Markdown                 from "$lib/components/markdown/Markdown.svelte"
     import MarkdownEditor           from "$lib/components/markdown/MarkdownEditor.svelte"
+    import Menu                     from "$lib/components/ui/menu/Menu.svelte"
+    import MenuButton               from "$lib/components/ui/menu/MenuButton.svelte"
     import Modal                    from "$lib/components/ui/modal/Modal.svelte"
     import ModalPanel               from '$lib/components/lemmy/modal/components/ModalPanel.svelte'
     import ModalPanelHeading        from '$lib/components/lemmy/modal/components/ModalPanelHeading.svelte'
@@ -49,19 +53,18 @@
         Folder,
         Funnel,
         InformationCircle,
+        Link as LinkIcon,
         Newspaper,
         NoSymbol,
         PencilSquare,
         Rss,
         Scale,
+        Share,
         Star,
         Trash,
         UserGroup,
         Window as WindowIcon
-    } from "svelte-hero-icons";
-    import { userSettings } from "$lib/settings";
-    
-    
+    } from "svelte-hero-icons"
     
     
     export let community: Community | undefined
@@ -378,6 +381,109 @@
                 />
                 
             {/if}
+
+             <!---Community 'Share' Menu--->
+             <Menu  alignment="bottom-right" containerClass="!min-w-[0px]">
+                <Button
+                    slot="button"
+                    on:click={toggleOpen}
+                    aria-label="Share Community Link"
+                    color="tertiary"
+                    size="square-lg"
+                    icon={Share}
+                    iconSize={20}
+                    let:toggleOpen
+                />
+                
+                <li class="flex flex-row items-center text-xs font-bold opacity-100 text-left mx-4 my-1 py-1 max-w-[25ch]">
+                    Copy Community Link
+                </li>
+                <hr class="dark:opacity-10 w-[90%] my-2 mx-auto" />
+                
+                
+                <!--Lemmyverse--->
+                <!-- svelte-ignore missing-declaration -->
+                <MenuButton color="info" icon={LinkIcon} iconSize={16} title="Lemmyverse Link"
+                    on:click={() => {
+                        //https://lemmyverse.link/u/name@instance.xyz
+                        if (communityDetails.community_view.community) {
+                            navigator.clipboard.writeText(`https://lemmyverse.link/C/${communityDetails.community_view.community.name}@${new URL(communityDetails.community_view.community.actor_id).host}`)
+                        }
+                        toast({
+                            type: 'success',
+                            content: `Copied Lemmyverse link to clipboard`,
+                            title: 'Copied'
+                        })
+                    }}
+                >
+                    <span>Lemmyverse</span>
+                </MenuButton>
+
+                <!--Lemshare--->
+                <MenuButton color="info" icon={LinkIcon} iconSize={16} title="Lemshare Link"
+                    on:click={() => {
+                        //https://lemsha.re/instance.xyz/u/name
+                        if (communityDetails?.community_view.community) {
+                            navigator.clipboard.writeText(`https://lemsha.re/${new URL(communityDetails.community_view.community.actor_id).host}/c/${communityDetails.community_view.community.name}`)
+                        }
+                        toast({
+                            type: 'success',
+                            content: `Copied Lemshare link to clipboard`,
+                            title: 'Copied'
+                        })
+                    }}
+                >
+                    <span>Lemshare</span>
+                </MenuButton>
+
+                <!--Threadiverse--->
+                <MenuButton color="info" icon={LinkIcon} iconSize={16} title="Threadiverse Link"
+                    on:click={() => {
+                        //https://threadiverse.link/u/user@instance.xyz
+                        if (communityDetails?.community_view.community) {
+                            navigator.clipboard.writeText(`https://threadiverse.link/c/${communityDetails.community_view.community.name}@${new URL(communityDetails.community_view.community.actor_id).host}`)
+                        }
+                        toast({
+                            type: 'success',
+                            content: `Copied Threadiverse link to clipboard`,
+                            title: 'Copied'
+                        })
+                    }}
+                >
+                    <span>Threadiverse</span>
+                </MenuButton>
+                
+                
+                <hr class="dark:opacity-10 w-[90%] my-2 mx-auto" />
+                
+                <!---Actor ID--->
+                <MenuButton color="info" icon={LinkIcon} iconSize={16} title="Actor ID"
+                    on:click={() => {
+                         if (communityDetails?.community_view.community) navigator.clipboard.writeText(communityDetails.community_view.community.actor_id)
+                        toast({
+                            type: 'success',
+                            content: `Copied actor ID to clipboard`,
+                            title: 'Copied'
+                        })
+                    }}
+                >
+                    <span>Actor ID</span>
+                </MenuButton>
+
+                <!---Local Link--->
+                <MenuButton color="info" icon={LinkIcon} iconSize={16} title="Local Link"
+                    on:click={() => {
+                         if (communityDetails?.community_view.community) navigator.clipboard.writeText(`https://${$instance}/c/${communityDetails.community_view.community.name}@${new URL(communityDetails.community_view.community.actor_id).host}`)
+                        toast({
+                            type: 'success',
+                            content: `Copied local user link to clipboard`,
+                            title: 'Copied'
+                        })
+                    }}
+                >
+                    <span>Local Link</span>
+                </MenuButton>
+            </Menu>
             
         {/if}
     </div>
