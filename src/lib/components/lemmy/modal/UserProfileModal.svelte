@@ -9,7 +9,7 @@
     import { goto } from "$app/navigation"
     import { instance } from "$lib/instance"
     import { amModOfAny, isAdmin } from '$lib/components/lemmy/moderation/moderation'
-    import { isBlocked, blockUser } from '$lib/lemmy/user'
+    import { isBlocked, blockUser, filterUser, userIsFiltered } from '$lib/lemmy/user'
     import { onMount } from "svelte"
     import { profile } from '$lib/auth'
     import { slide } from "svelte/transition"
@@ -78,7 +78,9 @@
     let modalWidth = defaultWidth
     let userFiltered = false
 
-    $:  userFiltered = (personDetails?.person_view?.person?.actor_id && $userSettings.hidePosts.userList.includes(personDetails.person_view.person.actor_id)) ? true : false
+    //$:  userFiltered = (personDetails?.person_view?.person?.actor_id && $userSettings.hidePosts.userList.includes(personDetails.person_view.person.actor_id)) ? true : false
+    $:  userFiltered = userIsFiltered(personDetails?.person_view?.person?.actor_id)
+    
     $:  if (originalUser != user) {
         originalUser = user
         loadDetails()
@@ -156,25 +158,7 @@
 
     function filter() {
         if  (!personDetails?.person_view) return
-        
-        //Un-Filter
-        if (userFiltered) {
-            const index = $userSettings.hidePosts.userList.findIndex((e) => e == personDetails.person_view.person.actor_id)
-            if (index >=0 ) $userSettings.hidePosts.userList.splice(index, 1)
-            userFiltered = false
-        }
-        // Add community actor_id to community filter list
-        else {
-            $userSettings.hidePosts.userList.push(personDetails.person_view.person.actor_id)
-            $userSettings.hidePosts.userList.sort()
-            userFiltered = true
-        }
-        
-        $userSettings = $userSettings
-        dispatchWindowEvent('filterUser', {
-            actor_id: personDetails.person_view.person.actor_id,
-            filtered: userFiltered
-        })
+        userFiltered = filterUser(personDetails.person_view.person.actor_id)
         returnMainMenu()
     }
   
