@@ -664,6 +664,8 @@
             </Button>
         </span>
         --->
+
+
         <!---Sort Direction--->
         <span class="flex flex-col ml-auto gap-1">
             <span class="font-bold text-sm opacity-80">Sort Direction</span>
@@ -696,7 +698,7 @@
         
         <div class="flex flex-col w-full items-start border-b dark:border-zinc-700 mx-auto {($userSettings.uiState.feedMargins && !inModal)  ? 'max-w-3xl' : 'w-full'}">
             {#if $profile?.user}
-                <CollapseButton icon={Funnel} title="Feed Filters" bottomBorder={false} class="w-full">
+                <CollapseButton icon={Funnel} title="Feed Filters" middleLine bottomBorder={false} class="w-full">
                     <SettingToggleContainer>
                         <SettingToggle small bind:value={liked_only} icon={HandThumbUp} title="Show Only Liked Posts" on:change={(e) => {
                             controller.liked_only = e.detail  
