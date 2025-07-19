@@ -7,7 +7,42 @@ import { goto } from '$app/navigation'
 import { profile } from '$lib/auth.js'
 import { toast } from '$lib/components/ui/toasts/toasts.js'
 import { trycatch } from '$lib/util.js'
+import { userSettings} from '$lib/settings'
+import { dispatchWindowEvent } from '$lib/ui/events'
 
+
+export const userIsFiltered = function(actor_id?:string): boolean {
+    if (!actor_id) return false
+    const $userSettings = get(userSettings)
+    return $userSettings.hidePosts.userList.includes(actor_id) ? true : false
+}
+
+export const filterUser = function(actor_id:string):boolean {
+    let userFiltered = userIsFiltered(actor_id)
+    const $userSettings = get(userSettings)
+
+    //Un-Filter
+    if (userFiltered) {
+        const index = $userSettings.hidePosts.userList.findIndex((e) => e == actor_id)
+        if (index >=0 ) $userSettings.hidePosts.userList.splice(index, 1)
+        userFiltered = false
+    }
+    // Add community actor_id to community filter list
+    else {
+        $userSettings.hidePosts.userList.push(actor_id)
+        $userSettings.hidePosts.userList.sort()
+        userFiltered = true
+    }
+    
+    userSettings.set($userSettings)
+    
+    dispatchWindowEvent('filterUser', {
+        actor_id: actor_id,
+        filtered: userFiltered
+    })
+
+    return userFiltered
+}
 
 export const isBlocked = function (me: PersonData|undefined, user: number) {
     if (!me) return false
