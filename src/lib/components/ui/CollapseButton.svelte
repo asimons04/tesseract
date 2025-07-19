@@ -1,5 +1,6 @@
 <script lang="ts">
     import Button from '$lib/components/input/Button.svelte'
+    import { hrColors } from '$lib/ui/colors'
     import { slide } from 'svelte/transition'
     import {
         Icon,
@@ -8,6 +9,7 @@
         type IconSource
     } from 'svelte-hero-icons'
     
+    
     export let expanded:boolean = false
     export let icon:IconSource | undefined = undefined
     export let title:string = ' '
@@ -15,6 +17,7 @@
     export let innerClass:string = ''
     export let iconSize:number = 24
     export let bottomBorder: boolean = true
+    export let middleLine: boolean = false
     export let bold: boolean = true
     export let truncate: boolean = false
 </script>
@@ -30,10 +33,14 @@
             {/if}
         </span>
 
-        <span class="w-full flex flex-row justify-between {heading ? 'text-xl' : 'text-xs'} {bold ? 'font-bold' : ''} {truncate ? 'truncate' : ''}">
+        <span class="flex flex-row justify-between whitespace-nowrap {heading ? 'text-xl' : 'text-xs'} {bold ? 'font-bold' : ''} {truncate ? 'truncate' : ''}">
             <slot name="title" />
             {title}
         </span>
+
+        {#if middleLine}
+            <hr class="flex w-full {hrColors} my-auto" />
+        {/if}
         
         <span class="text-xs font-medium mr-2 ml-auto px-2.5 py-0.5 my-auto">
             <Icon src={ChevronUp} mini height={18} width={18} class="transition-transform {expanded ? '' : 'rotate-180'}"/>
