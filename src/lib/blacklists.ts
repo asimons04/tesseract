@@ -17,13 +17,14 @@ const FAKE_NEWS = [
     'kaggle.com',
     'news.cctv.com',
     'tass.com',
-    'www.infoterkiniviral.com',
-    'www.kaggle.com',
-    'www.libsoftiktok.com',
     'libsoftiktok.com',
     'tiblur.com',
-    'www.tiblur.com',
     'todaycnn.com',
+    'www.kaggle.com',
+    'www.libsoftiktok.com',
+    'www.infoterkiniviral.com',
+    'www.tass.com',
+    'www.tiblur.com',
     'www.todaycnn.com',
     ...BLACKLIST_CONFIG.FAKE_NEWS_BLACKLIST
 ]
@@ -144,8 +145,26 @@ export const EXTREMIST_COMMUNITIES = [
     'https://awful.systems/c/sneerclub'
 ]
 
+export const MISINFO_PROPAGANDA_COMMUNITIES = [
+    'https://lemmy.ml/c/europe',
+    'https://lemmy.ml/c/geopolitics',
+    'https://lemmy.ml/c/liberalnews',
+    'https://lemmy.ml/c/politicalhumor',
+    'https://lemmy.ml/c/news',
+    'https://lemmy.ml/c/usa',
+    'https://lemmy.ml/c/worldnews'
+
+]
+
 
 export const SHADOWBAN_USERS = [
+    ['https://lemmy.ml/u/jackeroni', 'Misinformaiton/Propaganda'],
+    ['https://lemmy.ml/u/yogthos', 'Misinformation/Propaganda, Conspiracy, '],
+    ['https://lemmy.ml/u/davel', 'Misinformation/Propaganda'],
+    ['https://lemmy.ml/u/geneva_convenience', 'Misinformation/Propaganda, Hostility'],
+    ['https://sh.itjust.works/u/vile_asslips', 'Troll, Low-Effort, Juvenile, Non-Productive'],
+    ['https://lemmy.world/u/toomanypancakes', 'Incivility, hostility'],
+    ['https://piefed.world/u/toomanypancakes', 'Incivility, hostility'],
     'https://lemmy.world/u/Guns0rWeD13',
     'https://lemmy.today/u/Rivalarrival',
     'https://lemmy.world/u/CorruptCheesecake',
@@ -199,7 +218,6 @@ export const EMBARGOED_INSTANCES = [
     'hexbear.com',
     'hilariouschaos.com',
     'lemmy.doesnotexist.club',
-    'lemmy.ml',
     'lemmygrad.ml',
     'lemmyusa.com',
     'r.nf',
