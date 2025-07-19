@@ -4,7 +4,7 @@
     import { buildCommentsTreeAsync } from '$lib/components/lemmy/comment/comments.js'
     import { getClient } from '$lib/lemmy.js'
     import { amMod, isAdmin, ModQueue } from '../moderation/moderation'
-    import { hrColors } from '$lib/ui/colors'
+    import { dividerColors, hrColors } from '$lib/ui/colors'
     import { instance } from '$lib/instance'
     import { profile } from '$lib/auth.js'
     import { toast } from '$lib/components/ui/toasts/toasts'
@@ -20,12 +20,23 @@
     import Spinner          from '$lib/components/ui/loader/Spinner.svelte'
 
     import { 
+        ArrowDown,
         BarsArrowDown,
+        ChatBubbleLeft,
         ChatBubbleLeftRight,
         ChevronDoubleUp,
+        Cog6Tooth,
         ExclamationTriangle,
+        EyeSlash,
+        FaceSmile,
+        Funnel,
+        Newspaper,
+        Photo,
         ShieldCheck,
     } from 'svelte-hero-icons'
+    import SettingToggle from '$lib/components/ui/settings/SettingToggle.svelte';
+    import { userSettings } from '$lib/settings';
+    import CollapseButton from '$lib/components/ui/CollapseButton.svelte';
     
     
     
@@ -65,16 +76,17 @@
 {/if}
 
 <div bind:this={commentSectionContainer} id="comments" class="mt-4 flex flex-col gap-2 w-full h-full min-h-[300px]">
-    
 
     <div class="flex flex-row justify-between items-center px-2">
         
-        <div class="font-bold text-lg h-[40px] mt-auto">
+        <div class="flex flex-col font-bold text-lg">
             Comments 
-            <span class="text-sm font-normal ml-2 opacity-80">
+            <span class="text-base font-bold ml-4 opacity-80">
                 <FormattedNumber number={data.post.post_view.counts.comments} />
             </span>
         </div>
+
+       
 
         <!---Multi-Comment Mod Button--->
         {#if isAdmin($profile?.user) || amMod($profile?.user, data.post.post_view.community)}
@@ -111,6 +123,23 @@
         </span>
         
     </div>
+
+    <CollapseButton icon={Cog6Tooth} bottomBorder={false} middleLine title="Comment Settings">
+        <div class="Flex flex-col divide-y {dividerColors} gap-1 justify-between items-center px-2">
+            <SettingToggle small icon={Funnel} title="Enable Filters" bind:value={$userSettings.hidePosts.enabled}/>
+            
+            <!---Only Visible if Filtering Enabled--->
+            <SettingToggle small icon={EyeSlash} title="Allow Revealing Comments" condition={$userSettings.hidePosts.enabled} bind:value={$userSettings.hidePosts.allowRevealComments} />
+            <SettingToggle small icon={EyeSlash} title="Hide Users from Blocked Instances" condition={$userSettings.hidePosts.enabled} bind:value={$userSettings.hidePosts.hideUsersFromBlockedInstances} />
+
+            <SettingToggle small icon={Photo} title="Enable Inline Images" bind:value={$userSettings.inlineImages} />
+            <SettingToggle small icon={FaceSmile} title="Large Custom Emojis" bind:value={$userSettings.uiState.largeEmojis} />
+            <SettingToggle small icon={ArrowDown} title="Color Coded Conversation Lines" bind:value={$userSettings.uiState.coloredCommentThreadLines} />
+            <SettingToggle small icon={BarsArrowDown} title="Limit Comment Height" bind:value={$userSettings.uiState.limitCommentHeight} />
+            <SettingToggle small icon={Newspaper} title="Show Inline Removal Reasons" bind:value={$userSettings.autoLookupRemovedCommentReasons} />
+            <SettingToggle small icon={ChatBubbleLeft} title="Show Alt Text" bind:value={$userSettings.uiState.showAltText} />
+        </div>
+    </CollapseButton>
 
     {#if data.singleThread}
         <Card class="py-2 px-4 text-sm flex flex-row items-center flex-wrap justify-between">
