@@ -129,7 +129,7 @@
             <SettingToggle small icon={Funnel} title="Enable Filters" bind:value={$userSettings.hidePosts.enabled}/>
             
             <!---Only Visible if Filtering Enabled--->
-            <SettingToggle small icon={EyeSlash} title="Allow Revealing Comments" condition={$userSettings.hidePosts.enabled} bind:value={$userSettings.hidePosts.allowRevealComments} />
+            <SettingToggle small icon={EyeSlash} title="Allow Revealing Filtered Comments" condition={$userSettings.hidePosts.enabled} bind:value={$userSettings.hidePosts.allowRevealComments} />
             <SettingToggle small icon={EyeSlash} title="Hide Users from Blocked Instances" condition={$userSettings.hidePosts.enabled} bind:value={$userSettings.hidePosts.hideUsersFromBlockedInstances} />
 
             <SettingToggle small icon={Photo} title="Enable Inline Images" bind:value={$userSettings.inlineImages} />
