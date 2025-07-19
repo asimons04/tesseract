@@ -85,12 +85,12 @@
         }}
     >
         
-        {#if $site?.site_view?.local_site?.enable_downvotes && !$userSettings.uiState.disableDownvotes}
-            {#if !upvoting}    
+        {#if !upvoting}    
+            {#if $site?.site_view?.local_site?.enable_downvotes && !$userSettings.uiState.disableDownvotes}
                 <UpvoteIcon width={small ? 16 : 18} filled={post.my_vote == 1}/>
+            {:else}
+                <Icon src={Heart} width={small ? 16 : 18} mini />
             {/if}
-        {:else}
-            <Icon src={Heart} width={small ? 16 : 18} mini />
         {/if}
 
         {#if $userSettings.uiState.showScores}

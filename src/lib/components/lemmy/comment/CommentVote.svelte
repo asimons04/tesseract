@@ -19,6 +19,8 @@
     export let comment: CommentView
     export let onHomeInstance: boolean = false
 
+    let upvoting = false
+    let downvoting = false
     
 
     const voteColor = () => {
@@ -49,18 +51,24 @@
 </script>
 
 <div class="flex flex-row items-center gap-0 cursor-pointer border border-slate-300 dark:border-zinc-700 items-center text-sm gap-0 rounded-lg">
-    <Button disabled={!$profile?.user || !onHomeInstance || comment.banned_from_community} aria-label="Upvote" size="sm" color="tertiary" alignment="center"
+    <Button disabled={!$profile?.user || !onHomeInstance || comment.banned_from_community || upvoting || downvoting} 
+        loading={upvoting}
+        aria-label="Upvote" size="sm" color="tertiary" alignment="center"
         class="{comment.my_vote == 1 ? voteColor() : ''} !gap-0.5"
         on:click={async () => {
+            upvoting = true
             comment.counts = await vote(comment.my_vote == 1 ? 0 : 1)
             comment.my_vote = comment.my_vote == 1 ? 0 : 1
+            upvoting = false
         }}
         
     >
-        {#if $site?.site_view?.local_site?.enable_downvotes && !$userSettings.uiState.disableDownvotes}
-            <UpvoteIcon width={19} filled={comment.my_vote == 1}/>
-        {:else}
-            <Icon src={Heart} width={19} mini />
+        {#if !upvoting}
+            {#if $site?.site_view?.local_site?.enable_downvotes && !$userSettings.uiState.disableDownvotes}
+                <UpvoteIcon width={19} filled={comment.my_vote == 1}/>
+            {:else}
+                <Icon src={Heart} width={19} mini />
+            {/if}
         {/if}
 
         {#if $userSettings.uiState.showScores}
@@ -71,15 +79,21 @@
     
     <!---Hide downvote buttons if site config has globally disabled downvotes--->
     {#if $site?.site_view?.local_site?.enable_downvotes && !$userSettings.uiState.disableDownvotes}
-        <Button disabled={!$profile?.user || !onHomeInstance || comment.banned_from_community} aria-label="Downvote" size="sm" color="tertiary" alignment="center"
+        <Button disabled={!$profile?.user || !onHomeInstance || comment.banned_from_community || upvoting || downvoting}
+            loading={downvoting}
+            aria-label="Downvote" size="sm" color="tertiary" alignment="center"
             class="{comment.my_vote == -1 ? voteColor() : ''} !gap-0.5"
             on:click={async () => {
+                downvoting = true
                 comment.counts = await vote(comment.my_vote == -1 ? 0 : -1)
                 comment.my_vote = comment.my_vote == -1 ? 0 : -1
+                downvoting = false
             }}
             
         >
-            <UpvoteIcon width={19} filled={comment.my_vote == -1} downvote/>
+            {#if !downvoting}
+                <UpvoteIcon width={19} filled={comment.my_vote == -1} downvote/>
+            {/if}
 
             {#if $userSettings.uiState.showScores}
                 <FormattedNumber number={comment.counts.downvotes} />
