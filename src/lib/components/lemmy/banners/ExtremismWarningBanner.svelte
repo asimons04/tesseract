@@ -48,13 +48,12 @@
             <Placeholder
                 title="Tesseract Will Not Tolerate Extremism" 
                 description="You are subscribed to one or more communities that are dedicated to 
-                    advocating, promoting, endorsing, and/or praising extremism, violence, and/or vigilante justice." 
+                    advocating, promoting, or endorsing acts of violence, murder, hate, conspiracy,
+                    and/or other forms of extremism." 
             />
         </Card>
         
-        
         <span class="my-2" />
-
         
         <span class="flex flex-col gap-2 my-2 text-sm">
             <p>Neither Tesseract nor its developers will knowingly facilitate extremism nor any advocacy thereof.</p>
@@ -77,7 +76,7 @@
             <p>
                 You are free to remain subscribed to these communities, but 
                 you will need to logout and find another app. Tesseract will not be used
-                to facilitate extremism.
+                for the advocacy of extremism.
             </p>
 
             <p>
