@@ -81,12 +81,12 @@
             </p>
 
             <p>
-                By clicking "continue", you agree to be unsubscribed from the communities listed above. 
+                By clicking "continue", you agree to allow Tesseract to unsubscribe you from the communities listed above. 
             </p>
         </span>
     </div>
 
-    <span class="flex flex-col gap-2 md:flex-row w-full justify-between" slot="buttons">
+    <span class="flex flex-row gap-2 w-full justify-between" slot="buttons">
         <Button color="danger" size="lg" icon={Trash} title="Logout" on:click={() => {
                 if ($profile?.id) {
                     deleteProfile($profile.id)
