@@ -1,10 +1,11 @@
 <script lang="ts">
-    import type { BanUserEvent } from '$lib/ui/events'
+    import type { BanUserEvent, FilterUserEvent } from '$lib/ui/events'
     import type { Person } from 'lemmy-js-client'
     
     import { createEventDispatcher } from 'svelte';
     import { isNewAccount } from '../post/helpers'
-    import { userProfileModal } from '../moderation/moderation';
+    import { userIsFiltered } from '$lib/lemmy/user'
+    import { userProfileModal } from '../moderation/moderation'
     import { userSettings } from '$lib/settings.js'
 
     import Avatar from '$lib/components/ui/Avatar.svelte'
@@ -17,7 +18,8 @@
         Cake,
         EyeSlash,
         NoSymbol, 
-        Trash, 
+        Trash,
+        Funnel, 
     } from 'svelte-hero-icons'
     
     
@@ -45,6 +47,9 @@
     const dispatcher = createEventDispatcher()
     
     let displayName: string = user.name
+    
+    let userFiltered = false
+    $:  user, userFiltered = userIsFiltered(user.actor_id)
 
     $:  user.id, $userSettings.displayNames, displayName = generateDisplayName(user)
 
@@ -52,6 +57,13 @@
         BanUserEvent: function (e: BanUserEvent) {
             if (e.detail.person_id == user.id) {
                 user.banned = e.detail.banned
+                user = user
+            }
+        },
+
+        FilterUserEvent: function (e: FilterUserEvent) {
+            if (e.detail.actor_id == user.actor_id) {
+                userFiltered = e.detail.filtered
                 user = user
             }
         }
@@ -90,7 +102,7 @@
    
 </script>
 
-<svelte:window on:banUser={handlers.BanUserEvent} />
+<svelte:window on:banUser={handlers.BanUserEvent} on:filterUser={handlers.FilterUserEvent} />
 
 <a href={linkFromCommunity(user)} on:click={loadProfileModal} 
     class="inline-flex flex-col md:flex-row  gap-1 items-start md:items-center hover:underline w-full truncate
@@ -138,6 +150,12 @@
                 {#if badges && blocked}
                     <div class="text-red-500 mr-1" title="Blocked">
                         <Icon src={EyeSlash} mini size="12" />
+                    </div>
+                {/if}
+
+                {#if badges && userFiltered}
+                    <div class="text-orange-500 mr-1" title="Filtered">
+                        <Icon src={Funnel} mini size="12" />
                     </div>
                 {/if}
 
