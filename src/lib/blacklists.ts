@@ -169,6 +169,10 @@ export const SHADOWBAN_USERS = [
     ['https://sh.itjust.works/u/ScrewMysticScrewAI', 'Single-purpose Troll'],
     ['https://aussie.zone/u/Aussiemandeus', 'Hostility, Tranphibia'],
     ['https://feddit.org/u/Zwuzelmaus', 'Low-effort, confidently-incorrect, Debbie-downer'],
+    ['https://lemmy.world/u/SoftestSapphic', 'Advocating Violence, Doomerism'],
+    ['https://lemmy.world/u/Ensign_Crab', 'Repeated trolling, sealioning, slapfighting, misinformation, flame wars, antagonistic'],
+    ['https://lemmy.ca/u/Tiger666', 'Overuses/waters down the word \'fascist\', advocating violence, hostility, incapable of civilized disagreement'],
+
     'https://lemmy.world/u/Guns0rWeD13',
     'https://lemmy.today/u/Rivalarrival',
     'https://lemmy.world/u/CorruptCheesecake',
