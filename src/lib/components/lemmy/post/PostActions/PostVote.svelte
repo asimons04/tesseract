@@ -84,17 +84,19 @@
             upvoting = false
         }}
     >
-        {#if !upvoting}
-            {#if $site?.site_view?.local_site?.enable_downvotes && !$userSettings.uiState.disableDownvotes}
+        
+        {#if $site?.site_view?.local_site?.enable_downvotes && !$userSettings.uiState.disableDownvotes}
+            {#if !upvoting}    
                 <UpvoteIcon width={small ? 16 : 18} filled={post.my_vote == 1}/>
-            {:else}
-                <Icon src={Heart} width={small ? 16 : 18} mini />
             {/if}
-
-            {#if $userSettings.uiState.showScores}
-                <FormattedNumber number={post.counts.upvotes} />
-            {/if}
+        {:else}
+            <Icon src={Heart} width={small ? 16 : 18} mini />
         {/if}
+
+        {#if $userSettings.uiState.showScores}
+            <FormattedNumber number={post.counts.upvotes} />
+        {/if}
+        
     </Button>
     
   
@@ -116,11 +118,12 @@
         >
             {#if !downvoting}
                 <UpvoteIcon width={small ? 16 : 18} filled={post.my_vote == -1} downvote/>
-
-                {#if $userSettings.uiState.showScores}
-                    <FormattedNumber number={post.counts.downvotes} />
-                {/if}
             {/if}
+            
+            {#if $userSettings.uiState.showScores}
+                <FormattedNumber number={post.counts.downvotes} />
+            {/if}
+            
         </Button>
     {/if}
 </div>
