@@ -74,6 +74,7 @@
     let depth                       = getDepthFromComment(node.comment_view.comment) ?? 0
     let color: 'default' | 'warning' | 'error' | 'success' | 'info' = getCardColor(node)
     let threadLineColor = ''
+    let ringColor = ''
     let commentBodyContainerDoesScroll  = false
     let commentContainsImage            = false
     
@@ -86,7 +87,8 @@
     
     $: node, commentText, commentContainsImage = commentText.includes('![')
     $: node, commentText, commentBodyContainerDoesScroll = (commentBodyContainer?.scrollHeight > commentBodyContainer?.clientHeight) || commentContainsImage
-    $: node, threadLineColor = getThreadLineColor()
+    $: node, $userSettings.uiState.coloredCommentThreadLines, threadLineColor = getThreadLineColor()
+    $: node, $userSettings.uiState.coloredCommentThreadLines, ringColor = getAvatarRingColor()
     
     interface CommentModlogLookup {
         reason: string | undefined
@@ -296,7 +298,7 @@
     }
 
     function getAvatarRingColor() {
-        if (standalone || (depth == 0 && node.comment_view.counts.child_count < 1 && node.children.length < 1)) return undefined
+        if (standalone || (depth == 0 && node.comment_view.counts.child_count < 1 && node.children.length < 1)) return ''
         
         // If conversation line colors are disabled, return black/white 
         if (!$userSettings.uiState.coloredCommentThreadLines) return 'ring-black/80      dark:ring-white/80'
@@ -333,7 +335,19 @@
     
     
     $:  node, $userSettings, $profile?.user, overrideHideComment, hideComment = shouldHideComment()
+    $:  $userSettings.hidePosts.enabled, $userSettings.hidePosts.allowRevealComments, onFilterStateChange()
+
+
     
+    
+
+    function onFilterStateChange() {
+        
+        if ($userSettings.hidePosts.enabled) {
+            overrideHideComment = false
+            hideComment = shouldHideComment()
+        }
+    }
     function shouldHideComment(): boolean {
         if (!$userSettings.hidePosts.enabled) return false
         
@@ -493,9 +507,9 @@
             >
                 <span class:font-bold={op} class="flex flex-row gap-1 items-center w-full">
                     {#if hideComment}
-                        <Avatar url="/logo_512.png"  alt="Tesseract Logo" width={20} ring ringColor={getAvatarRingColor()}/>
+                        <Avatar url="/logo_512.png"  alt="Tesseract Logo" width={20} ring ringColor={ringColor}/>
                     {:else}
-                        <Avatar url={node.comment_view.creator.avatar} alt={node.comment_view.creator.actor_id} width={20} ring ringColor={getAvatarRingColor()}/>
+                        <Avatar url={node.comment_view.creator.avatar} alt={node.comment_view.creator.actor_id} width={20} ring ringColor={ringColor}/>
                     {/if}
                 
                     <span class="flex w-[calc(100%-150px)]">
