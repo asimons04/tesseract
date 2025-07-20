@@ -63,7 +63,7 @@
     let replying = false
     let reply = ''
     let loading = false
-    let reporting = false
+    let markingRead = false
     let itemType: InboxFeedType
    
     let subject: string
@@ -191,9 +191,13 @@
     <span class="flex flex-row w-full" transition:fade>
         
         <span class="mt-3 mb-auto w-[50px]">
-            <Button color="tertiary-border" size="sm" title="Mark as {read ? 'unread': 'read'}" on:click={() => markAsRead(!read)}>
-                <Icon src={read ? EnvelopeOpen : Envelope} width={22} mini class={read ? 'opacity-60' : ''}/>
-            </Button>
+            <Button color="tertiary-border" size="sm" title="Mark as {read ? 'unread': 'read'}" 
+                icon={read ? EnvelopeOpen : Envelope}
+                iconSize={22}
+                iconClass={read ? 'opacity-60' : ''}
+                loading={loading}
+                on:click={() => markAsRead(!read)}
+            />
         </span>
         
         <CollapseButton bind:expanded bind:icon={icon} bold={!read} truncate={true} class="w-[calc(100%-50px)]" innerClass="!pl-0 ml-[-50px]">
