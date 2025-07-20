@@ -124,13 +124,13 @@
             <span class="flex flex-row items-center">
                     
                 {#if badges && distinguishAdminsMods && admin}
-                    <div class="text-red-500 mr-1" title="Admin">
+                    <div class="flex mb-auto text-red-500 mr-1" title="Admin">
                         <ShieldIcon width={12} filled />
                     </div>
                 {/if}
                 
                 {#if badges && distinguishAdminsMods && mod}
-                    <div class="text-green-500 mr-1" title="Moderator">
+                    <div class="flex mb-auto text-green-500 mr-1" title="Moderator">
                         <ShieldIcon width={12} filled />
                     </div>
                 {/if}
