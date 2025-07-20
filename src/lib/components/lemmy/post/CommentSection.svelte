@@ -79,14 +79,13 @@
 
     <div class="flex flex-row justify-between items-center px-2">
         
-        <div class="flex flex-col font-bold text-lg">
-            Comments 
-            <span class="text-base font-bold ml-4 opacity-80">
+        <!---Comment Count Indicator--->        
+        <div class="flex flex-row gap-1 font-bold text-lg">
+            <span class="opacity-80">
                 <FormattedNumber number={data.post.post_view.counts.comments} />
             </span>
+            {data.post.post_view.counts.comments == 1 ? 'Comment' : 'Comments'}
         </div>
-
-       
 
         <!---Multi-Comment Mod Button--->
         {#if isAdmin($profile?.user) || amMod($profile?.user, data.post.post_view.community)}
@@ -125,7 +124,7 @@
     </div>
 
     <CollapseButton icon={Cog6Tooth} bottomBorder={false} middleLine title="Comment Settings">
-        <div class="Flex flex-col divide-y {dividerColors} gap-1 justify-between items-center px-2">
+        <div class="flex flex-col divide-y {dividerColors} gap-1 justify-between items-center px-2">
             <SettingToggle small icon={Funnel} title="Enable Filters" bind:value={$userSettings.hidePosts.enabled}/>
             
             <!---Only Visible if Filtering Enabled--->
@@ -178,11 +177,11 @@
                     <hr class="my-4 {hrColors}" />
                     <div class="flex flex-row w-full">
                         
-                        <div class="flex font-bold text-lg items-center w-1/3">
-                            Comments 
-                            <span class="flex text-sm font-normal ml-2 opacity-80">
+                        <div class="flex flex-row gap-1 font-bold text-lg">
+                            <span class="opacity-80">
                                 <FormattedNumber number={data.post.post_view.counts.comments} />
                             </span>
+                            {data.post.post_view.counts.comments == 1 ? 'Comment' : 'Comments'}
                         </div>
 
                         <!---Multi-Comment Mod Button--->
