@@ -21,6 +21,7 @@
     
     import { addMBFCResults, findCrossposts, sleep } from "../post/helpers"
     import { amModOfAny } from '../moderation/moderation'
+    import { dividerColors, hrColors } from "$lib/ui/colors"
     import { getClient, minAPIVersion } from "$lib/lemmy"
     import {  goto } from '$app/navigation'
     import { instance } from '$lib/instance'
@@ -34,7 +35,6 @@
     import { StorageController } from "$lib/storage-controller"
     import { userSettings } from "$lib/settings"
     
-    import Button                   from '$lib/components/input/Button.svelte'
     import CollapseButton           from "$lib/components/ui/CollapseButton.svelte"
     import InfiniteScrollDiv        from "$lib/components/ui/infinitescroll/InfiniteScrollDiv.svelte"
     import Pageination              from "$lib/components/ui/Pageination.svelte"
@@ -43,10 +43,25 @@
     import RelativeDate             from '$lib/components/util/RelativeDate.svelte'
     import SelectMenu               from "$lib/components/input/SelectMenu.svelte"
     import SettingToggle            from "$lib/components/ui/settings/SettingToggle.svelte"
-    import SettingToggleContainer   from "$lib/components/ui/settings/SettingToggleContainer.svelte"
     import Spinner                  from "$lib/components/ui/loader/Spinner.svelte"
     
-    import { ArchiveBox, ArrowPath, Bars3, BarsArrowDown, Bookmark, ExclamationCircle, Eye, EyeSlash, Funnel, HandThumbDown, HandThumbUp } from "svelte-hero-icons"
+    import { 
+        ArchiveBox, 
+        Bars3, 
+        BarsArrowDown,
+        Bookmark,
+        Cake, 
+        Cog6Tooth, 
+        ExclamationCircle, 
+        ExclamationTriangle, 
+        Eye,
+        EyeSlash, 
+        FaceFrown, 
+        Funnel, 
+        HandThumbDown, 
+        HandThumbUp
+    } from "svelte-hero-icons"
+    
     
     
     
@@ -698,49 +713,76 @@
         
         <div class="flex flex-col w-full items-start border-b dark:border-zinc-700 mx-auto {($userSettings.uiState.feedMargins && !inModal)  ? 'max-w-3xl' : 'w-full'}">
             {#if $profile?.user}
-                <CollapseButton icon={Funnel} title="Feed Filters" middleLine bottomBorder={false} class="w-full">
-                    <SettingToggleContainer>
-                        <SettingToggle small bind:value={liked_only} icon={HandThumbUp} title="Show Only Liked Posts" on:change={(e) => {
-                            controller.liked_only = e.detail  
-                        }}/>
-                        
-                        <SettingToggle small bind:value={disliked_only} icon={HandThumbDown} title="Show Only Disliked Posts" on:change={(e) => {
-                            controller.disliked_only = e.detail  
-                        }}/>
-            
-                        <SettingToggle small bind:value={saved_only} icon={Bookmark} title="Show Only Saved Posts {community_name || community_id ? 'in This Community' : ''}" on:change={(e) => {
-                            controller.saved_only = e.detail  
-                        }}/>
+                <CollapseButton icon={Cog6Tooth} title="Feed Settings" middleLine bottomBorder={false} class="w-full">
+                    <div class="flex flex-col w-full max-h-[30vh] overflow-y-auto">
+                        <div class="flex flex-row gap-1 items-center w-full">
+                            <span class="whitespace-nowrap">Tesseract Options</span>
+                            <hr class="flex w-full {hrColors} my-auto" />
 
-                        <!---Show Hidden Posts: Requires at least 0.19.4--->
-                        <SettingToggle small bind:value={show_hidden} icon={EyeSlash} title="Show Hidden Posts" 
-                            condition={minAPIVersion('0.19.4')}
-                            on:change={(e) => {
-                                controller.show_hidden = e.detail
-                                $userSettings.hidePosts.hidden = !e.detail
-                            }}
-                        />
+                        </div>
 
-                        <!---Show Read Posts: Requires at least 0.19.6--->
-                        <SettingToggle small bind:value={show_read} icon={Eye} title="Show Read Posts" 
-                            condition={minAPIVersion('0.19.6')}
-                            on:change={(e) => {
-                                controller.show_read = e.detail
-                                $userSettings.hidePosts.read = !e.detail
-                            }}
-                        />
-
-                        <!---Show NSFW Posts: Requires at least 0.19.6--->
-                        <SettingToggle small bind:value={show_nsfw} icon={ExclamationCircle} title="Show NSFW Posts" 
-                            condition={minAPIVersion('0.19.6')}
-                            on:change={(e) => {
-                                controller.show_nsfw = e.detail
-                                $userSettings.hidePosts.nsfw = !e.detail
-                            }}
-                        />
+                        <div class="flex flex-col divide-y {dividerColors} gap-1 justify-between items-center pl-4 pr-2">
+                            <SettingToggle small icon={Funnel} title="Enable Filters" bind:value={$userSettings.hidePosts.enabled}/>
+                            
+                            <!---Only Visible if Filtering Enabled--->
+                            <SettingToggle small icon={EyeSlash} title="Allow Revealing Filtered Posts" condition={$userSettings.hidePosts.enabled} bind:value={$userSettings.hidePosts.allowReveal} />
+                            <SettingToggle small icon={EyeSlash} title="Hide Users from Blocked Instances" condition={$userSettings.hidePosts.enabled} bind:value={$userSettings.hidePosts.hideUsersFromBlockedInstances} />
+                            <SettingToggle small icon={EyeSlash} title="Hide Posts Marked NSFW" condition={$userSettings.hidePosts.enabled} bind:value={$userSettings.hidePosts.filterNSFW} />
+                            <SettingToggle small icon={ExclamationTriangle} title="Hide Low Credibility Sources" condition={$userSettings.hidePosts.enabled} bind:value={$userSettings.hidePosts.MBFCLowCredibility} />
+                            <SettingToggle small icon={Cake} title="Hide Content From New Accounts" condition={$userSettings.hidePosts.enabled} bind:value={$userSettings.hidePosts.newAccounts} />
+                            <SettingToggle small icon={FaceFrown} title="Hide Content From Bot Accounts" condition={$userSettings.hidePosts.enabled} bind:value={$userSettings.hidePosts.botAccounts} />
+                        </div>
 
 
-                    </SettingToggleContainer>
+                        <div class="flex flex-row gap-1 items-center w-full">
+                            <span class="whitespace-nowrap">API Fetch Options</span>
+                            <hr class="flex w-full {hrColors} my-auto" />
+                        </div>
+
+                        <div class="flex flex-col divide-y {dividerColors} gap-1 justify-between items-center pl-4 pr-2">
+
+                            <SettingToggle small bind:value={liked_only} icon={HandThumbUp} title="Show Only Liked Posts" on:change={(e) => {
+                                controller.liked_only = e.detail  
+                            }}/>
+                            
+                            <SettingToggle small bind:value={disliked_only} icon={HandThumbDown} title="Show Only Disliked Posts" on:change={(e) => {
+                                controller.disliked_only = e.detail  
+                            }}/>
+                
+                            <SettingToggle small bind:value={saved_only} icon={Bookmark} title="Show Only Saved Posts {community_name || community_id ? 'in This Community' : ''}" on:change={(e) => {
+                                controller.saved_only = e.detail  
+                            }}/>
+
+                            <!---Show Hidden Posts: Requires at least 0.19.4--->
+                            <SettingToggle small bind:value={show_hidden} icon={EyeSlash} title="Show Hidden Posts" 
+                                condition={minAPIVersion('0.19.4')}
+                                on:change={(e) => {
+                                    controller.show_hidden = e.detail
+                                    $userSettings.hidePosts.hidden = !e.detail
+                                }}
+                            />
+
+                            <!---Show Read Posts: Requires at least 0.19.6--->
+                            <SettingToggle small bind:value={show_read} icon={Eye} title="Show Read Posts" 
+                                condition={minAPIVersion('0.19.6')}
+                                on:change={(e) => {
+                                    controller.show_read = e.detail
+                                    $userSettings.hidePosts.read = !e.detail
+                                }}
+                            />
+
+                            <!---Show NSFW Posts: Requires at least 0.19.6--->
+                            <SettingToggle small bind:value={show_nsfw} icon={ExclamationCircle} title="Show NSFW Posts" 
+                                condition={minAPIVersion('0.19.6')}
+                                on:change={(e) => {
+                                    controller.show_nsfw = e.detail
+                                    $userSettings.hidePosts.nsfw = !e.detail
+                                }}
+                            />
+
+
+                        </div>
+                    </div>
                 </CollapseButton>
             {/if}
 
