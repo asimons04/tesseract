@@ -87,7 +87,11 @@
     let hidePostReason  = ''
     let hidePostAlways = false
 
-    $:  post.post.removed, post.post.deleted, post.creator_blocked, post.hidden, post.community.hidden, overrideHidePost, $profile, postHidden = shouldHidePost()
+    $:  post.post.removed, post.post.deleted, post.creator_blocked, 
+        post.hidden, post.community.hidden, overrideHidePost, $profile, 
+        $userSettings.hidePosts.enabled, $userSettings.hidePosts.hideUsersFromBlockedInstances, 
+        postHidden = shouldHidePost()
+    
     $:  post.post.id, onPostChange()
     
     function onPostChange() {
