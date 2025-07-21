@@ -22,6 +22,7 @@
         Trash,
     } from 'svelte-hero-icons'
     
+    import Avatar           from '$lib/components/ui/Avatar.svelte'
     import Badge            from '$lib/components/ui/Badge.svelte'
     import Button           from '$lib/components/input/Button.svelte'
     import Card             from '$lib/components/ui/Card.svelte'
@@ -38,15 +39,15 @@
     import {  getClient, minAPIVersion } from '$lib/lemmy.js'
     import { createEventDispatcher, onMount }  from 'svelte'
     import { goto }         from '$app/navigation'
+    import { instance }     from '$lib/instance'
     import { page }         from '$app/stores'
     import { profile }      from '$lib/auth.js'
     import { isNewAccount, sleep }        from '../post/helpers'
     import { slide }        from 'svelte/transition'
     import { toast }        from '$lib/components/ui/toasts/toasts.js'
     import { userSettings } from '$lib/settings'
-    import Avatar from '$lib/components/ui/Avatar.svelte';
-    import { userIsInstanceBlocked } from '$lib/lemmy/user';
-    import { instance } from '$lib/instance';
+    import { userIsInstanceBlocked } from '$lib/lemmy/user'
+    
     
     export let node: CommentNodeI
     export let postId: number
@@ -85,10 +86,11 @@
     
     const dispatcher                    = createEventDispatcher<{select: CommentView, unselect: CommentView }>()
     
-    $: node, commentText, commentContainsImage = commentText.includes('![')
-    $: node, commentText, commentBodyContainerDoesScroll = (commentBodyContainer?.scrollHeight > commentBodyContainer?.clientHeight) || commentContainsImage
-    $: node, $userSettings.uiState.coloredCommentThreadLines, threadLineColor = getThreadLineColor()
-    $: node, $userSettings.uiState.coloredCommentThreadLines, ringColor = getAvatarRingColor()
+    $:  node, commentText, commentContainsImage = commentText.includes('![')
+    $:  node, commentText, commentBodyContainerDoesScroll = (commentBodyContainer?.scrollHeight > commentBodyContainer?.clientHeight) || commentContainsImage
+    $:  node, $userSettings.uiState.coloredCommentThreadLines, updateThreadLineColors()
+    $:  node, $userSettings, $profile?.user, overrideHideComment, hideComment = shouldHideComment()
+    $:  $userSettings.hidePosts.enabled, $userSettings.hidePosts.allowRevealComments, onFilterStateChange()
     
     interface CommentModlogLookup {
         reason: string | undefined
@@ -266,7 +268,12 @@
         if (selected) return 'info'
         return color
     }
-    
+
+    function updateThreadLineColors() {
+        threadLineColor = getThreadLineColor()
+        ringColor = getAvatarRingColor()
+    }
+
     function getThreadLineColor(): string {
         if (standalone || (depth == 0 && node.comment_view.counts.child_count < 1 && node.children.length < 1)) return 'hidden'
         const baseClasses = "ml-[0.65rem] w-[4px] bg-cover bg-center hover:scale-x-[1.75]"
@@ -331,15 +338,6 @@
             sleep(250).then(() => commentAnchor.scrollIntoView({behavior:'smooth', block: 'center'}))
         }
     }
-    
-    
-    
-    $:  node, $userSettings, $profile?.user, overrideHideComment, hideComment = shouldHideComment()
-    $:  $userSettings.hidePosts.enabled, $userSettings.hidePosts.allowRevealComments, onFilterStateChange()
-
-
-    
-    
 
     function onFilterStateChange() {
         
@@ -348,6 +346,7 @@
             hideComment = shouldHideComment()
         }
     }
+
     function shouldHideComment(): boolean {
         if (!$userSettings.hidePosts.enabled) return false
         
@@ -363,8 +362,9 @@
         if (amMod($profile?.user, node.comment_view.community)) return false
 
         // If jumping to a comment in a thread
-        if (node.comment_view.comment.path.split('.').includes(jumpTo.toString())) return false
-
+        //if (node.comment_view.comment.path.split('.').includes(jumpTo.toString())) return false
+        if (node.comment_view.comment.id == jumpTo) return false
+        
         
         // Hide comments from new accounts
         if ( $userSettings.hidePosts.newAccounts &&  isNewAccount(node.comment_view.creator.published) ) {
@@ -419,6 +419,14 @@
         hideCommentReason = ""
         return false
     }
+
+    let sinkholeComment = false
+    $:  hideComment, $userSettings.hidePosts.allowRevealComments, mod, admin, jumpTo, 
+        sinkholeComment = hideComment && !$userSettings.hidePosts.allowRevealComments && !mod && !admin 
+    //&& jumpTo < 0
+    
+    //let allowReveal = true
+    //$:  $userSettings.hidePosts.allowRevealComments, hideComment, jumpTo, 
 </script>
 
 <svelte:window 
@@ -433,8 +441,16 @@
     on:purgePost={handlers.PurgePostEvent}
 />
 
-{#if hideComment && !$userSettings.hidePosts.allowRevealComments}
+<!--{#if hideComment && !$userSettings.hidePosts.allowRevealComments && !mod && !admin && jumpTo < 0}-->
+{#if sinkholeComment}
     <!---Do not render comment or its replies--->
+    
+    <!---If viewing a comment in a thread, create the slot for the parent(s) but do not display them if they're sinkholed--->
+    {#if jumpTo > 0}
+        <div class="bg-transparent dark:bg-transparent">
+            <slot />
+        </div>
+    {/if}
 {:else}
 
     <!---Edit Comment Modal--->
