@@ -59,10 +59,9 @@
         FaceFrown, 
         Funnel, 
         HandThumbDown, 
-        HandThumbUp
+        HandThumbUp,
+        Link as LinkIcon
     } from "svelte-hero-icons"
-    
-    
     
     
     export let community_id: number | undefined     = undefined
@@ -712,33 +711,39 @@
     {#if $userSettings.uiState.infiniteScroll || (!$userSettings.uiState.infiniteScroll && controller.page == 1)}
         
         <div class="flex flex-col w-full items-start border-b dark:border-zinc-700 mx-auto {($userSettings.uiState.feedMargins && !inModal)  ? 'max-w-3xl' : 'w-full'}">
-            {#if $profile?.user}
-                <CollapseButton icon={Cog6Tooth} title="Feed Settings" middleLine bottomBorder={false} class="w-full">
-                    <div class="flex flex-col w-full max-h-[30vh] overflow-y-auto">
-                        <div class="flex flex-row gap-1 items-center w-full">
-                            <span class="whitespace-nowrap">Tesseract Options</span>
-                            <hr class="flex w-full {hrColors} my-auto" />
+            
+            <CollapseButton icon={Cog6Tooth} title="Feed Settings" middleLine bottomBorder={false} class="w-full">
+                <div class="flex flex-col w-full max-h-[30vh] overflow-y-auto">
+                    <div class="flex flex-row gap-1 items-center w-full">
+                        <span class="whitespace-nowrap">Tesseract Options</span>
+                        <hr class="flex w-full {hrColors} my-auto" />
 
-                        </div>
+                    </div>
 
-                        <div class="flex flex-col divide-y {dividerColors} gap-1 justify-between items-center pl-4 pr-2">
-                            <SettingToggle small icon={Funnel} title="Enable Filters" bind:value={$userSettings.hidePosts.enabled}/>
-                            
-                            <!---Only Visible if Filtering Enabled--->
-                            <SettingToggle small icon={EyeSlash} title="Allow Revealing Filtered Posts" condition={$userSettings.hidePosts.enabled} bind:value={$userSettings.hidePosts.allowReveal} />
-                            <SettingToggle small icon={EyeSlash} title="Hide Users from Blocked Instances" condition={$userSettings.hidePosts.enabled} bind:value={$userSettings.hidePosts.hideUsersFromBlockedInstances} />
-                            <SettingToggle small icon={EyeSlash} title="Hide Posts Marked NSFW" condition={$userSettings.hidePosts.enabled} bind:value={$userSettings.hidePosts.filterNSFW} />
-                            <SettingToggle small icon={ExclamationTriangle} title="Hide Low Credibility Sources" condition={$userSettings.hidePosts.enabled} bind:value={$userSettings.hidePosts.MBFCLowCredibility} />
-                            <SettingToggle small icon={Cake} title="Hide Content From New Accounts" condition={$userSettings.hidePosts.enabled} bind:value={$userSettings.hidePosts.newAccounts} />
-                            <SettingToggle small icon={FaceFrown} title="Hide Content From Bot Accounts" condition={$userSettings.hidePosts.enabled} bind:value={$userSettings.hidePosts.botAccounts} />
-                        </div>
+                    <div class="flex flex-col divide-y {dividerColors} gap-1 justify-between items-center pl-4 pr-2">
+                        <SettingToggle small icon={Funnel} title="Enable Filters" bind:value={$userSettings.hidePosts.enabled}/>
+                        
+                        <!---Only Visible if Filtering Enabled--->
+                        <SettingToggle small icon={EyeSlash} title="Allow Revealing Filtered Posts" condition={$userSettings.hidePosts.enabled} bind:value={$userSettings.hidePosts.allowReveal} />
+                        <SettingToggle small icon={EyeSlash} title="Hide Users from Blocked Instances" condition={$userSettings.hidePosts.enabled} bind:value={$userSettings.hidePosts.hideUsersFromBlockedInstances} />
+                        <SettingToggle small icon={EyeSlash} title="Hide Posts Marked NSFW" condition={$userSettings.hidePosts.enabled} bind:value={$userSettings.hidePosts.filterNSFW} />
+                        <SettingToggle small icon={Cake} title="Hide Content From New Accounts" condition={$userSettings.hidePosts.enabled} bind:value={$userSettings.hidePosts.newAccounts} />
+                        <SettingToggle small icon={FaceFrown} title="Hide Content From Bot Accounts" condition={$userSettings.hidePosts.enabled} bind:value={$userSettings.hidePosts.botAccounts} />
+    
+                        <SettingToggle small icon={LinkIcon} title="Hide Posts Likely to be Blogspam" condition={$userSettings.hidePosts.enabled} bind:value={$userSettings.hidePosts.hideBlogspam} />
+                        <SettingToggle small icon={LinkIcon} title="Hide Posts Using Link Shorteners" condition={$userSettings.hidePosts.enabled} bind:value={$userSettings.hidePosts.hideLinkShorteners} />
+                        <SettingToggle small icon={EyeSlash} title="Hide Posts to Bluesky" condition={$userSettings.hidePosts.enabled} bind:value={$userSettings.hidePosts.hideBluesky} />
+                        <SettingToggle small icon={EyeSlash} title="Hide Posts to Facebook" condition={$userSettings.hidePosts.enabled} bind:value={$userSettings.hidePosts.hideFacebook} />
+                        <SettingToggle small icon={EyeSlash} title="Hide Posts to Twitter/X" condition={$userSettings.hidePosts.enabled} bind:value={$userSettings.hidePosts.hideTwitter} />
+                        <SettingToggle small icon={EyeSlash} title="Hide Posts to Reddit" condition={$userSettings.hidePosts.enabled} bind:value={$userSettings.hidePosts.hideReddit} />
+                    </div>
 
 
-                        <div class="flex flex-row gap-1 items-center w-full">
-                            <span class="whitespace-nowrap">API Fetch Options</span>
-                            <hr class="flex w-full {hrColors} my-auto" />
-                        </div>
-
+                    <div class="flex flex-row gap-1 items-center w-full">
+                        <span class="whitespace-nowrap">API Fetch Options</span>
+                        <hr class="flex w-full {hrColors} my-auto" />
+                    </div>
+                    {#if $profile?.user}
                         <div class="flex flex-col divide-y {dividerColors} gap-1 justify-between items-center pl-4 pr-2">
 
                             <SettingToggle small bind:value={liked_only} icon={HandThumbUp} title="Show Only Liked Posts" on:change={(e) => {
@@ -782,9 +787,10 @@
 
 
                         </div>
-                    </div>
-                </CollapseButton>
-            {/if}
+                    {/if}
+                </div>
+            </CollapseButton>
+            
 
 
             <div class="flex flex-row w-full items-end justify-between">
