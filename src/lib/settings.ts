@@ -73,6 +73,7 @@ interface Settings {
         userList: string[]
         communityList: string[]
         domainList: string[]                                            // List of domains that should be filtered if used as the post URL
+        hideBluesky: boolean                                            // Hide posts that link to any known Bluesky domains
         hideFacebook: boolean                                           // Hide posts that link to any known Facebook domains
         hideReddit: boolean                                             // Hide posts that link to any known Reddit domains
         hideTwitter: boolean                                            // Hide posts that link to any known Twitter domains
@@ -260,6 +261,7 @@ export const defaultSettings: Settings = {
         userList:                                                       [],
         communityList:                                                  [],
         domainList:                                                     [],
+        hideBluesky:                                                    false,
         hideFacebook:                                                   false,
         hideReddit:                                                     false,
         hideTwitter:                                                    false,
