@@ -28,7 +28,17 @@
     import type { PostView } from 'lemmy-js-client'
     import { type PostType, type PostDisplayType, postType as getPostType, sleep, isNewAccount } from './helpers.js'
 
-    import { amMod, isAdmin }                from '../moderation/moderation.js'
+    import {
+        isBluesky, 
+        isFacebook, 
+        isFakeNewsSite, 
+        isLinkShortener, 
+        isReddit, 
+        isTwitter
+        
+    } from '$lib/blacklists'
+
+    import { amMod, isAdmin }       from '../moderation/moderation.js'
     import { fade }                 from 'svelte/transition'
     import { getClient }            from '$lib/lemmy'
     import { onDestroy, onMount }   from 'svelte'
@@ -79,24 +89,32 @@
     export let onHomeInstance: boolean      = true
     
     let postContainer: HTMLDivElement | null
-    let inViewport      = false
-    let postType        = getPostType(post)
-    let lastClickedPost = -1
-    let postHidden      = false
-    let overrideHidePost = false
-    let hidePostReason  = ''
-    let hidePostAlways = false
+    let inViewport          = false
+    let postType            = getPostType(post)
+    let lastClickedPost     = -1
+    let postHidden          = false
+    let overrideHidePost    = false
+    let allowReveal         = true
+    let hidePostReason      = ''
+    let hidePostAlways      = false
 
     $:  post.post.removed, post.post.deleted, post.creator_blocked, 
-        post.hidden, post.community.hidden, overrideHidePost, $profile, 
-        $userSettings.hidePosts.enabled, $userSettings.hidePosts.hideUsersFromBlockedInstances, 
-        postHidden = shouldHidePost()
+        post.hidden, post.community.hidden, overrideHidePost, $profile, postHidden = shouldHidePost()
     
     $:  post.post.id, onPostChange()
+    $:  $userSettings.hidePosts.enabled, $userSettings.hidePosts.allowReveal, $userSettings.hidePosts.hideUsersFromBlockedInstances, onFilterStateChange()
     
     function onPostChange() {
         postType = getPostType(post)
         applyDummyThumbnail()
+    }
+
+    function onFilterStateChange() {
+        
+        if ($userSettings.hidePosts.enabled) {
+            overrideHidePost = false
+            postHidden = shouldHidePost()
+        }
     }
 
     function applyDummyThumbnail() {
@@ -355,6 +373,71 @@
         // If mod of community or community is local and user is admin, always show the post
         if (amModOrAdmin) return false
 
+        
+        // Social Media And URL Filtering
+        if (post.post.url) {
+            
+            // Potential Blogspam (accounts less than a week old linking to blogspot.com
+            if ($userSettings.hidePosts.hideBlogspam && isNewAccount(post.creator.published, 7)) {
+                try {
+                    const isBlogspot = new URL(post.post.url).hostname.includes('blogspot.com')
+                    if (isBlogspot) {
+                        hidePostReason = 'Likely blogspam. Account is less than a week old and linking to blogspot'
+                        return true
+                    }
+                }
+                catch {}
+            }
+
+
+            // Bluesky
+            if ($userSettings.hidePosts.hideBluesky && isBluesky(post.post.url)) {
+                hidePostReason = "Post links to Bluesky"
+                return true
+            }
+
+            // Facebook
+            if ($userSettings.hidePosts.hideFacebook && isFacebook(post.post.url)) {
+                hidePostReason = "Post links to Facebook"
+                return true
+            }
+
+            // Fake News / Propaganda Sites (Always Hide)
+            if (isFakeNewsSite(post.post.url)) {
+                let domain: string|undefined = undefined
+                try {
+                    domain = `(${new URL(post.post.url).hostname})`
+                }
+                catch {}
+
+                hidePostReason = `This post links to a known misinformation, conspiracy, news impersonation, propaganda, and/or hate site ${domain ? domain : ''} and cannot be revealed.`
+                allowReveal = false
+                return true
+            }
+
+            // Link Shorteners
+            if ($userSettings.hidePosts.hideLinkShorteners && isLinkShortener(post.post.url)) {
+                hidePostReason = "Post uses a link-shortening service"
+                return true
+            }
+
+            // Reddit
+            if ($userSettings.hidePosts.hideReddit && isReddit(post.post.url)) {
+                hidePostReason = "Post links to Reddit"
+                return true
+            }
+
+            // Twitter/X
+            if ($userSettings.hidePosts.hideTwitter && isTwitter(post.post.url)) {
+                hidePostReason = "Post links to Twitter"
+                return true
+            }
+
+
+
+        
+        }
+        
         // Creator is a bot
         if ($userSettings.hidePosts.botAccounts && post.creator.bot_account) {
             hidePostReason = "Creator is a bot"
@@ -404,10 +487,11 @@
             return true
         }
 
-        // MBFC Low Credibility
+        // MBFC Low Credibility (Ignore Odysee for now)
         //@ts-ignore
-        if ($userSettings.hidePosts.MBFCLowCredibility && post.mbfc?.credibility == 'Low Credibility') {
-            hidePostReason = "Post links to low-credibility source"
+        //if ($userSettings.hidePosts.MBFCLowCredibility && post.mbfc?.credibility == 'Low Credibility' && postType != 'odysee') {
+        if (post.mbfc?.credibility == 'Low Credibility' && postType != 'odysee') {
+            hidePostReason = "Post links to low-credibility news source"
             return true
         }
 
@@ -416,6 +500,8 @@
             hidePostReason = "New account"
             return true
         }
+
+        
 
         // Blocked Instance
         if ($userSettings.hidePosts.hideUsersFromBlockedInstances && userIsInstanceBlocked($profile?.user, post.creator.instance_id)) {
@@ -512,7 +598,7 @@
     >
         <div class="flex flex-row gap-1 items-start w-full p-1">
             <div class="w-[42px]">
-                <Button color="tertiary" size="square-lg" icon={EyeSlash} iconSize={28} 
+                <Button color="tertiary" size="square-lg" icon={EyeSlash} iconSize={28} disabled={!allowReveal}
                     title="Show Hidden Post"
                     on:click={async () => { overrideHidePost = true }}
                 />
