@@ -27,6 +27,7 @@
         XCircle
 
     } from "svelte-hero-icons"
+    import { hrColors } from '$lib/ui/colors';
     
     export let post:PostView
     export let open: boolean = false
@@ -59,19 +60,18 @@
                 </h2>
                 
                 
-                {#if ['left', 'left-center', 'center', 'right-center', 'right', 'fake-news'].includes(results?.biases?.bias ?? '')}
+                {#if ['left', 'left-center', 'center', 'right-center', 'right'].includes(results?.biases?.bias ?? '')}
                     <div class="bg-slate-300 p-2 rounded-md">
                         <img src="/img/MBFC/{results?.biases?.bias}.webp" alt="MBFC Gauge for {results.name} reporting as {results?.biases?.pretty}" class="mx-auto"/>
                     </div>
-
-                {/if}
-
-                {#if ['satire', 'pro-science'].includes(results?.biases?.bias ?? '')}
+                {:else if ['satire', 'pro-science'].includes(results?.biases?.bias ?? '')}
                     <div class="bg-slate-300 p-2 rounded-md">
                         <img src="/img/MBFC/center.webp" alt="MBFC Gauge for {results.name} reporting as {results?.biases?.pretty}" class="mx-auto"/>
                     </div>
-
+                {:else}
+                    <hr class="w-full {hrColors}" />
                 {/if}
+                
 
                 <div class="flex flex-row flex-wrap sm:flex-nowrap gap-2">
                     <div class="flex flex-col gap-2 w-full sm:w-[60%]">
