@@ -11,6 +11,7 @@
     import FederationStateModal     from '$lib/components/lemmy/modal/FederationStateModal.svelte'
     import Fediseer                 from '$lib/fediseer/Fediseer.svelte'
     import LinkPreviewModal         from '$lib/components/lemmy/modal/LinkPreviewModal.svelte'
+    import MBFCModal                from '$lib/MBFC/MBFCModal.svelte'
     import PostModerationModal      from '$lib/components/lemmy/modal/PostModerationModal.svelte'
     import PostViewModal            from '$lib/components/lemmy/modal/PostViewModal.svelte'
     import QuickSettingsModal       from '$lib/components/lemmy/modal/QuickSettingsModal.svelte'
@@ -18,6 +19,7 @@
     import ReportModal              from '$lib/components/lemmy/moderation/ReportModal.svelte'
     import UserProfileModal         from '$lib/components/lemmy/modal/UserProfileModal.svelte'
     import ZoomImageModal           from '$lib/components/lemmy/modal/ZoomImageModal.svelte'
+    
     
     
     $:  open = {
@@ -29,6 +31,7 @@
             FederationStateModal:   $page.state.modals?.FederationStateModal    ?? false,
             FediseerModal:          $page.state.modals?.FediseerModal           ?? false,
             LinkPreviewModal:       $page.state.modals?.LinkPreviewModal        ?? false,
+            MBFCModal:              $page.state.modals?.MBFCModal               ?? false,
             PostModerationModal:    $page.state.modals?.PostModerationModal     ?? false,
             PostViewModal:          $page.state.modals?.PostViewModal           ?? false,
             QuickSettingsModal:     $page.state.modals?.QuickSettingsModal      ?? false,
@@ -136,6 +139,10 @@
     <LinkPreviewModal open={open.LinkPreviewModal} url={$modals.linkPreview.url} iframe={$modals.linkPreview.iframe}/>
 {/if}
 
+<!---MBFC Modal--->
+{#if open.MBFCModal && $modals.MBFCModal.post}
+    <MBFCModal open={open.MBFCModal} post={$modals.MBFCModal.post} />
+{/if}
 
 {#if open.ZoomImageModal}
     <ZoomImageModal open={open.ZoomImageModal} bind:url={$modals.zooming.url} altText={$modals.zooming.altText} />
