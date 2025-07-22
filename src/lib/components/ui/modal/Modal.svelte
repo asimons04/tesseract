@@ -86,7 +86,7 @@
   
         <div class="flex w-full h-full" transition:scale={{ start: 0.5, easing: expoOut }} >
             
-            <div class="flex my-auto dark:!bg-zinc-950 rounded-xl w-full min-w-[min(100%,450px)] {width} {height} box-border mx-auto ">
+            <div class="flex my-auto dark:!bg-zinc-950 p-2 rounded-xl w-full min-w-[min(100%,450px)] {width} {height} box-border mx-auto ">
 
                 <div bind:this={modalElement} tabindex="-1" role="dialog"
                     class="flex flex-col gap-4 p-1 md:p-2 lg:p-3 pb-2 rounded-xl overflow-none 
