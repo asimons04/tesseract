@@ -54,10 +54,10 @@
                         : QuestionMarkCircle
             } mini size="16"/>
             
-            <!--{results.credibility.replace('Credibility', '')} <span class="hidden {collapseBadges ? 'hidden' : 'lg:block'}">Credibility</span>-->
             {results.credibility.replace('Credibility', '')} 
                 <span class="{collapseBadges ? 'hidden' : 'hidden lg:block'}">
-                     ({results?.biases?.name.replace('Biased', '').replace('Bias','').trim()})
+                     <!---({results?.biases?.name.replace('Biased', '').replace('Bias','').trim()})--->
+                     Credibility
                 </span>
         </span>
         
