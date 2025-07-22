@@ -7,6 +7,7 @@ export default {
             'sans': ['sans-serif'],
             'system': ['system-ui'], 
             'serif': ['serif'],
+            'atkinson': ['AtkinsonHyperlegible', 'sans-serif', 'system-ui'],
             'inter': ['Inter', 'sans-serif', 'system-ui'],
             'opendyslexic' : ['OpenDyslexic', 'serif', 'system-ui'],
             'roboto': ['Roboto', 'sans-serif', 'system-ui'],
