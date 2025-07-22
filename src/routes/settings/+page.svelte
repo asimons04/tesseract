@@ -381,8 +381,8 @@
 
         <!---Application Font--->
         <SettingMultiSelect icon={Language} title="Application Font" description="Select your preferred font to use in Tesseract"
-            options={['font-sans', 'font-serif', 'font-system', 'font-inter', 'font-opendyslexic', 'font-reddit', 'font-roboto', 'font-ubuntu', 'font-urbanist']}
-            optionNames={['Sans', 'Serif', 'System', 'Inter', 'OpenDyslexic', 'Reddit Mono', 'Roboto', 'Ubuntu', 'Urbanist']}
+            options={['font-sans', 'font-serif', 'font-system', 'font-atkinson', 'font-inter', 'font-opendyslexic', 'font-reddit', 'font-roboto', 'font-ubuntu', 'font-urbanist']}
+            optionNames={['Sans', 'Serif', 'System', 'Atkinson Hyperlegible', 'Inter', 'OpenDyslexic', 'Reddit Mono', 'Roboto', 'Ubuntu', 'Urbanist']}
             bind:selected={$userSettings.font}
         />
 

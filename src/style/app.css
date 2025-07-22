@@ -20,6 +20,13 @@
 
 
 @font-face {
+    font-family: 'AtkinsonHyperlegible';
+    src: url("/fonts/atkinsonhyperlegiblenext.woff") format('woff'),
+        url("/fonts/atkinsonhyperlegiblenext.woff2") format('woff2');
+    font-display: swap;
+}
+
+@font-face {
     font-family: 'Roboto';
     src: url("/fonts/Roboto-Regular.ttf") format('ttf'),
         url("/fonts/Roboto-Regular.woff") format('woff'),

@@ -59,8 +59,8 @@
             <SettingMultiSelect icon={Language} 
                 title="Application Font" 
                 padding={true} small={true}
-                options={['font-sans', 'font-serif', 'font-system', 'font-inter', 'font-opendyslexic', 'font-reddit', 'font-roboto', 'font-ubuntu', 'font-urbanist']}
-                optionNames={['Sans', 'Serif', 'System', 'Inter', 'OpenDyslexic', 'Reddit Mono', 'Roboto', 'Ubuntu', 'Urbanist']}
+                options={['font-sans', 'font-serif', 'font-system', 'font-atkinson', 'font-inter', 'font-opendyslexic', 'font-reddit', 'font-roboto', 'font-ubuntu', 'font-urbanist']}
+                optionNames={['Sans', 'Serif', 'System', 'Atkinson Hyperlegible', 'Inter', 'OpenDyslexic', 'Reddit Mono', 'Roboto', 'Ubuntu', 'Urbanist']}
                 bind:selected={$userSettings.font}
             />
 
