@@ -83,6 +83,11 @@ interface Modals {
         url: string
         iframe: boolean
     },
+    MBFCModal: {
+        open: boolean
+        post?: PostView
+
+    },
     postModeration: {
         open: boolean
         item: PostView | CommentView | undefined
@@ -173,6 +178,9 @@ export let modals = writable<Modals>({
         open: false,
         url: '',
         iframe: false
+    },
+    MBFCModal: {
+        open: false,
     },
     postModeration: {
         open: false,
@@ -352,6 +360,23 @@ export function linkPreviewModal(url: string, iframe=false) {
         modals: {
             ...get(page).state.modals,
             LinkPreviewModal: true
+        }
+    })
+}
+
+// MBFC Modal
+export function MBFCModal(post:PostView) {
+    modals.update((m) => ({
+        ...m,
+        MBFCModal: {
+            open: true,
+            post:post
+        }
+    }))
+    pushState('', {
+        modals: {
+            ...get(page).state.modals,
+            MBFCModal: true
         }
     })
 }

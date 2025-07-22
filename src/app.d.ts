@@ -19,6 +19,7 @@ declare global {
                 FederationStateModal?:      boolean
                 FediseerModal?:             boolean
                 LinkPreviewModal?:          boolean
+                MBFCModal?:                 boolean
                 PostModerationModal?:       boolean
                 PostViewModal?:             boolean
                 QuickSettingsModal?:        boolean
@@ -26,12 +27,6 @@ declare global {
                 RemoveModal?:               boolean
                 UserProfileModal?:          boolean
                 ZoomImageModal?:            boolean
-                
-                // Special, in-place modals
-                MBFCModal?: {
-                    open?:                  boolean
-                    id?:                    number
-                }
             }
         }
 
