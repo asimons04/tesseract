@@ -193,7 +193,7 @@ export const defaultSettings: Settings = {
         reportsPerPage: 20,
 
     },
-    font: 'font-roboto',
+    font: 'font-atkinson',
     debugInfo: false,
     highlightCode: true,
     highlightInlineCode: false,
