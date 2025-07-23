@@ -38,10 +38,11 @@
         
     } from '$lib/blacklists'
 
-    import { amMod, isAdmin }       from '../moderation/moderation.js'
+    import { amMod, isAdmin, MBFCModal }       from '../moderation/moderation.js'
     import { fade }                 from 'svelte/transition'
     import { getClient }            from '$lib/lemmy'
     import { onDestroy, onMount }   from 'svelte'
+    import { page } from '$app/stores'
     import { profile }              from '$lib/auth.js'
     import { userIsInstanceBlocked } from '$lib/lemmy/user.js'
     import { userSettings }         from '$lib/settings.js'
@@ -73,6 +74,8 @@
     
     import { EyeSlash } from 'svelte-hero-icons'
     import { EXTREMIST_COMMUNITIES } from '$lib/blacklists.js';
+    import { linkColors } from '$lib/ui/colors.js';
+    import { pushState } from '$app/navigation';
 
 
     export let post: PostView                                           // The Post to display
@@ -97,6 +100,8 @@
     let allowReveal         = true
     let hidePostReason      = ''
     let hidePostAlways      = false
+    let lowCredFilter       = false
+    let MBFCAvailable       = false
 
     $:  post.post.removed, post.post.deleted, post.creator_blocked, 
         post.hidden, post.community.hidden, overrideHidePost, $profile, postHidden = shouldHidePost()
@@ -107,14 +112,13 @@
     function onPostChange() {
         postType = getPostType(post)
         applyDummyThumbnail()
+        // @ts-ignore
+        if (post.mbfc) MBFCAvailable = true
     }
 
     function onFilterStateChange() {
-        
-        if ($userSettings.hidePosts.enabled) {
-            overrideHidePost = false
-            postHidden = shouldHidePost()
-        }
+        overrideHidePost = false
+        postHidden = shouldHidePost()
     }
 
     function applyDummyThumbnail() {
@@ -346,13 +350,41 @@
     function shouldHidePost(): boolean {
         const isExtremist = isExtremistCommunity(post.community.actor_id)
         const ownPost = (post.post.creator_id == $profile?.user?.local_user_view.person.id)
-        const amModOrAdmin = amMod($profile?.user, post.community) || isAdmin($profile?.user)
-        
+        const amModOrAdmin = amMod($profile?.user, post.community) 
+        //|| isAdmin($profile?.user)
+
         // Only show extremist community content to mods, admins, and self
         if (isExtremist && !(amModOrAdmin || ownPost)) {
-            hidePostReason = "Community advocates extremism"
+            hidePostReason = "This post is to a community that advocates extremism and cannot be revealed."
             hidePostAlways = true
             return true
+        }
+
+        // Always hide these regardless of filtering being enabled
+        if (post.post.url && !(amModOrAdmin || ownPost) && !overrideHidePost) {
+            let domain: string|undefined = undefined
+            
+            try {
+                domain = `(${new URL(post.post.url).hostname})`
+            }
+            catch {}
+
+            if (isFakeNewsSite(post.post.url)) {
+                hidePostReason = `This post links to a known misinformation, conspiracy, news impersonation, propaganda, and/or hate site ${domain ? domain : ''} and cannot be revealed.`
+                allowReveal = false
+                lowCredFilter = true
+                return true
+            }
+
+            // MBFC Low Credibility (Ignore Odysee for now)
+            //@ts-ignore
+            if (post.mbfc?.credibility == 'Low Credibility' && postType != 'odysee') {
+                hidePostReason = `This post links to a low-credibility news source ${domain ? domain : ''} and cannot be revealed.`
+                allowReveal = false
+                lowCredFilter = true
+                return true 
+            }
+
         }
 
         // If filtering disabled, show post
@@ -402,18 +434,7 @@
                 return true
             }
 
-            // Fake News / Propaganda Sites (Always Hide)
-            if (isFakeNewsSite(post.post.url)) {
-                let domain: string|undefined = undefined
-                try {
-                    domain = `(${new URL(post.post.url).hostname})`
-                }
-                catch {}
-
-                hidePostReason = `This post links to a known misinformation, conspiracy, news impersonation, propaganda, and/or hate site ${domain ? domain : ''} and cannot be revealed.`
-                allowReveal = false
-                return true
-            }
+            
 
             // Link Shorteners
             if ($userSettings.hidePosts.hideLinkShorteners && isLinkShortener(post.post.url)) {
@@ -487,13 +508,7 @@
             return true
         }
 
-        // MBFC Low Credibility (Ignore Odysee for now)
-        //@ts-ignore
-        //if ($userSettings.hidePosts.MBFCLowCredibility && post.mbfc?.credibility == 'Low Credibility' && postType != 'odysee') {
-        if (post.mbfc?.credibility == 'Low Credibility' && postType != 'odysee') {
-            hidePostReason = "Post links to low-credibility news source"
-            return true
-        }
+        
 
         // New Account
         if ($userSettings.hidePosts.newAccounts &&  isNewAccount(post.creator.published) && post.creator.id != $profile?.user?.local_user_view?.person?.id) {
@@ -592,7 +607,7 @@
 
 
 {#if postHidden && !hidePostAlways && $userSettings.hidePosts.allowReveal}
-    <Card class="flex flex-col px-2 py-1 gap-2 mx-auto opacity-70 w-full
+    <Card class="flex flex-col px-2 py-1 gap-2 mx-auto opacity-70 dark:opacity-80 w-full
         {($userSettings.uiState.feedMargins && displayType=='feed' && !inModal) || (displayType=='post' && !inModal && previewing) ? 'max-w-3xl' : '' }
         "
     >
@@ -606,6 +621,42 @@
             <div class="flex flex-col w-[calc(100%-48px)] gap-0 text-xs font-normal">
                 <span class="font-bold">Post Hidden</span>
                 <span>{hidePostReason}</span>
+                
+                <!---Additional Actions for Hidden Low-Credibility/Propaganda Posts--->
+                {#if lowCredFilter}
+                    <span class="flex flex-row flex-wrap mt-2 gap-2 w-full">
+                        <!---View MBFC Report for Source--->
+                        {#if MBFCAvailable}
+                            <button class="{linkColors}" title="View MBFC Report" on:click={() => { MBFCModal(post) }}>
+                                View MBFC Report
+                            </button>
+                        {/if}
+
+                        <!---Search Ground News for Alternate Coverage--->
+                        {#if post.post.url}
+                            <button class="{linkColors}" title="Search for Alternate Coverage" on:click={() => {
+                                window.open(`https://ground.news/find?url=${post.post.url}`)
+                                
+                            }}>
+                                Find Alternate Coverage
+                            </button>
+                        {/if}
+                        
+                        <!---Block Creator if not Viewing Profile--->
+                        {#if !inProfile && onHomeInstance && $profile?.user}
+                            <button class="{linkColors}" title="Block Creator" on:click={() => alert('Action goes here')}>
+                                Block Creator
+                            </button>
+                        {/if}
+
+                        <!---Block Community if not Browsing It--->
+                        {#if !inCommunity && onHomeInstance && $profile?.user}
+                            <button class="{linkColors}" title="Block Community" on:click={() => alert('Action goes here')}>
+                                Block Community
+                            </button>
+                        {/if}
+                    </span>
+                {/if}
             </div>
         </div>
     </Card>
