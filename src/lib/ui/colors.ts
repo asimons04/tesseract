@@ -74,7 +74,7 @@ export const buttonColor = {
 
 export let dividerColors = "divide-slate-300 dark:divide-zinc-700"
 export let hrColors = "border-slate-300 dark:border-zinc-700"
-
+export let linkColors = "break-words text-sky-700 dark:text-sky-500 text-left hover:underline max-w-full"
 
 const configuredTheme = (env.PUBLIC_THEME ?? 'system') as 'system' | 'light' | 'dark' | undefined
 export const theme = writable<'system' | 'light' | 'dark'>(configuredTheme)
