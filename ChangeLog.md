@@ -2,29 +2,111 @@
 All major/minor changes between releases will be documented here.  
 
 # 1.4.42
+## Bugfixes
+- "Scroll to Top" in footer of comment section was not justified correctly.
+
+## New Font: Atkinson Hyperlegible
+Saw mentions of this font going around, checked it out, and I like it.  It seems to be designed for visually impaired, but it also helps dyslexics such as myself without being as wonky-looking as OpenDyslexic (no offense to OD's creators).
+
+This is also the new default font for the application.  The default font will only be applied if you have never used the app before, if you reset your settings to default, or access it from a new device.
+
+## Deezer Support 
+1) Check if domain is "link.deezer.com" or "www.deezer.com"
+1) If "www.deezer.com", get the track ID and create an embed widget:
+```
+<iframe title="deezer-widget" src="https://widget.deezer.com/widget/dark/track/725274" width="100%" height="300" frameborder="0" allowtransparency="true" allow="encrypted-media; clipboard-write"></iframe>
+```
+1) If "link.deezer.com", do a server-side fetch to get the proper URL which will have the track ID:
+```typescript
+const link = 'https://link.deezer.com/s/30wXWI1bio9tChRmZgrxs'
+const res = await fetch(link)
+const path = new URL(res.url).pathname
+const pathArr = path.split('/')
+const trackID = pathArr[pathArr.length-1]
+```
+
+
 
 ## Block Management
-Blocked users, communities, and instances are now alphabetized
+Blocked users, communities, and instances are now alphabetized for easier review.
+- To do:  Add a text input to search/filter the list
+
+## Tesseract Versus Disinformation: Round 2
+This release combines several of Tesseract's features into what has been called the "anti-disinformation filter" during this dev cycle.
+
+I'm sure this change will be contoversial, but I really don't care anymore.  Some of the built-in filters and indicators are now hardcoded and can no longer be disabled.  In addition, most posts flagged by this filter are prevented from being shown.
+
+Changes that comprise the anti-disinformation filter include:
+
+- Posts linking to low-credibility news sources are now hidden *and cannot be revealed*. Only the overall credibility rating is used in this calculation - the bias rating *does not* factor in at all.
+
+- Posts to known misinformation, conspiracy, news impersonation, propaganda, and/or hate sites are now hidden and cannot be revealed.
+
+- Posts linking to an archive URL, proxy, link shortener, or other service which obfuscates the true source of the content will be hidden behind a disclaimer. Those _are_ able to be revealed but will always start out hidden with the disclaimer.
+
+- MBFC badges can no longer be disabled
+
+On posts hidden by the anti-disinformation filter, you will have the following options:
+- View MBFC Report for the Source (if available)
+- Search Ground News for Alternate Coverage
+- Block the Creator (TO DO)
+- Block the Community (TO DO)
+- Report the Post (TO DO)
+
+
+**Note**: Mods, admins, and the creator will still be able to see and act upon the filtered items.
+
+**Notes and Responses to Expected Grumbings**:
+- If you're wringing your hands over minutiae like "That's *American* left/right bias, and I'm an enlightned European with a different Overton window!" then you just need to focus on the *overall credibility* rating and factual reporting rating.  Regardless, even a bias rating from a different Overton window can still be a useful indicator. Only the overall credibility rating is used in the filtering system (e.g. not the bias or factual reporting scores).
+
+- I've removed the "bias" portion of the indicator badge and only display the credibility rating.  Hopefully that shuts some of you up.
+
+- "But I don't like/trust MBFC at all!" - Then use another client - I really DGAF.  MBFC may not be perfect, but it's a hell of a lot better than trusting a bunch of randos on the internet, especially those here with an agenda.  And Lemmings *love* their agendas.
+
+- "Yeah, the source is low-cred, but *this* article is fine." - No, it's not.  Giving low-cred outlets a pass on an article-by-article basis only gives undeserved legitimacy to the other trash it puts out.  If a particular story is only being covered by low-cred sources, then you should ask yourself why that is.  If it is being covered by better sources, then link to the better sources.
+
+- "But my favorite rag is getting 'CeNSorED'" - Well, too bad?  Credibility ratings are established over time.  If they clean up their act and improve their overall credibility rating, then they will no longer trigger the filter.  Otherwise, check for coverage from more reliable/credible sources and use the opportunity to improve your media literacy.
+
+**Do not submit feature requests, bugs, or PRs to revert this and do not @ me about this.  If this is such a deal-breaker for you, then there are plenty of other clients you can use.**  
+
+However, if you encounter a legitimate bug then, by all means, please do report it.
 
 
 ## Filtering
+The filtering subsystem has seen improvements this release.  
 
-### Global Toggle
+### Filtering Versus Blocking
+You may be wondering whether it would be more appropriate to filter a user/community or block them.  Really, it depends on your use case and preferences.
+
+#### Blocking
+- If you never, ever want to see content from a user/community ever again, block them.
+- Blocking is account-specific. This may be helpful or detremental depending on your use cases.
+- Blocking requires a logged-in account and does not work if you are browsing as a guest.
+- If you occasionally want to see content from blocked users, it's cumbersome to unblock them, go back to the content, view it, and then, probably, block them again.
+
+#### Filtering
+- Filtering is done client side and applies to all profiles in Tesseract
+- Filtering can be done without being logged into an account.  i.e. you can browse as guest and still curate your experience
+- Filters can be quickly toggled on and off without leaving the current spot in the app.  Useful if you want to peek at what you may be missing and either adjust your filters or turn them back on when you're done.
+- Filtering can act as either a soft block (default) or closer to a real/hard block
+  - You can opt to not allow filtered items to be revealed. This will hide them completely akin to a block (except it can also work if you're logged out / browsing as a guest).
+  - Posts and comments can be separately configured to be revealable (or not)
+
+Whether you block at the API level or filter content client-side, things like comment counts and post/comment counts for users and communities will not reflect those you've blocked or filtered.
+
+### Filter Quick Toggles
  Can now quick enable/disable all client-side filtering via `Settings->Filtering->Enable Filtering`. Defaults to on but with no filters set, it doesn't do anything.
 
- To Do:  Add some quick access toggles in various places
- - Quick Settings Modal
- - Top of feed
- - Top of comment section
+ This lets you "peek" at filtered content without having to remove any items from your filter. 
 
- To do: Ensure relevant components watch this setting variable and trigger a re-run of the `shouldHide` function.
+ In the main feed and when browsing a community, the "Feed Filters" dropdown at the top of the feed has been renamed "Feed Settings".  From here, you can enable/disable filtering globally as well as adjust certain filter options that apply to the feed.  
 
-### The Filtering Placeholder is Now Toggleable
-Previously, when a post/comment is caught by your filters, a stub placeholder will be shown instead.  Clicking the button on this placeholder will allow you to view the content.
+ A similar "Comment Settings" dropdown has been added to the top of the comment section on posts.
+ 
+As before, viewing someone's profile does not apply any filters except the built-in anti-disinformation filters.
 
-If you've got an extensive set of filters, especially if they're for power-users or hot-button/overexposed topics, then this can make things feel a bit cluttered.
-
-To rememdy this, there are two new options in the `Settings -> Filtering` section:
+### Can Now Optionally Hide Filtered Posts and Comments Completely
+You can now optionally completely hide filtered posts and comments rather than showing the stub.
 
 #### Allow Revealing Posts
 When enabled (default), posts in the feed that match the filter will show a stub indicating why the post was filtered. You can click the "eye" button to show the post.
@@ -38,7 +120,7 @@ When enabled (default), comments in the comment section that match the filter wi
 
 Additionally, this does not hide any replies to the filtered comment; those are all visible unless they hit on another filter themselves.
 
-When disabled, comments that match the filter will not be shown at all nor will any replies to that comment.  This is similar to blocking a user.
+When disabled, comments that match the filter will not be shown at all *nor will any replies to that comment*.  This is similar to blocking a user.
 
 #### Note About 'Hide Content From Users of Blocked Instances'
 For those unaware, blocking an instance is more accurately "block all communities on this instance" - you will still see posts/comments from users of the blocked instance elsewhere.
@@ -48,6 +130,40 @@ Enabling this option will filter users that belong to any instance you've blocke
 Thus, if you disable both "Allow Reveal Posts" and "Allow Reveal Comments" with "Hide Content From Blocked Users" enabled, then you are effectively soft-defederating from any blocked instances. You will not see any content whatsoever from them or posted/commented by users of that instance.  This includes any replies to comments of users from there (this matches how real defederation works).
 
 The only thing the filters do not account for is the comment counts. The comment count may say 50, but you may only see 0, 1, 20, or all 50. The number of filtered comments does not reflect in the count shown.
+
+
+### New Filtering Options
+
+#### Filter By URL
+
+As each of these have several domains, Tesseract includes built-in lists for the following:
+- Bluesky
+- Facebook
+- Reddit
+- Twitter/X
+
+Each of those can be toggled individually under the "URL Filtering" section in the Settings.  Unfortunately, Nitter links are too diverse to detect, but if someone would want to compile a list of known instances, I will be happy to add that list.
+
+To do:  Add filter editor to manage the user-defined URL blocklist.  Add filter step to post component.
+
+#### Hide Posts Likely to Be Blogspam
+Posts that are from accounts younger than 7 days that link to `[anything].blogspot.com` will be hidden.
+
+#### Hide Posts That Use Link Shorteners
+Link shorteners are like Russian Roulette from a cybersecurity perspective.  Plus, they're useless on a medium where you can just, you know, *click* the damn link.
+Enabling this filter option will hide any posts that link to commonly known shortener services or any URL that obfuscates the true source of the link.
+
+
+## Misc Changes
+- Re-implement MBFC modal using the standard shallow-routing system modals. Re-base modal into system modal container and no longer embed it within the MBFC badge.
+
+- Slightly larger `xs` and `sm` font sizes
+
+- Community profile modals now have share menu for the community:
+  - Lemmyverse, LemShare, and Threadiverse links
+  - Actor ID (home instance of community)
+  - Local Link (link to the community relative to your instancec)
+
 
 
 
