@@ -340,11 +340,8 @@
     }
 
     function onFilterStateChange() {
-        
-        if ($userSettings.hidePosts.enabled) {
-            overrideHideComment = false
-            hideComment = shouldHideComment()
-        }
+        overrideHideComment = false
+        hideComment = shouldHideComment()
     }
 
     function shouldHideComment(): boolean {
@@ -423,10 +420,7 @@
     let sinkholeComment = false
     $:  hideComment, $userSettings.hidePosts.allowRevealComments, mod, admin, jumpTo, 
         sinkholeComment = hideComment && !$userSettings.hidePosts.allowRevealComments && !mod && !admin 
-    //&& jumpTo < 0
-    
-    //let allowReveal = true
-    //$:  $userSettings.hidePosts.allowRevealComments, hideComment, jumpTo, 
+
 </script>
 
 <svelte:window 
