@@ -37,6 +37,7 @@
     import SettingToggle from '$lib/components/ui/settings/SettingToggle.svelte';
     import { userSettings } from '$lib/settings';
     import CollapseButton from '$lib/components/ui/CollapseButton.svelte';
+    import { slide } from 'svelte/transition';
     
     
     
@@ -128,9 +129,12 @@
             <SettingToggle small icon={Funnel} title="Enable Filters" bind:value={$userSettings.hidePosts.enabled}/>
             
             <!---Only Visible if Filtering Enabled--->
-            <SettingToggle small icon={EyeSlash} title="Allow Revealing Filtered Comments" condition={$userSettings.hidePosts.enabled} bind:value={$userSettings.hidePosts.allowRevealComments} />
-            <SettingToggle small icon={EyeSlash} title="Hide Users from Blocked Instances" condition={$userSettings.hidePosts.enabled} bind:value={$userSettings.hidePosts.hideUsersFromBlockedInstances} />
-
+            {#if $userSettings.hidePosts.enabled}
+                <div class="flex flex-col w-full divide-y {dividerColors} gap-1 justify-between items-center pl-2" transition:slide>
+                    <SettingToggle small icon={EyeSlash} title="Allow Revealing Filtered Comments" bind:value={$userSettings.hidePosts.allowRevealComments} />
+                    <SettingToggle small icon={EyeSlash} title="Hide Users from Blocked Instances" bind:value={$userSettings.hidePosts.hideUsersFromBlockedInstances} />
+                </div>
+            {/if}
             <SettingToggle small icon={Photo} title="Enable Inline Images" bind:value={$userSettings.inlineImages} />
             <SettingToggle small icon={FaceSmile} title="Large Custom Emojis" bind:value={$userSettings.uiState.largeEmojis} />
             <SettingToggle small icon={ArrowDown} title="Color Coded Conversation Lines" bind:value={$userSettings.uiState.coloredCommentThreadLines} />
@@ -204,7 +208,7 @@
                         </div>
 
                         
-                        <div class="flex w-1/3">
+                        <div class="flex ml-auto w-1/3">
                             <Button size="sm" color="tertiary-border" class="ml-auto" icon={ChevronDoubleUp} iconSize={16} on:click={() => commentSectionContainer.scrollIntoView({behavior: 'smooth', block: 'start'}) }>
                                 Scroll to Top
                             </Button>
