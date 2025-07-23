@@ -9,15 +9,74 @@ export interface URLValidateResponse {
 
 export type AccessDeniedReason = 'extremism' | 'private_instance' | 'luigi' | 'none'
 
+export const isBluesky = function (url:string): boolean {
+    try {
+        const testURL = new URL(url)
+        const domain = testURL.hostname
+        return BLUESKY.includes(domain)
+    }
+    catch { return false }
+}
+
+export const isFacebook = function (url:string): boolean {
+    try {
+        const testURL = new URL(url)
+        const domain = testURL.hostname
+        return FACEBOOK.includes(domain)
+    }
+    catch { return false }
+}
+
+export const isFakeNewsSite = function(url:string): boolean {
+    try {
+        const testURL = new URL(url)
+        const domain = testURL.hostname
+            .replace(/.*\.pravda\.ru/, 'pravda.ru')
+        return FAKE_NEWS.includes(domain)
+    }
+    catch { return false }
+}
+
+export const isLinkShortener = function (url:string): boolean {
+    try {
+        const testURL = new URL(url)
+        const domain = testURL.hostname
+        return LINK_SHORTENERS.includes(domain)
+    }
+    catch { return false }
+}
+
+export const isReddit = function (url:string): boolean {
+    try {
+        const testURL = new URL(url)
+        const domain = testURL.hostname
+        return REDDIT.includes(domain)
+    }
+    catch { return false }
+}
+
+export const isTwitter = function (url:string): boolean {
+    try {
+        const testURL = new URL(url)
+        const domain = testURL.hostname
+        return TWITTER.includes(domain)
+    }
+    catch { return false }
+}
+
 // Fake news sites that MBFC doesn't have on file
-const FAKE_NEWS = [
+export const FAKE_NEWS = [
     'cctv.com',
+    'en.news-front.su',
     'infoterkiniviral.com',
     'gazeon.site',
+    'journal-neo.su',
     'kaggle.com',
     'news.cctv.com',
-    'tass.com',
+    'pravda.ru',
     'libsoftiktok.com',
+    'southfront.press',
+    'tass.com',
     'tiblur.com',
     'todaycnn.com',
     'www.kaggle.com',
@@ -30,11 +89,12 @@ const FAKE_NEWS = [
 ]
 
 // Disallow link shorteners
-const LINK_SHORTENERS = [
+export const LINK_SHORTENERS = [
     '12ft.io',
     'apple.news',
     'archive.is',
     'archive.ph',
+    'archive.vn',
     'bit.ly',
     'bl.ink',
     'blobstreaming.org',
@@ -54,26 +114,31 @@ const LINK_SHORTENERS = [
     ...BLACKLIST_CONFIG.LINK_SHORTENER_BLACKLIST
 ]
 
-const FACEBOOK = [
+export const FACEBOOK = [
     'facebook.com',
     'www.facebook.com',
     'm.me'
 ]
 
-const REDDIT = [
+export const REDDIT = [
     'reddit.com',
     'old.reddit.com',
     'new.reddit.com',
-    'out.reddit.com'
+    'out.reddit.com',
+    'www.reddit.com'
 ]
 
-const TWITTER = [
+export const TWITTER = [
     'x.com',
     't.co',
     'twitter.com',
     'www.twitter.com',
     'www.x.com',
+]
 
+export const BLUESKY = [
+    'bsky.app',
+    'bsky.social'
 ]
 
 // Very non-comprehensive list of domains that host disposable/temporary/throwaway email aliases. Basically just the low-hanging fruit to aid in decision making.
@@ -137,18 +202,24 @@ export const THROWAWAY_EMAIL_DOMAINS = [
     'zvvzuv.com'
 ]
 
+/*
+  *  Before anyone reads the below and freaks out, these are temporary for development 
+  *  and are being used to test user and community tagging without me having to tag them over and over
+  *  as I re-deploy and reset my default settings. These will not remain in the release and
+  *  will be replaced by user-defined values.
+*/
+
 // A logged-in user subscribed to any of these communities will be barred from using the app until they subsubscribe.
 export const EXTREMIST_COMMUNITIES = [
     'https://lemmy.world/c/luigimangione',
     'https://lemmy.ml/c/luigimangione',
-    'https://sh.itjust.works/c/cybersecurity',
-    'https://awful.systems/c/sneerclub'
 ]
 
 export const MISINFO_PROPAGANDA_COMMUNITIES = [
     'https://lemmy.ml/c/europe',
     'https://lemmy.ml/c/geopolitics',
     'https://lemmy.ml/c/liberalnews',
+    'https://lemmy.ml/c/memes',
     'https://lemmy.ml/c/politicalhumor',
     'https://lemmy.ml/c/news',
     'https://lemmy.ml/c/usa',
@@ -159,7 +230,7 @@ export const MISINFO_PROPAGANDA_COMMUNITIES = [
 
 export const SHADOWBAN_USERS = [
     ['https://lemmy.ml/u/jackeroni', 'Misinformaiton/Propaganda'],
-    ['https://lemmy.ml/u/yogthos', 'Misinformation/Propaganda, Conspiracy, '],
+    ['https://lemmy.ml/u/yogthos', 'Misinformation/Propaganda, Conspiracy'],
     ['https://lemmy.ml/u/davel', 'Misinformation/Propaganda'],
     ['https://lemmy.ml/u/geneva_convenience', 'Misinformation/Propaganda, Hostility'],
     ['https://sh.itjust.works/u/vile_asslips', 'Troll, Low-Effort, Juvenile, Non-Productive'],
@@ -179,7 +250,13 @@ export const SHADOWBAN_USERS = [
     ['https://sh.itjust.works/u/Varyk', 'Hostile, Attitude Problem, Reactionary, Over-Reactionary'],
     ['https://lemmy.cafe/u/LeninsOvaries', 'Slow-burn AntiYanks account, Absolutist, Extreme Takes, Viciously Argumentative'],
     ['https://lemmy.world/u/Shardikprime', 'Hateful, Misinformation/Propaganda, Civility, Personal Insults, Report Abuse, Spamming'],
-    'https://lemmy.world/u/Guns0rWeD13',
+    ['https://lemmy.ca/u/KingPorkChop', 'Advocating Violence, Xenophobia', 'Hostile'],
+    ['https://sopuli.xyz/u/supersquirrel', 'Hostility, Advocating Violence, Overly Argumentative'],
+    ['https://lemmy.world/u/Guns0rWeD13', 'Does Nothing But Advocate Violence, Stirring the Pot'],
+    ['https://lemmy.world/u/drmoose', 'Hostility, Xenophobia, Advocating Cultural Extinction, Bigotry'],
+    ['https://lemmy.world/u/DwZ', 'Uses made-up slurs for people they disagree with'],
+    ['https://lemmy.world/u/NocturnalMorning', 'Advocating Violence'],
+    ['https://sh.itjust.works/u/Plebcouncilman', 'Pattern of low-effort trolling'],
     'https://lemmy.today/u/Rivalarrival',
     'https://lemmy.world/u/CorruptCheesecake',
     'https://feddit.nl/u/Asafum',
@@ -191,7 +268,7 @@ export const SHADOWBAN_USERS = [
     'https://lemmy.world/u/lmdnw',
     'https://lemmy.world/u/MushuChupacabra',
     'https://lemmy.ca/u/humanspiral',
-    'https://sopuli.xyz/u/supersquirrel',
+    
     'https://lemmy.world/u/Lost_My_Mind',
     'https://lemmy.ca/u/Rusty',
     'https://lemmy.dbzer0.com/u/misteloct',
