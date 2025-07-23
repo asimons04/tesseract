@@ -59,7 +59,7 @@
                     <span class="font-bold text-lg">{results.name}</span>
                 </h2>
                 
-                
+                <!---Bias Gauge Image or horizontal line--->
                 {#if ['left', 'left-center', 'center', 'right-center', 'right'].includes(results?.biases?.bias ?? '')}
                     <div class="bg-slate-300 p-2 rounded-md">
                         <img src="/img/MBFC/{results?.biases?.bias}.webp" alt="MBFC Gauge for {results.name} reporting as {results?.biases?.pretty}" class="mx-auto"/>
@@ -73,22 +73,10 @@
                 {/if}
                 
 
-                <div class="flex flex-row flex-wrap sm:flex-nowrap gap-2">
-                    <div class="flex flex-col gap-2 w-full sm:w-[60%]">
-                        {#if results.biases?.description}
-                            <p class="text-base font-bold">{results?.biases?.name}</p>
-                            <p class="text-sm">{results?.biases.description}</p>
-                            <p class="text-xs">
-                                <strong>Learn more</strong>: 
-                                <Link href={results.biases.url} newtab={true} title={results.biases.pretty} highlight>
-                                    {results.biases.url}
-                                </Link>
-                            </p>
-                        {/if}
-                    </div>
-
+                <div class="flex flex-row flex-wrap sm:flex-nowrap gap-4">
+                    <!---Credibility rating, factual reporting, and bias scores.--->
                     <div class="flex flex-col gap-2 w-full sm:w-[40%]">
-                        <ul class="pl-4 mt-2 text-sm">
+                        <ul class="smt-2 text-sm">
                             
                             <!--- Credibility--->
                             {#if results.credibility}
@@ -163,7 +151,7 @@
                             <!---Reasons for Questionable Status--->
                             {#if results.questionable?.length > 0}
                                 <li class="mt-2">
-                                    <strong>Questionable Reasoning</strong>:
+                                    <strong>Reasoning</strong>:
                                     <ul class="list-disc pl-4 text-sm">
                                         {#each results.questionable as reason}
                                             <li>{reason}</li>
@@ -174,34 +162,40 @@
 
                         </ul>
                     </div>
-                
+                    
+                    <!---Description of Bias Rating--->
+                    <div class="flex flex-col gap-2 w-full sm:w-[60%]">
+                        {#if results.biases?.description}
+                            <p class="text-base font-bold">{results?.biases?.name}</p>
+                            <p class="text-sm">{results?.biases.description}</p>
+                            <p class="text-xs">
+                                <strong>Learn more</strong>: 
+                                <Link href={results.biases.url} newtab={true} title={results.biases.pretty} highlight>
+                                    {results.biases.url}
+                                </Link>
+                            </p>
+                        {/if}
+                    </div>
+                   
                 </div>
-                
+
                 <!--Full MBFC Report Button--->
                 {#if results?.url}
-                    <hr class="mt-1"/>
-                    
-                    <div class="flex flex-row items-center">
-                        
-                        <div class="flex flex-col">
-                            <p class="text-sm font-bold flex flex-row gap-2 items-center">
-                                <Icon src={CheckCircle} mini width={16}/>
-                                Full Results
-                            </p>
-                            <p class="text-xs font-normal">Read the full report for {results.name} at Media Bias Fact Check.</p>
-                            
-                            <span class="mt-2 text-xs font-normal">
-                                <Link highlight href={results.url} newtab={true} title="Full MBFC report for {results.name}"/>
-                            </span>
-                        </div>
-                        
+                    <div class="flex w-full">
+                        <p class="text-xs">
+                            <span class="font-bold">Full MBFC Results for {results.name}</span>:
+                            <Link highlight href={results.url} newtab={true} title="Full MBFC report for {results.name}"/>
+                        </p>
                     </div>
                 {/if}
+                
+                
                 
 
                 <!--- User Report Post--->
                 {#if post?.post.id > 0 && post?.creator?.id && !post.post.removed && !post.post.deleted && $profile?.user && $profile.user?.local_user_view.person.id != post.creator.id}
-                    <hr class="mt-1"/>
+                    <hr class="w-full mt-1 {hrColors}" />
+                    
                     <div class="flex flex-row items-center gap-2">
                         <div class="flex flex-col">
                             <p class="text-sm font-bold flex flex-row items-center gap-2">
@@ -210,8 +204,8 @@
                             </p>
                             
                             <p class="text-xs font-normal">
-                                If you feel this post is from a non-credible source, submit a report to the community moderators that includes
-                                an abridged copy of this MBFC result.
+                                If you feel this post is from a non-credible source or otherwise does not meet the credibility standards for this community,
+                                submit a report to the community moderators that includes an abridged copy of this MBFC result.
                             </p>
                         </div>
                         
@@ -228,7 +222,8 @@
 
                 <!--- Moderator Purge/Remove Post --->
                 {#if post?.post.id > 0 && $profile?.user && (amMod($profile.user, post.community) || isAdmin($profile.user)) && !post.post.removed}
-                    <hr class="mt-1"/>
+                    <hr class="w-full mt-1 {hrColors}" />
+                    
                     <div class="flex flex-row items-center gap-2">
                         <div class="flex flex-col">
                             <p class="text-sm font-bold flex flex-row gap-2 items-center">
