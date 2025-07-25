@@ -185,17 +185,6 @@
                         next_page: batch.next_page,
                         posts: [...posts.posts, ...batch.posts]
                     }
-                    
-                    
-                    if (posts.posts.length > $userSettings.uiState.maxScrollPosts) {
-                        let truncateCount = posts.posts.length - $userSettings.uiState.maxScrollPosts
-
-                        posts.posts.splice(0, truncateCount)
-                        truncatedPostCount += truncateCount
-                        this.truncated = true
-                    }
-                    
-                    
                 }
                 else {
                     this.page_cursors[this.page+1] = batch.next_page
