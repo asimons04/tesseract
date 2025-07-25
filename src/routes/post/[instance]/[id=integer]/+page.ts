@@ -2,6 +2,7 @@ import { get } from 'svelte/store'
 import { getClient } from '$lib/lemmy.js'
 import { instance } from '$lib/instance'
 import { error, redirect } from '@sveltejs/kit'
+import { lookup } from '$lib/MBFC/client'
 import { userSettings } from '$lib/settings.js'
 
 interface LoadParams {
@@ -25,6 +26,12 @@ export async function load({ params, url }: LoadParams) {
         const post = await getClient(params.instance.toLowerCase()).getPost({
             id: Number(params.id),
         })
+
+        // Add MBFC results to PostView object for filtering
+        if (post.post_view.post.url) {
+            //@ts-ignore
+            post.post_view.mbfc = lookup(post.post_view.post.url)
+        }
 
         const thread = url.searchParams.get('thread')
         let parentId: number | undefined

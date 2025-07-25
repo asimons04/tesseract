@@ -28,6 +28,7 @@
     import TextInput from "$lib/components/input/TextInput.svelte"
 
     import { ArrowLeft, ArrowPath, Bars3, BarsArrowDown, ExclamationTriangle, MagnifyingGlass, PencilSquare, XCircle } from "svelte-hero-icons"
+    import { addMBFCResults } from "../post/helpers";
     
     export let person_id: number | undefined        = undefined
     export let person_name: string | undefined      = undefined
@@ -114,6 +115,7 @@
                     community_id: community_id
                 })
                 
+                user.posts = [...addMBFCResults(user.posts)]
                 submissions = [...user.posts, ...user.comments]
 
                 if (sort.startsWith('Top')) {
