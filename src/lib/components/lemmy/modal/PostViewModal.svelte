@@ -228,7 +228,7 @@
 <svelte:window on:clickIntoPost={handlers.ClickIntoPostEvent} />
 
 <Modal bind:open width="max-w-5xl"  icon={comment_id ? ChatBubbleLeftRight : Window}  iconImage={data?.post?.post_view?.community.icon} 
-    title="{data?.post?.post_view?.post?.name ?? 'Post Viewer'}" card={false} allowMaximize 
+    title="{commentsDisabled ? 'Post Unavailable' : data?.post?.post_view?.post?.name ?? 'Post Viewer'}" card={false} allowMaximize 
     on:close={() => { close() }} 
 >
     
