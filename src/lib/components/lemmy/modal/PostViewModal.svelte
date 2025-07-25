@@ -58,7 +58,8 @@
     let scrollArea: HTMLDivElement
     let viewHistory: ItemHistoryEntry[] = []
     let historyPosition: number         = 0
-    
+    let commentsDisabled                = false
+
     // Set initial history element to current values at load
     viewHistory[0] = {
         instance,
@@ -332,6 +333,9 @@
         {#if !loading && data}
             {#key onHomeInstance}
                 <Post post={data.post.post_view} displayType="post" actions={true} inModal={true} {expandCompact} {onHomeInstance}
+                    on:disableComments={(e) => {
+                        commentsDisabled = e.detail
+                    }}
                     on:reply={() => {
                         showCommentForm = !showCommentForm
                         
@@ -344,7 +348,7 @@
                     }}
                 />      
 
-                <CommentSection bind:data bind:showCommentForm bind:imageUploads {onHomeInstance} jumpTo={viewHistory[historyPosition].comment_id}/>
+                <CommentSection bind:data bind:showCommentForm bind:imageUploads {onHomeInstance} {commentsDisabled} jumpTo={viewHistory[historyPosition].comment_id}/>
             {/key}
         {/if}
     </ModalScrollArea>

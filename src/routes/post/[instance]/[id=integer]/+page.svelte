@@ -34,7 +34,7 @@
     
     let showCommentForm:boolean = false;
     let imageUploads = [] as UploadImageResponse[]
-    
+    let commentsDisabled = false
     let expandCompact: boolean = false
     
     $:  onHomeInstance = $page.params.instance.toLowerCase() == $instance.toLowerCase()
@@ -82,7 +82,7 @@
 
 
 <svelte:head>
-    {#if data?.post}
+    {#if !commentsDisabled && data?.post}
         <title>{data.post.post_view.post.name}</title>
         <meta property="og:title" content={data.post.post_view.post.name} />
         <meta property="og:url" content={$page.url.toString()} />
@@ -96,12 +96,16 @@
         {/if}
     {:else}
         <title>Unable to Fetch Post</title>
+        <meta property="og:title" content="Unable to Fetch Post" />
+        <meta property="og:url" content=""/>
+        <meta property="og:description" content=""/>
+        <meta property="og:image" content=""/>
     {/if}
 </svelte:head>
 
 
 {#if data?.post}
-    <SubNavbar home back scrollButtons refreshButton postTitle quickSettings toggleCommunitySidebar bind:post={data.post.post_view} 
+    <SubNavbar home back scrollButtons refreshButton quickSettings toggleCommunitySidebar  
         refreshPreventDefault on:navRefresh={() => goto(removeURLParams($page.url.toString()), {invalidateAll: true}) }
     />
 
@@ -147,6 +151,9 @@
                 actions={true} 
                 {expandCompact}
                 {onHomeInstance}
+                on:disableComments={(e) => {
+                    commentsDisabled = e.detail
+                }}
                 on:reply={() => {
                     showCommentForm = !showCommentForm
                     
@@ -159,7 +166,7 @@
                 }}
             />      
 
-            <CommentSection data={data} bind:showCommentForm bind:imageUploads {onHomeInstance} {jumpTo}/>
+            <CommentSection data={data} bind:showCommentForm bind:imageUploads {commentsDisabled} {onHomeInstance} {jumpTo}/>
         </div>
 
         <CommunityCard bind:community_view={data.post.community_view} moderators={data.post.moderators} slot="right-panel" class="hidden 2xl:flex"/>
